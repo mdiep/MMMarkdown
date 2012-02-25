@@ -52,7 +52,7 @@
 		BE813DF514F893EB00EC9469 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		BE813DF714F893EB00EC9469 /* MMMarkdownTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MMMarkdownTests.h; sourceTree = "<group>"; };
 		BE813DF814F893EB00EC9469 /* MMMarkdownTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MMMarkdownTests.m; sourceTree = "<group>"; };
-		BE813E0E14F8961D00EC9469 /* libMMMarkdown-Mac copy.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libMMMarkdown-Mac copy.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BE813E0E14F8961D00EC9469 /* libMMMarkdown-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libMMMarkdown-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE813E1314F92B6100EC9469 /* mmmarkdown */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mmmarkdown; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE813E1714F92B6100EC9469 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		BE813E1A14F92B6200EC9469 /* mmmarkdown-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "mmmarkdown-Prefix.pch"; sourceTree = "<group>"; };
@@ -110,7 +110,7 @@
 			children = (
 				BE813DD614F893EB00EC9469 /* libMMMarkdown-Mac.a */,
 				BE813DEA14F893EB00EC9469 /* MMMarkdownTests.octest */,
-				BE813E0E14F8961D00EC9469 /* libMMMarkdown-Mac copy.a */,
+				BE813E0E14F8961D00EC9469 /* libMMMarkdown-iOS.a */,
 				BE813E1314F92B6100EC9469 /* mmmarkdown */,
 			);
 			name = Products;
@@ -225,7 +225,7 @@
 			);
 			name = "MMMarkdown-iOS";
 			productName = MMMarkdown;
-			productReference = BE813E0E14F8961D00EC9469 /* libMMMarkdown-Mac copy.a */;
+			productReference = BE813E0E14F8961D00EC9469 /* libMMMarkdown-iOS.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		BE813E1214F92B6100EC9469 /* mmmarkdown */ = {
@@ -451,7 +451,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Source/MMMarkdown-Prefix.pch";
 				ONLY_ACTIVE_ARCH = NO;
-				PRODUCT_NAME = "MMMarkdown-Mac copy";
+				PRODUCT_NAME = "MMMarkdown-iOS";
 				SDKROOT = iphoneos5.0;
 			};
 			name = Debug;
@@ -462,7 +462,7 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Source/MMMarkdown-Prefix.pch";
-				PRODUCT_NAME = "MMMarkdown-Mac copy";
+				PRODUCT_NAME = "MMMarkdown-iOS";
 				SDKROOT = iphoneos5.0;
 			};
 			name = Release;
