@@ -16,6 +16,45 @@
 		BE813E1514F92B6100EC9469 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE813DDE14F893EB00EC9469 /* Foundation.framework */; };
 		BE813E1814F92B6200EC9469 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E1714F92B6100EC9469 /* main.m */; };
 		BE813E2014F92BF600EC9469 /* libMMMarkdown-Mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE813DD614F893EB00EC9469 /* libMMMarkdown-Mac.a */; };
+		BE813E4B14F93D8700EC9469 /* Amps and angle encoding.html in Resources */ = {isa = PBXBuildFile; fileRef = BE813E2414F93D8700EC9469 /* Amps and angle encoding.html */; };
+		BE813E4C14F93D8700EC9469 /* Amps and angle encoding.text in Resources */ = {isa = PBXBuildFile; fileRef = BE813E2514F93D8700EC9469 /* Amps and angle encoding.text */; };
+		BE813E4D14F93D8700EC9469 /* Auto links.html in Resources */ = {isa = PBXBuildFile; fileRef = BE813E2614F93D8700EC9469 /* Auto links.html */; };
+		BE813E4E14F93D8700EC9469 /* Auto links.text in Resources */ = {isa = PBXBuildFile; fileRef = BE813E2714F93D8700EC9469 /* Auto links.text */; };
+		BE813E4F14F93D8700EC9469 /* Backslash escapes.html in Resources */ = {isa = PBXBuildFile; fileRef = BE813E2814F93D8700EC9469 /* Backslash escapes.html */; };
+		BE813E5014F93D8700EC9469 /* Backslash escapes.text in Resources */ = {isa = PBXBuildFile; fileRef = BE813E2914F93D8700EC9469 /* Backslash escapes.text */; };
+		BE813E5114F93D8700EC9469 /* Blockquotes with code blocks.html in Resources */ = {isa = PBXBuildFile; fileRef = BE813E2A14F93D8700EC9469 /* Blockquotes with code blocks.html */; };
+		BE813E5214F93D8700EC9469 /* Blockquotes with code blocks.text in Resources */ = {isa = PBXBuildFile; fileRef = BE813E2B14F93D8700EC9469 /* Blockquotes with code blocks.text */; };
+		BE813E5314F93D8700EC9469 /* Hard-wrapped paragraphs with list-like lines.html in Resources */ = {isa = PBXBuildFile; fileRef = BE813E2C14F93D8700EC9469 /* Hard-wrapped paragraphs with list-like lines.html */; };
+		BE813E5414F93D8700EC9469 /* Hard-wrapped paragraphs with list-like lines.text in Resources */ = {isa = PBXBuildFile; fileRef = BE813E2D14F93D8700EC9469 /* Hard-wrapped paragraphs with list-like lines.text */; };
+		BE813E5514F93D8700EC9469 /* Horizontal rules.html in Resources */ = {isa = PBXBuildFile; fileRef = BE813E2E14F93D8700EC9469 /* Horizontal rules.html */; };
+		BE813E5614F93D8700EC9469 /* Horizontal rules.text in Resources */ = {isa = PBXBuildFile; fileRef = BE813E2F14F93D8700EC9469 /* Horizontal rules.text */; };
+		BE813E5714F93D8700EC9469 /* Inline HTML (Advanced).html in Resources */ = {isa = PBXBuildFile; fileRef = BE813E3014F93D8700EC9469 /* Inline HTML (Advanced).html */; };
+		BE813E5814F93D8700EC9469 /* Inline HTML (Advanced).text in Resources */ = {isa = PBXBuildFile; fileRef = BE813E3114F93D8700EC9469 /* Inline HTML (Advanced).text */; };
+		BE813E5914F93D8700EC9469 /* Inline HTML (Simple).html in Resources */ = {isa = PBXBuildFile; fileRef = BE813E3214F93D8700EC9469 /* Inline HTML (Simple).html */; };
+		BE813E5A14F93D8700EC9469 /* Inline HTML (Simple).text in Resources */ = {isa = PBXBuildFile; fileRef = BE813E3314F93D8700EC9469 /* Inline HTML (Simple).text */; };
+		BE813E5B14F93D8700EC9469 /* Inline HTML comments.html in Resources */ = {isa = PBXBuildFile; fileRef = BE813E3414F93D8700EC9469 /* Inline HTML comments.html */; };
+		BE813E5C14F93D8700EC9469 /* Inline HTML comments.text in Resources */ = {isa = PBXBuildFile; fileRef = BE813E3514F93D8700EC9469 /* Inline HTML comments.text */; };
+		BE813E5D14F93D8700EC9469 /* Links, inline style.html in Resources */ = {isa = PBXBuildFile; fileRef = BE813E3614F93D8700EC9469 /* Links, inline style.html */; };
+		BE813E5E14F93D8700EC9469 /* Links, inline style.text in Resources */ = {isa = PBXBuildFile; fileRef = BE813E3714F93D8700EC9469 /* Links, inline style.text */; };
+		BE813E5F14F93D8700EC9469 /* Links, reference style.html in Resources */ = {isa = PBXBuildFile; fileRef = BE813E3814F93D8700EC9469 /* Links, reference style.html */; };
+		BE813E6014F93D8700EC9469 /* Links, reference style.text in Resources */ = {isa = PBXBuildFile; fileRef = BE813E3914F93D8700EC9469 /* Links, reference style.text */; };
+		BE813E6114F93D8700EC9469 /* Literal quotes in titles.html in Resources */ = {isa = PBXBuildFile; fileRef = BE813E3A14F93D8700EC9469 /* Literal quotes in titles.html */; };
+		BE813E6214F93D8700EC9469 /* Literal quotes in titles.text in Resources */ = {isa = PBXBuildFile; fileRef = BE813E3B14F93D8700EC9469 /* Literal quotes in titles.text */; };
+		BE813E6314F93D8700EC9469 /* Markdown Documentation - Basics.html in Resources */ = {isa = PBXBuildFile; fileRef = BE813E3C14F93D8700EC9469 /* Markdown Documentation - Basics.html */; };
+		BE813E6414F93D8700EC9469 /* Markdown Documentation - Basics.text in Resources */ = {isa = PBXBuildFile; fileRef = BE813E3D14F93D8700EC9469 /* Markdown Documentation - Basics.text */; };
+		BE813E6514F93D8700EC9469 /* Markdown Documentation - Syntax.html in Resources */ = {isa = PBXBuildFile; fileRef = BE813E3E14F93D8700EC9469 /* Markdown Documentation - Syntax.html */; };
+		BE813E6614F93D8700EC9469 /* Markdown Documentation - Syntax.text in Resources */ = {isa = PBXBuildFile; fileRef = BE813E3F14F93D8700EC9469 /* Markdown Documentation - Syntax.text */; };
+		BE813E6714F93D8700EC9469 /* Nested blockquotes.html in Resources */ = {isa = PBXBuildFile; fileRef = BE813E4014F93D8700EC9469 /* Nested blockquotes.html */; };
+		BE813E6814F93D8700EC9469 /* Nested blockquotes.text in Resources */ = {isa = PBXBuildFile; fileRef = BE813E4114F93D8700EC9469 /* Nested blockquotes.text */; };
+		BE813E6914F93D8700EC9469 /* Ordered and unordered lists.html in Resources */ = {isa = PBXBuildFile; fileRef = BE813E4214F93D8700EC9469 /* Ordered and unordered lists.html */; };
+		BE813E6A14F93D8700EC9469 /* Ordered and unordered lists.text in Resources */ = {isa = PBXBuildFile; fileRef = BE813E4314F93D8700EC9469 /* Ordered and unordered lists.text */; };
+		BE813E6B14F93D8700EC9469 /* Strong and em together.html in Resources */ = {isa = PBXBuildFile; fileRef = BE813E4414F93D8700EC9469 /* Strong and em together.html */; };
+		BE813E6C14F93D8700EC9469 /* Strong and em together.text in Resources */ = {isa = PBXBuildFile; fileRef = BE813E4514F93D8700EC9469 /* Strong and em together.text */; };
+		BE813E6D14F93D8700EC9469 /* Tabs.html in Resources */ = {isa = PBXBuildFile; fileRef = BE813E4614F93D8700EC9469 /* Tabs.html */; };
+		BE813E6E14F93D8700EC9469 /* Tabs.text in Resources */ = {isa = PBXBuildFile; fileRef = BE813E4714F93D8700EC9469 /* Tabs.text */; };
+		BE813E6F14F93D8700EC9469 /* Tidyness.html in Resources */ = {isa = PBXBuildFile; fileRef = BE813E4814F93D8700EC9469 /* Tidyness.html */; };
+		BE813E7014F93D8700EC9469 /* Tidyness.text in Resources */ = {isa = PBXBuildFile; fileRef = BE813E4914F93D8700EC9469 /* Tidyness.text */; };
+		BE813E7114F941AD00EC9469 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE813DDE14F893EB00EC9469 /* Foundation.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +95,45 @@
 		BE813E1314F92B6100EC9469 /* mmmarkdown */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mmmarkdown; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE813E1714F92B6100EC9469 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		BE813E1A14F92B6200EC9469 /* mmmarkdown-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "mmmarkdown-Prefix.pch"; sourceTree = "<group>"; };
+		BE813E2214F93D8700EC9469 /* MarkdownTest.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = MarkdownTest.pl; sourceTree = "<group>"; };
+		BE813E2414F93D8700EC9469 /* Amps and angle encoding.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "Amps and angle encoding.html"; sourceTree = "<group>"; };
+		BE813E2514F93D8700EC9469 /* Amps and angle encoding.text */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Amps and angle encoding.text"; sourceTree = "<group>"; };
+		BE813E2614F93D8700EC9469 /* Auto links.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "Auto links.html"; sourceTree = "<group>"; };
+		BE813E2714F93D8700EC9469 /* Auto links.text */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Auto links.text"; sourceTree = "<group>"; };
+		BE813E2814F93D8700EC9469 /* Backslash escapes.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "Backslash escapes.html"; sourceTree = "<group>"; };
+		BE813E2914F93D8700EC9469 /* Backslash escapes.text */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Backslash escapes.text"; sourceTree = "<group>"; };
+		BE813E2A14F93D8700EC9469 /* Blockquotes with code blocks.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "Blockquotes with code blocks.html"; sourceTree = "<group>"; };
+		BE813E2B14F93D8700EC9469 /* Blockquotes with code blocks.text */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Blockquotes with code blocks.text"; sourceTree = "<group>"; };
+		BE813E2C14F93D8700EC9469 /* Hard-wrapped paragraphs with list-like lines.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "Hard-wrapped paragraphs with list-like lines.html"; sourceTree = "<group>"; };
+		BE813E2D14F93D8700EC9469 /* Hard-wrapped paragraphs with list-like lines.text */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Hard-wrapped paragraphs with list-like lines.text"; sourceTree = "<group>"; };
+		BE813E2E14F93D8700EC9469 /* Horizontal rules.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "Horizontal rules.html"; sourceTree = "<group>"; };
+		BE813E2F14F93D8700EC9469 /* Horizontal rules.text */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Horizontal rules.text"; sourceTree = "<group>"; };
+		BE813E3014F93D8700EC9469 /* Inline HTML (Advanced).html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "Inline HTML (Advanced).html"; sourceTree = "<group>"; };
+		BE813E3114F93D8700EC9469 /* Inline HTML (Advanced).text */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Inline HTML (Advanced).text"; sourceTree = "<group>"; };
+		BE813E3214F93D8700EC9469 /* Inline HTML (Simple).html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "Inline HTML (Simple).html"; sourceTree = "<group>"; };
+		BE813E3314F93D8700EC9469 /* Inline HTML (Simple).text */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Inline HTML (Simple).text"; sourceTree = "<group>"; };
+		BE813E3414F93D8700EC9469 /* Inline HTML comments.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "Inline HTML comments.html"; sourceTree = "<group>"; };
+		BE813E3514F93D8700EC9469 /* Inline HTML comments.text */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Inline HTML comments.text"; sourceTree = "<group>"; };
+		BE813E3614F93D8700EC9469 /* Links, inline style.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "Links, inline style.html"; sourceTree = "<group>"; };
+		BE813E3714F93D8700EC9469 /* Links, inline style.text */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Links, inline style.text"; sourceTree = "<group>"; };
+		BE813E3814F93D8700EC9469 /* Links, reference style.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "Links, reference style.html"; sourceTree = "<group>"; };
+		BE813E3914F93D8700EC9469 /* Links, reference style.text */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Links, reference style.text"; sourceTree = "<group>"; };
+		BE813E3A14F93D8700EC9469 /* Literal quotes in titles.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "Literal quotes in titles.html"; sourceTree = "<group>"; };
+		BE813E3B14F93D8700EC9469 /* Literal quotes in titles.text */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Literal quotes in titles.text"; sourceTree = "<group>"; };
+		BE813E3C14F93D8700EC9469 /* Markdown Documentation - Basics.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "Markdown Documentation - Basics.html"; sourceTree = "<group>"; };
+		BE813E3D14F93D8700EC9469 /* Markdown Documentation - Basics.text */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Markdown Documentation - Basics.text"; sourceTree = "<group>"; };
+		BE813E3E14F93D8700EC9469 /* Markdown Documentation - Syntax.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "Markdown Documentation - Syntax.html"; sourceTree = "<group>"; };
+		BE813E3F14F93D8700EC9469 /* Markdown Documentation - Syntax.text */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Markdown Documentation - Syntax.text"; sourceTree = "<group>"; };
+		BE813E4014F93D8700EC9469 /* Nested blockquotes.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "Nested blockquotes.html"; sourceTree = "<group>"; };
+		BE813E4114F93D8700EC9469 /* Nested blockquotes.text */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Nested blockquotes.text"; sourceTree = "<group>"; };
+		BE813E4214F93D8700EC9469 /* Ordered and unordered lists.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "Ordered and unordered lists.html"; sourceTree = "<group>"; };
+		BE813E4314F93D8700EC9469 /* Ordered and unordered lists.text */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Ordered and unordered lists.text"; sourceTree = "<group>"; };
+		BE813E4414F93D8700EC9469 /* Strong and em together.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "Strong and em together.html"; sourceTree = "<group>"; };
+		BE813E4514F93D8700EC9469 /* Strong and em together.text */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Strong and em together.text"; sourceTree = "<group>"; };
+		BE813E4614F93D8700EC9469 /* Tabs.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = Tabs.html; sourceTree = "<group>"; };
+		BE813E4714F93D8700EC9469 /* Tabs.text */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Tabs.text; sourceTree = "<group>"; };
+		BE813E4814F93D8700EC9469 /* Tidyness.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = Tidyness.html; sourceTree = "<group>"; };
+		BE813E4914F93D8700EC9469 /* Tidyness.text */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Tidyness.text; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,6 +148,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE813E7114F941AD00EC9469 /* Foundation.framework in Frameworks */,
 				BE813DEC14F893EB00EC9469 /* SenTestingKit.framework in Frameworks */,
 				BE813DF014F893EB00EC9469 /* libMMMarkdown-Mac.a in Frameworks */,
 			);
@@ -138,6 +217,7 @@
 		BE813DF114F893EB00EC9469 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				BE813E2114F93D8700EC9469 /* MarkdownTest_1.0 */,
 				BE813DF714F893EB00EC9469 /* MMMarkdownTests.h */,
 				BE813DF814F893EB00EC9469 /* MMMarkdownTests.m */,
 				BE813DF314F893EB00EC9469 /* MMMarkdownTests-Info.plist */,
@@ -153,6 +233,60 @@
 				BE813E1A14F92B6200EC9469 /* mmmarkdown-Prefix.pch */,
 			);
 			path = CLI;
+			sourceTree = "<group>";
+		};
+		BE813E2114F93D8700EC9469 /* MarkdownTest_1.0 */ = {
+			isa = PBXGroup;
+			children = (
+				BE813E2214F93D8700EC9469 /* MarkdownTest.pl */,
+				BE813E2314F93D8700EC9469 /* Tests */,
+			);
+			path = MarkdownTest_1.0;
+			sourceTree = "<group>";
+		};
+		BE813E2314F93D8700EC9469 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				BE813E2414F93D8700EC9469 /* Amps and angle encoding.html */,
+				BE813E2514F93D8700EC9469 /* Amps and angle encoding.text */,
+				BE813E2614F93D8700EC9469 /* Auto links.html */,
+				BE813E2714F93D8700EC9469 /* Auto links.text */,
+				BE813E2814F93D8700EC9469 /* Backslash escapes.html */,
+				BE813E2914F93D8700EC9469 /* Backslash escapes.text */,
+				BE813E2A14F93D8700EC9469 /* Blockquotes with code blocks.html */,
+				BE813E2B14F93D8700EC9469 /* Blockquotes with code blocks.text */,
+				BE813E2C14F93D8700EC9469 /* Hard-wrapped paragraphs with list-like lines.html */,
+				BE813E2D14F93D8700EC9469 /* Hard-wrapped paragraphs with list-like lines.text */,
+				BE813E2E14F93D8700EC9469 /* Horizontal rules.html */,
+				BE813E2F14F93D8700EC9469 /* Horizontal rules.text */,
+				BE813E3014F93D8700EC9469 /* Inline HTML (Advanced).html */,
+				BE813E3114F93D8700EC9469 /* Inline HTML (Advanced).text */,
+				BE813E3214F93D8700EC9469 /* Inline HTML (Simple).html */,
+				BE813E3314F93D8700EC9469 /* Inline HTML (Simple).text */,
+				BE813E3414F93D8700EC9469 /* Inline HTML comments.html */,
+				BE813E3514F93D8700EC9469 /* Inline HTML comments.text */,
+				BE813E3614F93D8700EC9469 /* Links, inline style.html */,
+				BE813E3714F93D8700EC9469 /* Links, inline style.text */,
+				BE813E3814F93D8700EC9469 /* Links, reference style.html */,
+				BE813E3914F93D8700EC9469 /* Links, reference style.text */,
+				BE813E3A14F93D8700EC9469 /* Literal quotes in titles.html */,
+				BE813E3B14F93D8700EC9469 /* Literal quotes in titles.text */,
+				BE813E3C14F93D8700EC9469 /* Markdown Documentation - Basics.html */,
+				BE813E3D14F93D8700EC9469 /* Markdown Documentation - Basics.text */,
+				BE813E3E14F93D8700EC9469 /* Markdown Documentation - Syntax.html */,
+				BE813E3F14F93D8700EC9469 /* Markdown Documentation - Syntax.text */,
+				BE813E4014F93D8700EC9469 /* Nested blockquotes.html */,
+				BE813E4114F93D8700EC9469 /* Nested blockquotes.text */,
+				BE813E4214F93D8700EC9469 /* Ordered and unordered lists.html */,
+				BE813E4314F93D8700EC9469 /* Ordered and unordered lists.text */,
+				BE813E4414F93D8700EC9469 /* Strong and em together.html */,
+				BE813E4514F93D8700EC9469 /* Strong and em together.text */,
+				BE813E4614F93D8700EC9469 /* Tabs.html */,
+				BE813E4714F93D8700EC9469 /* Tabs.text */,
+				BE813E4814F93D8700EC9469 /* Tidyness.html */,
+				BE813E4914F93D8700EC9469 /* Tidyness.text */,
+			);
+			path = Tests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -279,6 +413,44 @@
 			buildActionMask = 2147483647;
 			files = (
 				BE813DF614F893EB00EC9469 /* InfoPlist.strings in Resources */,
+				BE813E4B14F93D8700EC9469 /* Amps and angle encoding.html in Resources */,
+				BE813E4C14F93D8700EC9469 /* Amps and angle encoding.text in Resources */,
+				BE813E4D14F93D8700EC9469 /* Auto links.html in Resources */,
+				BE813E4E14F93D8700EC9469 /* Auto links.text in Resources */,
+				BE813E4F14F93D8700EC9469 /* Backslash escapes.html in Resources */,
+				BE813E5014F93D8700EC9469 /* Backslash escapes.text in Resources */,
+				BE813E5114F93D8700EC9469 /* Blockquotes with code blocks.html in Resources */,
+				BE813E5214F93D8700EC9469 /* Blockquotes with code blocks.text in Resources */,
+				BE813E5314F93D8700EC9469 /* Hard-wrapped paragraphs with list-like lines.html in Resources */,
+				BE813E5414F93D8700EC9469 /* Hard-wrapped paragraphs with list-like lines.text in Resources */,
+				BE813E5514F93D8700EC9469 /* Horizontal rules.html in Resources */,
+				BE813E5614F93D8700EC9469 /* Horizontal rules.text in Resources */,
+				BE813E5714F93D8700EC9469 /* Inline HTML (Advanced).html in Resources */,
+				BE813E5814F93D8700EC9469 /* Inline HTML (Advanced).text in Resources */,
+				BE813E5914F93D8700EC9469 /* Inline HTML (Simple).html in Resources */,
+				BE813E5A14F93D8700EC9469 /* Inline HTML (Simple).text in Resources */,
+				BE813E5B14F93D8700EC9469 /* Inline HTML comments.html in Resources */,
+				BE813E5C14F93D8700EC9469 /* Inline HTML comments.text in Resources */,
+				BE813E5D14F93D8700EC9469 /* Links, inline style.html in Resources */,
+				BE813E5E14F93D8700EC9469 /* Links, inline style.text in Resources */,
+				BE813E5F14F93D8700EC9469 /* Links, reference style.html in Resources */,
+				BE813E6014F93D8700EC9469 /* Links, reference style.text in Resources */,
+				BE813E6114F93D8700EC9469 /* Literal quotes in titles.html in Resources */,
+				BE813E6214F93D8700EC9469 /* Literal quotes in titles.text in Resources */,
+				BE813E6314F93D8700EC9469 /* Markdown Documentation - Basics.html in Resources */,
+				BE813E6414F93D8700EC9469 /* Markdown Documentation - Basics.text in Resources */,
+				BE813E6514F93D8700EC9469 /* Markdown Documentation - Syntax.html in Resources */,
+				BE813E6614F93D8700EC9469 /* Markdown Documentation - Syntax.text in Resources */,
+				BE813E6714F93D8700EC9469 /* Nested blockquotes.html in Resources */,
+				BE813E6814F93D8700EC9469 /* Nested blockquotes.text in Resources */,
+				BE813E6914F93D8700EC9469 /* Ordered and unordered lists.html in Resources */,
+				BE813E6A14F93D8700EC9469 /* Ordered and unordered lists.text in Resources */,
+				BE813E6B14F93D8700EC9469 /* Strong and em together.html in Resources */,
+				BE813E6C14F93D8700EC9469 /* Strong and em together.text in Resources */,
+				BE813E6D14F93D8700EC9469 /* Tabs.html in Resources */,
+				BE813E6E14F93D8700EC9469 /* Tabs.text in Resources */,
+				BE813E6F14F93D8700EC9469 /* Tidyness.html in Resources */,
+				BE813E7014F93D8700EC9469 /* Tidyness.text in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
