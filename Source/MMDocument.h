@@ -1,6 +1,6 @@
 //
-//  MMMarkdownTests.h
-//  MMMarkdownTests
+//  MMDocument.h
+//  MMMarkdown
 //
 //  Copyright (c) 2012 Matt Diephouse.
 //
@@ -23,8 +23,15 @@
 // THE SOFTWARE.
 //
 
-#import "MMTestCase.h"
+#import <Foundation/Foundation.h>
 
-@interface MMMarkdownTests : MMTestCase
+
+@interface MMDocument : NSObject
+
+@property (strong, nonatomic, readonly) NSString *markdown;
+@property (strong, nonatomic, readonly) NSArray  *elements;
+
++ (id) documentWithMarkdown:(NSString *)markdown;
+- (id) initWithMarkdown:(NSString *)markdown;
 
 @end

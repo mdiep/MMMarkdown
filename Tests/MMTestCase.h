@@ -1,6 +1,6 @@
 //
-//  MMMarkdownTests.h
-//  MMMarkdownTests
+//  MMTestCase.h
+//  MMMarkdown
 //
 //  Copyright (c) 2012 Matt Diephouse.
 //
@@ -23,8 +23,11 @@
 // THE SOFTWARE.
 //
 
-#import "MMTestCase.h"
+#import <SenTestingKit/SenTestingKit.h>
 
-@interface MMMarkdownTests : MMTestCase
+
+@interface MMTestCase : SenTestCase
+
+- (void) checkMarkdown:(NSString *)markdown againstHTML:(NSString *)html;
 
 @end

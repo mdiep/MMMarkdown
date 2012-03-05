@@ -41,6 +41,16 @@
       shouldUseLaunchSchemeArgsEnv = "YES"
       buildConfiguration = "Debug">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "BE813DE914F893EB00EC9469"
+               BuildableName = "MMMarkdownTests.octest"
+               BlueprintName = "MMMarkdownTests"
+               ReferencedContainer = "container:MMMarkdown.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference

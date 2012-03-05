@@ -1,6 +1,6 @@
 //
-//  MMMarkdownTests.h
-//  MMMarkdownTests
+//  MMScanner.h
+//  MMMarkdown
 //
 //  Copyright (c) 2012 Matt Diephouse.
 //
@@ -23,8 +23,34 @@
 // THE SOFTWARE.
 //
 
-#import "MMTestCase.h"
+#import <Foundation/Foundation.h>
 
-@interface MMMarkdownTests : MMTestCase
+
+@interface MMScanner : NSObject
+
+@property (strong, nonatomic, readonly) NSString *string;
+
+@property (assign, nonatomic, readonly) NSUInteger startLocation;
+@property (assign, nonatomic, readonly) NSRange    lineRange;
+@property (assign, nonatomic) NSUInteger location;
+
++ (id) scannerWithString:(NSString *)aString;
+- (id) initWithString:(NSString *)aString;
+
+- (void) beginTransaction;
+- (void) commitTransaction:(BOOL)shouldSave;
+
+- (BOOL) atEndOfLine;
+- (BOOL) atEndOfString;
+
+- (unichar) nextCharacter;
+
+- (void) advance;
+- (void) advanceToNextLine;
+
+- (NSUInteger) skipCharactersFromSet:(NSCharacterSet *)aSet;
+- (NSUInteger) skipCharactersFromSet:(NSCharacterSet *)aSet max:(NSUInteger)maxToSkip;
+- (NSUInteger) skipIndentationUpTo:(NSUInteger)maxSpacesToSkip;
+- (NSUInteger) skipToEndOfLine;
 
 @end

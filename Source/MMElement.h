@@ -1,6 +1,6 @@
 //
-//  MMMarkdownTests.h
-//  MMMarkdownTests
+//  MMElement.h
+//  MMMarkdown
 //
 //  Copyright (c) 2012 Matt Diephouse.
 //
@@ -23,8 +23,33 @@
 // THE SOFTWARE.
 //
 
-#import "MMTestCase.h"
+#import <Foundation/Foundation.h>
 
-@interface MMMarkdownTests : MMTestCase
+
+typedef enum
+{
+    MMElementTypeNone,
+    MMElementTypeHeader,
+    MMElementTypeParagraph,
+    MMElementTypeBlockquote,
+    MMElementTypeNumberedList,
+    MMElementTypeBulletedList,
+    MMElementTypeListItem,
+    MMElementTypeCode,
+    MMElementTypeHorizontalRule
+} MMElementType;
+
+@interface MMElement : NSObject
+
+@property (assign, nonatomic) NSRange        range;
+@property (assign, nonatomic) MMElementType  type;
+@property (assign, nonatomic) NSUInteger     indentation;
+@property (assign, nonatomic) NSUInteger     level;
+
+@property (assign, nonatomic) MMElement *parent;
+@property (copy,   nonatomic) NSArray   *children;
+
+- (void) addChild:(MMElement *)aChild;
+- (MMElement *) removeLastChild;
 
 @end

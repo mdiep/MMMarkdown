@@ -55,6 +55,31 @@
 		BE813E6F14F93D8700EC9469 /* Tidyness.html in Resources */ = {isa = PBXBuildFile; fileRef = BE813E4814F93D8700EC9469 /* Tidyness.html */; };
 		BE813E7014F93D8700EC9469 /* Tidyness.text in Resources */ = {isa = PBXBuildFile; fileRef = BE813E4914F93D8700EC9469 /* Tidyness.text */; };
 		BE813E7114F941AD00EC9469 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE813DDE14F893EB00EC9469 /* Foundation.framework */; };
+		BE813E7414F959BC00EC9469 /* MMElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BE813E7214F959BC00EC9469 /* MMElement.h */; };
+		BE813E7514F959BC00EC9469 /* MMElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BE813E7214F959BC00EC9469 /* MMElement.h */; };
+		BE813E7614F959BC00EC9469 /* MMElement.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E7314F959BC00EC9469 /* MMElement.m */; };
+		BE813E7714F959BC00EC9469 /* MMElement.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E7314F959BC00EC9469 /* MMElement.m */; };
+		BE813E7A14F95B2A00EC9469 /* MMParser.h in Headers */ = {isa = PBXBuildFile; fileRef = BE813E7814F95B2A00EC9469 /* MMParser.h */; };
+		BE813E7B14F95B2A00EC9469 /* MMParser.h in Headers */ = {isa = PBXBuildFile; fileRef = BE813E7814F95B2A00EC9469 /* MMParser.h */; };
+		BE813E7C14F95B2A00EC9469 /* MMParser.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E7914F95B2A00EC9469 /* MMParser.m */; };
+		BE813E7D14F95B2A00EC9469 /* MMParser.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E7914F95B2A00EC9469 /* MMParser.m */; };
+		BE813E8014F95FD400EC9469 /* MMDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = BE813E7E14F95FD300EC9469 /* MMDocument.h */; };
+		BE813E8114F95FD400EC9469 /* MMDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = BE813E7E14F95FD300EC9469 /* MMDocument.h */; };
+		BE813E8214F95FD400EC9469 /* MMDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E7F14F95FD300EC9469 /* MMDocument.m */; };
+		BE813E8314F95FD400EC9469 /* MMDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E7F14F95FD300EC9469 /* MMDocument.m */; };
+		BE813E8614F9602500EC9469 /* MMGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = BE813E8414F9602400EC9469 /* MMGenerator.h */; };
+		BE813E8714F9602500EC9469 /* MMGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = BE813E8414F9602400EC9469 /* MMGenerator.h */; };
+		BE813E8814F9602500EC9469 /* MMGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E8514F9602500EC9469 /* MMGenerator.m */; };
+		BE813E8914F9602500EC9469 /* MMGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E8514F9602500EC9469 /* MMGenerator.m */; };
+		BE813E8C14F9658600EC9469 /* MMDocument_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = BE813E8A14F9658600EC9469 /* MMDocument_Private.h */; };
+		BE813E8D14F9658600EC9469 /* MMDocument_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = BE813E8A14F9658600EC9469 /* MMDocument_Private.h */; };
+		BE813E9214FACF0D00EC9469 /* MMScanner.h in Headers */ = {isa = PBXBuildFile; fileRef = BE813E9014FACF0C00EC9469 /* MMScanner.h */; };
+		BE813E9314FACF0D00EC9469 /* MMScanner.h in Headers */ = {isa = PBXBuildFile; fileRef = BE813E9014FACF0C00EC9469 /* MMScanner.h */; };
+		BE813E9414FACF0D00EC9469 /* MMScanner.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E9114FACF0C00EC9469 /* MMScanner.m */; };
+		BE813E9514FACF0D00EC9469 /* MMScanner.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E9114FACF0C00EC9469 /* MMScanner.m */; };
+		BE813E981502E78900EC9469 /* MMTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E971502E78700EC9469 /* MMTestCase.m */; };
+		BE813E9B15031B4000EC9469 /* MMListTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E9A15031B4000EC9469 /* MMListTests.m */; };
+		BE813E9E1503C14300EC9469 /* MMEscapingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E9D1503C14200EC9469 /* MMEscapingTests.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -134,6 +159,21 @@
 		BE813E4714F93D8700EC9469 /* Tabs.text */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Tabs.text; sourceTree = "<group>"; };
 		BE813E4814F93D8700EC9469 /* Tidyness.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = Tidyness.html; sourceTree = "<group>"; };
 		BE813E4914F93D8700EC9469 /* Tidyness.text */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Tidyness.text; sourceTree = "<group>"; };
+		BE813E7214F959BC00EC9469 /* MMElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMElement.h; sourceTree = "<group>"; };
+		BE813E7314F959BC00EC9469 /* MMElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMElement.m; sourceTree = "<group>"; };
+		BE813E7814F95B2A00EC9469 /* MMParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMParser.h; sourceTree = "<group>"; };
+		BE813E7914F95B2A00EC9469 /* MMParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMParser.m; sourceTree = "<group>"; };
+		BE813E7E14F95FD300EC9469 /* MMDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMDocument.h; sourceTree = "<group>"; };
+		BE813E7F14F95FD300EC9469 /* MMDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMDocument.m; sourceTree = "<group>"; };
+		BE813E8414F9602400EC9469 /* MMGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMGenerator.h; sourceTree = "<group>"; };
+		BE813E8514F9602500EC9469 /* MMGenerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMGenerator.m; sourceTree = "<group>"; };
+		BE813E8A14F9658600EC9469 /* MMDocument_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMDocument_Private.h; sourceTree = "<group>"; };
+		BE813E9014FACF0C00EC9469 /* MMScanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMScanner.h; sourceTree = "<group>"; };
+		BE813E9114FACF0C00EC9469 /* MMScanner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMScanner.m; sourceTree = "<group>"; };
+		BE813E961502E78700EC9469 /* MMTestCase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMTestCase.h; sourceTree = "<group>"; };
+		BE813E971502E78700EC9469 /* MMTestCase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMTestCase.m; sourceTree = "<group>"; };
+		BE813E9A15031B4000EC9469 /* MMListTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMListTests.m; sourceTree = "<group>"; };
+		BE813E9D1503C14200EC9469 /* MMEscapingTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMEscapingTests.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -210,6 +250,17 @@
 				BE813DE214F893EB00EC9469 /* MMMarkdown.h */,
 				BE813DE314F893EB00EC9469 /* MMMarkdown.m */,
 				BE813DE114F893EB00EC9469 /* MMMarkdown-Prefix.pch */,
+				BE813E7E14F95FD300EC9469 /* MMDocument.h */,
+				BE813E8A14F9658600EC9469 /* MMDocument_Private.h */,
+				BE813E7F14F95FD300EC9469 /* MMDocument.m */,
+				BE813E7214F959BC00EC9469 /* MMElement.h */,
+				BE813E7314F959BC00EC9469 /* MMElement.m */,
+				BE813E8414F9602400EC9469 /* MMGenerator.h */,
+				BE813E8514F9602500EC9469 /* MMGenerator.m */,
+				BE813E7814F95B2A00EC9469 /* MMParser.h */,
+				BE813E7914F95B2A00EC9469 /* MMParser.m */,
+				BE813E9014FACF0C00EC9469 /* MMScanner.h */,
+				BE813E9114FACF0C00EC9469 /* MMScanner.m */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -218,8 +269,12 @@
 			isa = PBXGroup;
 			children = (
 				BE813E2114F93D8700EC9469 /* MarkdownTest_1.0 */,
+				BE813E9D1503C14200EC9469 /* MMEscapingTests.m */,
+				BE813E9A15031B4000EC9469 /* MMListTests.m */,
 				BE813DF714F893EB00EC9469 /* MMMarkdownTests.h */,
 				BE813DF814F893EB00EC9469 /* MMMarkdownTests.m */,
+				BE813E961502E78700EC9469 /* MMTestCase.h */,
+				BE813E971502E78700EC9469 /* MMTestCase.m */,
 				BE813DF314F893EB00EC9469 /* MMMarkdownTests-Info.plist */,
 				BE813DF414F893EB00EC9469 /* InfoPlist.strings */,
 			);
@@ -296,6 +351,12 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE813E7414F959BC00EC9469 /* MMElement.h in Headers */,
+				BE813E7A14F95B2A00EC9469 /* MMParser.h in Headers */,
+				BE813E8014F95FD400EC9469 /* MMDocument.h in Headers */,
+				BE813E8614F9602500EC9469 /* MMGenerator.h in Headers */,
+				BE813E8C14F9658600EC9469 /* MMDocument_Private.h in Headers */,
+				BE813E9214FACF0D00EC9469 /* MMScanner.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -303,6 +364,12 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE813E7514F959BC00EC9469 /* MMElement.h in Headers */,
+				BE813E7B14F95B2A00EC9469 /* MMParser.h in Headers */,
+				BE813E8114F95FD400EC9469 /* MMDocument.h in Headers */,
+				BE813E8714F9602500EC9469 /* MMGenerator.h in Headers */,
+				BE813E8D14F9658600EC9469 /* MMDocument_Private.h in Headers */,
+				BE813E9314FACF0D00EC9469 /* MMScanner.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -478,6 +545,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				BE813DE414F893EB00EC9469 /* MMMarkdown.m in Sources */,
+				BE813E7614F959BC00EC9469 /* MMElement.m in Sources */,
+				BE813E7C14F95B2A00EC9469 /* MMParser.m in Sources */,
+				BE813E8214F95FD400EC9469 /* MMDocument.m in Sources */,
+				BE813E8814F9602500EC9469 /* MMGenerator.m in Sources */,
+				BE813E9414FACF0D00EC9469 /* MMScanner.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -486,6 +558,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				BE813DF914F893EB00EC9469 /* MMMarkdownTests.m in Sources */,
+				BE813E981502E78900EC9469 /* MMTestCase.m in Sources */,
+				BE813E9B15031B4000EC9469 /* MMListTests.m in Sources */,
+				BE813E9E1503C14300EC9469 /* MMEscapingTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -494,6 +569,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				BE813E0814F8961D00EC9469 /* MMMarkdown.m in Sources */,
+				BE813E7714F959BC00EC9469 /* MMElement.m in Sources */,
+				BE813E7D14F95B2A00EC9469 /* MMParser.m in Sources */,
+				BE813E8314F95FD400EC9469 /* MMDocument.m in Sources */,
+				BE813E8914F9602500EC9469 /* MMGenerator.m in Sources */,
+				BE813E9514FACF0D00EC9469 /* MMScanner.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

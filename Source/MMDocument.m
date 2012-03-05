@@ -1,5 +1,5 @@
 //
-//  MMMarkdown.m
+//  MMDocument.m
 //  MMMarkdown
 //
 //  Copyright (c) 2012 Matt Diephouse.
@@ -23,29 +23,52 @@
 // THE SOFTWARE.
 //
 
-#import "MMMarkdown.h"
+#import "MMDocument.h"
+#import "MMDocument_Private.h"
 
 
-#import "MMParser.h"
-#import "MMGenerator.h"
+@implementation MMDocument
+{
+    NSMutableArray *_elements;
+}
 
-@implementation MMMarkdown
+@synthesize markdown = _markdown;
+@synthesize elements = _elements;
 
 //==================================================================================================
 #pragma mark -
 #pragma mark Public Methods
 //==================================================================================================
 
-+ (NSString *) HTMLStringWithMarkdown:(NSString *)string error:(__autoreleasing NSError **)error
++ (id) documentWithMarkdown:(NSString *)markdown
 {
-    MMParser    *parser    = [MMParser new];
-    MMGenerator *generator = [MMGenerator new];
+    return [[[self class] alloc] initWithMarkdown:markdown];
+}
+
+- (id) initWithMarkdown:(NSString *)markdown
+{
+    self = [super init];
     
-    MMDocument *document = [parser parseMarkdown:string error:error];
-    if (!document)
-        return nil;
+    if (self)
+    {
+        _markdown = markdown;
+        _elements = [NSMutableArray new];
+    }
     
-    return [generator generateHTML:document];
+    return self;
+}
+
+
+//==================================================================================================
+#pragma mark -
+#pragma mark Private Methods
+//==================================================================================================
+
+- (void) addElement:(MMElement *)anElement
+{
+    [self willChangeValueForKey:@"elements"];
+    [_elements addObject:anElement];
+    [self didChangeValueForKey:@"elements"];
 }
 
 

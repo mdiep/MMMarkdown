@@ -46,13 +46,10 @@
 
 - (void) runTestWithName:(NSString *)aName
 {
-    NSString *markdown = [self stringWithContentsOfFile:[NSString stringWithFormat:@"%@.text", aName]];
-    NSString *expected = [self stringWithContentsOfFile:[NSString stringWithFormat:@"%@.html", aName]];
+    NSString *input  = [self stringWithContentsOfFile:[NSString stringWithFormat:@"%@.text", aName]];
+    NSString *html   = [self stringWithContentsOfFile:[NSString stringWithFormat:@"%@.html", aName]];
     
-    NSError *error;
-    NSString *HTML = [MMMarkdown HTMLStringWithMarkdown:markdown error:&error];
-    
-    STAssertEqualObjects(HTML, expected, @"%@: HTML doesn't match expected value", aName);
+    [self checkMarkdown:input againstHTML:html];
 }
 
 

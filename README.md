@@ -1,5 +1,6 @@
 # MMMarkdown
-MMMarkdown is an Objective-C [Markdown][] static library, compatible with OS X 10.6+ and iOS 5.0+. It is written using ARC.
+MMMarkdown is an Objective-C [Markdown][] static library, 
+compatible with OS X 10.6+ and iOS 5.0+. It is written using ARC.
 
 [Markdown]: http://daringfireball.net/projects/markdown/
 

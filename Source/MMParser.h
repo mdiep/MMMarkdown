@@ -1,6 +1,6 @@
 //
-//  MMMarkdownTests.h
-//  MMMarkdownTests
+//  MMParser.h
+//  MMMarkdown
 //
 //  Copyright (c) 2012 Matt Diephouse.
 //
@@ -23,8 +23,13 @@
 // THE SOFTWARE.
 //
 
-#import "MMTestCase.h"
+#import <Foundation/Foundation.h>
 
-@interface MMMarkdownTests : MMTestCase
+
+@class MMDocument;
+
+@interface MMParser : NSObject
+
+- (MMDocument *) parseMarkdown:(NSString *)markdown error:(__autoreleasing NSError **)error;
 
 @end
