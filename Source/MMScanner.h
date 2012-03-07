@@ -40,10 +40,12 @@
 - (void) beginTransaction;
 - (void) commitTransaction:(BOOL)shouldSave;
 
+- (BOOL) atBeginningOfLine;
 - (BOOL) atEndOfLine;
 - (BOOL) atEndOfString;
 
 - (unichar) nextCharacter;
+- (NSString *) substringBeforeCharacter:(unichar)character;
 
 - (void) advance;
 - (void) advanceToNextLine;

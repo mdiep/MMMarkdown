@@ -36,7 +36,8 @@ typedef enum
     MMElementTypeBulletedList,
     MMElementTypeListItem,
     MMElementTypeCode,
-    MMElementTypeHorizontalRule
+    MMElementTypeHorizontalRule,
+    MMElementTypeHTML
 } MMElementType;
 
 @interface MMElement : NSObject

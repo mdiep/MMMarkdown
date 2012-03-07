@@ -494,6 +494,8 @@
             [openElements addObject:element];
             topElement = element;
         }
+        else
+            topElement = nil;
     }
     
     return newElements;
@@ -504,6 +506,12 @@
                             openElements:(NSArray *)openElements
 {
     MMElement *element;
+    
+    [aScanner beginTransaction];
+    element = [self _startHTMLWithScanner:aScanner inDocument:aDocument];
+    [aScanner commitTransaction:element != nil];
+    if (element)
+        return element;
     
     [aScanner beginTransaction];
     element = [self _startHeaderWithScanner:aScanner inDocument:aDocument];
@@ -560,6 +568,41 @@
     }
     
     return nil;
+}
+
+- (MMElement *) _startHTMLWithScanner:(MMScanner *)aScanner inDocument:(MMDocument *)aDocument
+{
+    NSUInteger startLocation = aScanner.location;
+    
+    // At the beginning of the line
+    if (![aScanner atBeginningOfLine])
+        return nil;
+    
+    // which starts with a '<'
+    if ([aScanner nextCharacter] != '<')
+        return nil;
+    [aScanner advance];
+    
+    NSSet *htmlBlockTags = [NSSet setWithObjects:
+                            @"p", @"div", @"h1", @"h2", @"h3", @"h4", @"h5", @"h6",
+                            @"blockquote", @"pre", @"table", @"dl", @"ol", @"ul",
+                            @"script", @"noscript", @"form", @"fieldset", @"iframe",
+                            @"math", @"ins", @"del", nil];
+    NSString *tagName = [aScanner substringBeforeCharacter:'>'];
+    if (![htmlBlockTags containsObject:tagName])
+        return nil;
+    
+    // Skip lines until we come across a blank line
+    while (![aScanner atEndOfLine])
+    {
+        [aScanner advanceToNextLine];
+    }
+    
+    MMElement *element = [MMElement new];
+    element.type  = MMElementTypeHTML;
+    element.range = NSMakeRange(startLocation, aScanner.location-startLocation);
+        
+    return element;
 }
 
 - (MMElement *) _startHeaderWithScanner:(MMScanner *)aScanner inDocument:(MMDocument *)aDocument

@@ -105,10 +105,17 @@ static NSString * __HTMLEndTagForElement(MMElement *anElement)
     
     for (MMElement *element in aDocument.elements)
     {
-        [self _generateHTMLForElement:element
-                           inDocument:aDocument
+        if (element.type == MMElementTypeHTML)
+        {
+            [HTML appendString:[aDocument.markdown substringWithRange:element.range]];
+        }
+        else
+        {
+            [self _generateHTMLForElement:element
+                               inDocument:aDocument
                                  HTML:HTML
                              location:&location];
+        }
     }
     
     return HTML;

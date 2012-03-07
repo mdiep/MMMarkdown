@@ -28,19 +28,22 @@
 
 @interface MMScanner ()
 @property (assign, nonatomic) NSUInteger startLocation;
+@property (assign, nonatomic) NSUInteger lineStartLocation;
 @property (assign, nonatomic) NSRange    lineRange;
 @property (strong, nonatomic, readonly) NSMutableArray *transactions;
 
 - (NSUInteger) _locationOfNextLineAfterLocation:(NSUInteger)aLocation;
+- (NSUInteger) _startLocationOfLineAtLocation:(NSUInteger)aLocation;
 @end
 
 @implementation MMScanner
 
 @synthesize string = _string;
 
-@synthesize startLocation = _startLocation;
-@synthesize lineRange    = _lineRange;
-@synthesize transactions = _transactions;
+@synthesize startLocation     = _startLocation;
+@synthesize lineStartLocation = _lineStartLocation;
+@synthesize lineRange         = _lineRange;
+@synthesize transactions      = _transactions;
 
 //==================================================================================================
 #pragma mark -
@@ -87,6 +90,11 @@
     }
 }
 
+- (BOOL) atBeginningOfLine
+{
+    return self.location == self.lineStartLocation;
+}
+
 - (BOOL) atEndOfLine
 {
     return self.lineRange.length == 0;
@@ -104,6 +112,18 @@
     return [self.string characterAtIndex:self.location];
 }
 
+- (NSString *) substringBeforeCharacter:(unichar)character
+{
+    NSUInteger location = [self _locationOfCharacter:character inRange:self.lineRange];
+    if (location == NSNotFound)
+        return nil;
+    
+    NSRange   range     = NSMakeRange(self.lineRange.location, location-self.lineRange.location);
+    NSString *substring = [self.string substringWithRange:range];
+    
+    return substring;
+}
+
 - (void) advance
 {
     // Don't advance past the end of the line unless explicitly asked to.
@@ -118,7 +138,10 @@
 
 - (void) advanceToNextLine
 {
-    self.location = 1 + NSMaxRange(self.lineRange); // lineRange doesn't include the \n
+    if (![self atEndOfString])
+    {
+        self.location = 1 + NSMaxRange(self.lineRange); // lineRange doesn't include the \n
+    }
 }
 
 - (NSUInteger) skipCharactersFromSet:(NSCharacterSet *)aSet
@@ -178,7 +201,8 @@
 - (NSUInteger) skipToEndOfLine
 {
     NSUInteger length = self.lineRange.length;
-    self.location = NSMaxRange(self.lineRange);
+    self.location          = NSMaxRange(self.lineRange);
+    self.lineStartLocation = self.location;
     return length;
 }
 
@@ -196,7 +220,8 @@
 - (void) setLocation:(NSUInteger)location
 {
     NSUInteger nextLine = [self _locationOfNextLineAfterLocation:location];
-    self.lineRange = NSMakeRange(location, (nextLine - 1) - location);
+    self.lineRange         = NSMakeRange(location, (nextLine - 1) - location);
+    self.lineStartLocation = [self _startLocationOfLineAtLocation:location];
 }
 
 
@@ -205,21 +230,47 @@
 #pragma mark Private Methods
 //==================================================================================================
 
+- (NSUInteger) _locationOfCharacter:(unichar)character inRange:(NSRange)range
+{
+    NSString       *characterString = [NSString stringWithCharacters:&character length:1];
+    NSCharacterSet *characterSet    = [NSCharacterSet characterSetWithCharactersInString:characterString];
+    NSRange result = [self.string rangeOfCharacterFromSet:characterSet options:0 range:range];
+    return result.location;
+}
+
 - (NSUInteger) _locationOfNextLineAfterLocation:(NSUInteger)aLocation
 {
-    NSRange searchRange  = NSMakeRange(aLocation, self.string.length-aLocation);
+    NSRange searchRange = NSMakeRange(aLocation, self.string.length-aLocation);
+    if (self.string.length < aLocation)
+        searchRange = NSMakeRange(self.string.length, 0);
+    
     NSRange newlineRange = [self.string rangeOfCharacterFromSet:[NSCharacterSet newlineCharacterSet]
                                                         options:0
-                                                            range:searchRange];
+                                                          range:searchRange];
     
     if (newlineRange.location == NSNotFound)
     {
-        return self.string.length;
+        return self.string.length + 1;
     }
-    else
+    
+    return newlineRange.location + 1;
+}
+
+- (NSUInteger) _startLocationOfLineAtLocation:(NSUInteger)aLocation
+{
+    NSRange searchRange = NSMakeRange(0, 1+aLocation);
+    if (searchRange.length > self.string.length)
+        searchRange.length = self.string.length;
+    
+    NSRange newlineRange = [self.string rangeOfCharacterFromSet:[NSCharacterSet newlineCharacterSet]
+                                                        options:NSBackwardsSearch
+                                                          range:searchRange];
+    if (newlineRange.location == NSNotFound)
     {
-        return newlineRange.location + 1;
+        return 0;
     }
+    
+    return NSMaxRange(newlineRange);
 }
 
 

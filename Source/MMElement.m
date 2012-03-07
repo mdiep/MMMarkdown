@@ -48,6 +48,8 @@ static NSString * __MMStringFromElementType(MMElementType type)
             return @"code";
         case MMElementTypeHorizontalRule:
             return @"hr";
+        case MMElementTypeHTML:
+            return @"html";
         default:
             return @"unknown";
     }
