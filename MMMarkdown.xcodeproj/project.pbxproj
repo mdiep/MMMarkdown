@@ -80,6 +80,10 @@
 		BE813E981502E78900EC9469 /* MMTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E971502E78700EC9469 /* MMTestCase.m */; };
 		BE813E9B15031B4000EC9469 /* MMListTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E9A15031B4000EC9469 /* MMListTests.m */; };
 		BE813E9E1503C14300EC9469 /* MMEscapingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E9D1503C14200EC9469 /* MMEscapingTests.m */; };
+		BEF34216150C45ED00BFA0E2 /* MMTextSegment.h in Headers */ = {isa = PBXBuildFile; fileRef = BEF34214150C45ED00BFA0E2 /* MMTextSegment.h */; };
+		BEF34217150C45ED00BFA0E2 /* MMTextSegment.h in Headers */ = {isa = PBXBuildFile; fileRef = BEF34214150C45ED00BFA0E2 /* MMTextSegment.h */; };
+		BEF34218150C45ED00BFA0E2 /* MMTextSegment.m in Sources */ = {isa = PBXBuildFile; fileRef = BEF34215150C45ED00BFA0E2 /* MMTextSegment.m */; };
+		BEF34219150C45ED00BFA0E2 /* MMTextSegment.m in Sources */ = {isa = PBXBuildFile; fileRef = BEF34215150C45ED00BFA0E2 /* MMTextSegment.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -174,6 +178,8 @@
 		BE813E971502E78700EC9469 /* MMTestCase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMTestCase.m; sourceTree = "<group>"; };
 		BE813E9A15031B4000EC9469 /* MMListTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMListTests.m; sourceTree = "<group>"; };
 		BE813E9D1503C14200EC9469 /* MMEscapingTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMEscapingTests.m; sourceTree = "<group>"; };
+		BEF34214150C45ED00BFA0E2 /* MMTextSegment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMTextSegment.h; sourceTree = "<group>"; };
+		BEF34215150C45ED00BFA0E2 /* MMTextSegment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMTextSegment.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -261,6 +267,8 @@
 				BE813E7914F95B2A00EC9469 /* MMParser.m */,
 				BE813E9014FACF0C00EC9469 /* MMScanner.h */,
 				BE813E9114FACF0C00EC9469 /* MMScanner.m */,
+				BEF34214150C45ED00BFA0E2 /* MMTextSegment.h */,
+				BEF34215150C45ED00BFA0E2 /* MMTextSegment.m */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -357,6 +365,7 @@
 				BE813E8614F9602500EC9469 /* MMGenerator.h in Headers */,
 				BE813E8C14F9658600EC9469 /* MMDocument_Private.h in Headers */,
 				BE813E9214FACF0D00EC9469 /* MMScanner.h in Headers */,
+				BEF34216150C45ED00BFA0E2 /* MMTextSegment.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -370,6 +379,7 @@
 				BE813E8714F9602500EC9469 /* MMGenerator.h in Headers */,
 				BE813E8D14F9658600EC9469 /* MMDocument_Private.h in Headers */,
 				BE813E9314FACF0D00EC9469 /* MMScanner.h in Headers */,
+				BEF34217150C45ED00BFA0E2 /* MMTextSegment.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -550,6 +560,7 @@
 				BE813E8214F95FD400EC9469 /* MMDocument.m in Sources */,
 				BE813E8814F9602500EC9469 /* MMGenerator.m in Sources */,
 				BE813E9414FACF0D00EC9469 /* MMScanner.m in Sources */,
+				BEF34218150C45ED00BFA0E2 /* MMTextSegment.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -574,6 +585,7 @@
 				BE813E8314F95FD400EC9469 /* MMDocument.m in Sources */,
 				BE813E8914F9602500EC9469 /* MMGenerator.m in Sources */,
 				BE813E9514FACF0D00EC9469 /* MMScanner.m in Sources */,
+				BEF34219150C45ED00BFA0E2 /* MMTextSegment.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

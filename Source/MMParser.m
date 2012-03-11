@@ -30,11 +30,13 @@
 #import "MMDocument_Private.h"
 #import "MMElement.h"
 #import "MMScanner.h"
+#import "MMTextSegment.h"
 
 @interface MMParser ()
 @property (strong, nonatomic) MMScanner      *scanner;
 @property (strong, nonatomic) MMDocument     *document;
 @property (strong, nonatomic) NSMutableArray *openElements;
+@property (strong, nonatomic) MMTextSegment  *textSegment;
 @end
 
 @implementation MMParser
@@ -42,6 +44,7 @@
 @synthesize scanner      = _scanner;
 @synthesize document     = _document;
 @synthesize openElements = _openElements;
+@synthesize textSegment  = _textSegment;
 
 //==================================================================================================
 #pragma mark -
@@ -53,6 +56,7 @@
     self.scanner      = [MMScanner scannerWithString:markdown];
     self.document     = [MMDocument documentWithMarkdown:markdown];
     self.openElements = [NSMutableArray new];
+    self.textSegment  = [MMTextSegment segmentWithString:markdown];
     
     // Parse the markdown line-by-line.
     while (![self.scanner atEndOfString])
@@ -61,12 +65,14 @@
         [self.scanner advanceToNextLine];
     }
     
+    [self _endTextSegment];
     [self _closeElements:self.openElements atLocation:markdown.length];
     
     MMDocument *document = self.document;
     self.scanner      = nil;
     self.document     = nil;
     self.openElements = nil;
+    self.textSegment  = nil;
     return document;
 }
 
@@ -131,7 +137,7 @@
     if (indentation != anElement.parent.indentation)
         return NO;
     
-    // Figure out what the last line was in the item and how many lists are currently open
+    // Figure out how many lists are currently open
     MMElement  *lastElement = [anElement.children lastObject];
     NSUInteger  listCount   = 1;
     while (lastElement.children.count > 0)
@@ -142,7 +148,9 @@
     }
     
     // Check for indentation if after a blank line
-    if (lastElement && lastElement.type == MMElementTypeNone && lastElement.range.length == 0)
+    NSArray *ranges    = self.textSegment.ranges;
+    NSRange  lastRange = [(NSValue *)[ranges lastObject] rangeValue];
+    if (ranges.count > 0 && lastRange.length == 0)
     {
         BOOL indentation = [scanner skipIndentationUpTo:4];
         
@@ -152,21 +160,19 @@
             // Check if this list already has paragraphs
             MMElement *list       = anElement.parent;
             MMElement *firstItem  = [list.children objectAtIndex:0];
-            MMElement *firstChild = [firstItem.children objectAtIndex:0];
-            if (firstChild.type != MMElementTypeParagraph)
+            if (firstItem.children.count == 0)
             {
-                // It's only a new paragraph if it follows a blank line.
-                MMElement *child = [anElement.children lastObject];
-                if (child.type == MMElementTypeNone && child.range.length == 0)
-                {
-                    MMElement *list = anElement.parent;
-                    [self _addParagraphsToItemsInList:list];
-                    
-                    // Move the blank line outside the paragraph
-                    MMElement *paragraph = [anElement.children objectAtIndex:0];
-                    MMElement *blankLine = [paragraph removeLastChild];
-                    [anElement addChild:blankLine];
-                }
+                MMElement *list = anElement.parent;
+                [self _addParagraphsToItemsInList:list];
+                
+                // Remove the blank line
+                [self.textSegment removeLastRange];
+                
+                // End the current text segment inside the last paragraph
+                MMElement *paragraph = [anElement.children lastObject];
+                [self.openElements addObject:paragraph];
+                [self _endTextSegment];
+                [self.openElements removeLastObject];
             }
             
             return YES;
@@ -228,10 +234,7 @@
                 lastChild.range = range;
                 
                 // Also add a blank line so the new list starts on its own line
-                MMElement *blankLine = [MMElement new];
-                blankLine.type  = MMElementTypeNone;
-                blankLine.range = NSMakeRange(0, 0);
-                [anElement addChild:blankLine];
+                [self.textSegment addRange:NSMakeRange(0, 0)];
             }
             
             return YES;
@@ -332,14 +335,20 @@
     {
         MMElement *element = [self.openElements objectAtIndex:idx];
         if (element.range.length != 0)
+        {
+            [self _endTextSegment];
             break;
+        }
         
         [scanner beginTransaction];
         BOOL stillOpen = [self _checkElement:element];
         [scanner commitTransaction:stillOpen];
         
         if (!stillOpen)
+        {
+            [self _endTextSegment];
             break;
+        }
     }
     
     if (idx == count)
@@ -432,29 +441,43 @@
     // elements may use the blank lines in deciding what to be.
     [self _removeTrailingBlankLinesFromElements:elementsToClose];
     
-    MMElement *topElement    = [self.openElements lastObject];
-    BOOL       shouldAddText = YES;
+    [self.textSegment addRange:self.scanner.lineRange];
+}
+
+- (void) _endTextSegment
+{
+    if (self.textSegment.ranges.count == 0)
+        return;
+    
+    MMElement *topElement = [self.openElements lastObject];
+    BOOL followsBlankLine = NO;
     
     // Don't add 2 blank lines in a row
-    if ([self.scanner atEndOfLine])
+    for (NSValue *value in self.textSegment.ranges)
     {
-        MMElement *sibling = topElement ? [topElement.children lastObject] : [self.document.elements lastObject];
-        if (sibling.type == MMElementTypeNone && sibling.range.length == 0)
+        NSRange range = [value rangeValue];
+        
+        if (range.length == 0)
         {
-            shouldAddText = NO;
+            BOOL skip = followsBlankLine;
+            followsBlankLine = YES;
+            if (skip)
+                continue;
         }
-    }
-    
-    if (shouldAddText)
-    {
+        else
+            followsBlankLine = NO;
+        
         MMElement *element = [MMElement new];
         element.type  = MMElementTypeNone;
-        element.range = self.scanner.lineRange;
+        element.range = range;
+        
         if (topElement)
             [topElement addChild:element];
         else
             [self.document addElement:element];
     }
+    
+    self.textSegment = [MMTextSegment segmentWithString:self.document.markdown];
 }
 
 - (NSArray *) _startNewBlockElements
@@ -468,6 +491,8 @@
         
         if (!element)
             break;
+        
+        [self _endTextSegment];
         
         [newElements addObject:element];
         
@@ -764,11 +789,12 @@
                 [self _addParagraphsToItemsInList:list];
                 
                 // Move the blank line outside the paragraph
+                MMElement *lastItem  = [list.children lastObject];
                 MMElement *paragraph = [lastItem.children lastObject];
                 MMElement *blankLine = [paragraph removeLastChild];
                 if (blankLine)
                 {
-                    [lastItem addChild:blankLine];
+                    [self.textSegment addRange:NSMakeRange(0, 0)];
                 }
             }
         }
