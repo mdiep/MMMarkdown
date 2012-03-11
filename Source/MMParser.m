@@ -32,18 +32,16 @@
 #import "MMScanner.h"
 
 @interface MMParser ()
-- (BOOL) _checkElement:(MMElement *)anElement
-           withScanner:(MMScanner *)aScanner
-            inDocument:(MMDocument *)aDocument;
-- (NSArray *) _checkOpenElements:(NSArray *)openElements
-                     withScanner:(MMScanner *)aScanner
-                      inDocument:(MMDocument *)aDocument;
-- (void) _parseLineWithScanner:(MMScanner *)aScanner
-                    inDocument:(MMDocument *)aDocument
-                  openElements:(NSMutableArray *)openElements;
+@property (strong, nonatomic) MMScanner      *scanner;
+@property (strong, nonatomic) MMDocument     *document;
+@property (strong, nonatomic) NSMutableArray *openElements;
 @end
 
 @implementation MMParser
+
+@synthesize scanner      = _scanner;
+@synthesize document     = _document;
+@synthesize openElements = _openElements;
 
 //==================================================================================================
 #pragma mark -
@@ -52,23 +50,23 @@
 
 - (MMDocument *) parseMarkdown:(NSString *)markdown error:(__autoreleasing NSError **)error
 {
-    MMScanner  *scanner  = [MMScanner scannerWithString:markdown];
-    MMDocument *document = [MMDocument documentWithMarkdown:markdown];
-    
-    NSMutableArray *openElements = [NSMutableArray new];
+    self.scanner      = [MMScanner scannerWithString:markdown];
+    self.document     = [MMDocument documentWithMarkdown:markdown];
+    self.openElements = [NSMutableArray new];
     
     // Parse the markdown line-by-line.
-    while (![scanner atEndOfString])
+    while (![self.scanner atEndOfString])
     {
-        [self _parseLineWithScanner:scanner
-                         inDocument:document
-                       openElements:openElements];
-        
-        [scanner advanceToNextLine];
+        [self _parseNextLine];
+        [self.scanner advanceToNextLine];
     }
     
-    [self _closeElements:openElements atLocation:markdown.length];
+    [self _closeElements:self.openElements atLocation:markdown.length];
     
+    MMDocument *document = self.document;
+    self.scanner      = nil;
+    self.document     = nil;
+    self.openElements = nil;
     return document;
 }
 
@@ -79,28 +77,26 @@
 //==================================================================================================
 
 - (BOOL) _checkBlockquoteElement:(MMElement *)anElement
-                     withScanner:(MMScanner *)aScanner
-                      inDocument:(MMDocument *)aDocument
 {
-    if ([aScanner atEndOfLine])
+    MMScanner *scanner = self.scanner;
+    
+    if ([scanner atEndOfLine])
         return NO;
     
-    [aScanner skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet]];
+    [scanner skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet]];
     
-    if ([aScanner nextCharacter] != '>')
+    if ([scanner nextCharacter] != '>')
         return NO;
-    [aScanner advance];
+    [scanner advance];
     
-    [aScanner skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet] max:1];
+    [scanner skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet] max:1];
     
     return YES;
 }
 
 - (BOOL) _checkCodeElement:(MMElement *)anElement
-               withScanner:(MMScanner *)aScanner
-                inDocument:(MMDocument *)aDocument
 {
-    NSUInteger indentation = [aScanner skipIndentationUpTo:4];
+    NSUInteger indentation = [self.scanner skipIndentationUpTo:4];
     if (indentation != 4)
         return NO;
     
@@ -127,11 +123,11 @@
 }
 
 - (BOOL) _checkListItemElement:(MMElement *)anElement
-                   withScanner:(MMScanner *)aScanner
-                    inDocument:(MMDocument *)aDocument
 {
+    MMScanner *scanner = self.scanner;
+    
     // Make sure there's enough indentation
-    NSUInteger indentation = [aScanner skipIndentationUpTo:anElement.parent.indentation];
+    NSUInteger indentation = [scanner skipIndentationUpTo:anElement.parent.indentation];
     if (indentation != anElement.parent.indentation)
         return NO;
     
@@ -148,7 +144,7 @@
     // Check for indentation if after a blank line
     if (lastElement && lastElement.type == MMElementTypeNone && lastElement.range.length == 0)
     {
-        BOOL indentation = [aScanner skipIndentationUpTo:4];
+        BOOL indentation = [scanner skipIndentationUpTo:4];
         
         // 4 spaces may mean a new paragraph in the list item
         if (indentation == 4)
@@ -181,17 +177,17 @@
     }
     
     // Check for a new list item, possibly indented
-    [aScanner beginTransaction]; // We may want to keep this transaction
-    indentation = [aScanner skipIndentationUpTo:4];
-    [aScanner beginTransaction]; // We don't want to keep this transaction
-    indentation += [aScanner skipIndentationUpTo:4*(listCount-1)];
+    [scanner beginTransaction]; // We may want to keep this transaction
+    indentation = [self.scanner skipIndentationUpTo:4];
+    [scanner beginTransaction]; // We don't want to keep this transaction
+    indentation += [self.scanner skipIndentationUpTo:4*(listCount-1)];
     
     if (indentation % 4 == 0)
     {
         BOOL foundAnItem = NO;
         
         // Look for a bullet
-        unichar nextChar = [aScanner nextCharacter];
+        unichar nextChar = [scanner nextCharacter];
         if (nextChar == '*' || nextChar == '-' || nextChar == '+')
         {
             foundAnItem = YES;
@@ -200,10 +196,10 @@
         // Look for a numbered item
         if (!foundAnItem)
         {
-            NSUInteger numOfNums = [aScanner skipCharactersFromSet:[NSCharacterSet decimalDigitCharacterSet]];
+            NSUInteger numOfNums = [scanner skipCharactersFromSet:[NSCharacterSet decimalDigitCharacterSet]];
             if (numOfNums != 0)
             {
-                unichar nextChar = [aScanner nextCharacter];
+                unichar nextChar = [scanner nextCharacter];
                 if (nextChar == '.')
                 {
                     foundAnItem = YES;
@@ -213,22 +209,22 @@
         
         if (foundAnItem)
         {
-            [aScanner commitTransaction:NO];
+            [scanner commitTransaction:NO];
             
             if (indentation == 0)
             {
-                [aScanner commitTransaction:NO];
+                [scanner commitTransaction:NO];
                 return NO;
             }
             
-            [aScanner commitTransaction:YES];
+            [scanner commitTransaction:YES];
             
             // If there's an open paragraph, close it before starting the new list
             MMElement *lastChild = [anElement.children lastObject];
             if (listCount == 1 && lastChild && lastChild.type == MMElementTypeParagraph)
             {
                 NSRange range = lastChild.range;
-                range.length = aScanner.startLocation - range.location;
+                range.length = self.scanner.startLocation - range.location;
                 lastChild.range = range;
                 
                 // Also add a blank line so the new list starts on its own line
@@ -242,108 +238,105 @@
         }
     }
     
-    [aScanner commitTransaction:NO];
-    [aScanner commitTransaction:NO];
+    [scanner commitTransaction:NO];
+    [scanner commitTransaction:NO];
     
     // List items only end after blank lines or before new list items
-    [aScanner skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet]];
+    [scanner skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet]];
     return YES;
 }
 
 - (BOOL) _checkListElement:(MMElement *)anElement
-               withScanner:(MMScanner *)aScanner
-                inDocument:(MMDocument *)aDocument
 {
-    [aScanner beginTransaction];
-    BOOL item = [self _checkListItemElement:[anElement.children lastObject] withScanner:aScanner inDocument:aDocument];
-    [aScanner commitTransaction:NO];
+    MMScanner *scanner = self.scanner;
+    
+    [scanner beginTransaction];
+    BOOL item = [self _checkListItemElement:[anElement.children lastObject]];
+    [scanner commitTransaction:NO];
     if (item)
         return YES;
     
     // Check for a new list item
     
-    [aScanner skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet]];
+    [scanner skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet]];
     
-    unichar nextChar = [aScanner nextCharacter];
+    unichar nextChar = [scanner nextCharacter];
     if (nextChar == '*' || nextChar == '-' || nextChar == '+')
     {
         // Maybe this is a horizontal rule, not a bullet
-        [aScanner beginTransaction];
-        MMElement *rule = [self _startHorizontalRuleWithScanner:aScanner inDocument:aDocument];
-        [aScanner commitTransaction:NO];
+        [scanner beginTransaction];
+        MMElement *rule = [self _startHorizontalRule];
+        [scanner commitTransaction:NO];
         if (rule != nil)
             return NO;
         
         return YES;
     }
     
-    [aScanner beginTransaction];
-    NSUInteger numOfNums = [aScanner skipCharactersFromSet:[NSCharacterSet decimalDigitCharacterSet]];
+    [scanner beginTransaction];
+    NSUInteger numOfNums = [scanner skipCharactersFromSet:[NSCharacterSet decimalDigitCharacterSet]];
     if (numOfNums != 0)
     {
-        unichar nextChar = [aScanner nextCharacter];
+        unichar nextChar = [scanner nextCharacter];
         if (nextChar == '.')
         {
-            [aScanner commitTransaction:NO];
+            [scanner commitTransaction:NO];
             return YES;
         }
     }
-    [aScanner commitTransaction:NO];
+    [scanner commitTransaction:NO];
     
     return NO;
 }
 
 - (BOOL) _checkParagraphElement:(MMElement *)anElement
-                    withScanner:(MMScanner *)aScanner
-                     inDocument:(MMDocument *)aDocument
 {
-    [aScanner skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet]];
+    MMScanner *scanner = self.scanner;
     
-    if ([aScanner atEndOfLine])
+    [scanner skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet]];
+    
+    if ([scanner atEndOfLine])
         return NO;
     
     return YES;
 }
 
 - (BOOL) _checkElement:(MMElement *)anElement
-           withScanner:(MMScanner *)aScanner
-            inDocument:(MMDocument *)aDocument
 {
     switch (anElement.type)
     {
         case MMElementTypeBlockquote:
-            return [self _checkBlockquoteElement:anElement withScanner:aScanner inDocument:aDocument];
+            return [self _checkBlockquoteElement:anElement];
         case MMElementTypeCode:
-            return [self _checkCodeElement:anElement withScanner:aScanner inDocument:aDocument];
+            return [self _checkCodeElement:anElement];
         case MMElementTypeBulletedList:
         case MMElementTypeNumberedList:
-            return [self _checkListElement:anElement withScanner:aScanner inDocument:aDocument];
+            return [self _checkListElement:anElement];
         case MMElementTypeListItem:
-            return [self _checkListItemElement:anElement withScanner:aScanner inDocument:aDocument];
+            return [self _checkListItemElement:anElement];
         case MMElementTypeParagraph:
-            return [self _checkParagraphElement:anElement withScanner:aScanner inDocument:aDocument];
+            return [self _checkParagraphElement:anElement];
         default:
             break;
     }
     return NO;
 }
 
-- (NSArray *) _checkOpenElements:(NSArray *)openElements
-                     withScanner:(MMScanner *)aScanner
-                      inDocument:(MMDocument *)aDocument
+- (NSArray *) _checkOpenElements
 {
-    NSUInteger idx   = 0;
-    NSUInteger count = openElements.count;
+    MMScanner  *scanner = self.scanner;
+    NSUInteger  idx     = 0;
+    NSUInteger  count   = self.openElements.count;
     
     for (; idx < count; idx++)
     {
-        MMElement *element = [openElements objectAtIndex:idx];
+        MMElement *element = [self.openElements objectAtIndex:idx];
         if (element.range.length != 0)
             break;
         
-        [aScanner beginTransaction];
-        BOOL stillOpen = [self _checkElement:element withScanner:aScanner inDocument:aDocument];
-        [aScanner commitTransaction:stillOpen];
+        [scanner beginTransaction];
+        BOOL stillOpen = [self _checkElement:element];
+        [scanner commitTransaction:stillOpen];
         
         if (!stillOpen)
             break;
@@ -352,7 +345,7 @@
     if (idx == count)
         return [NSArray array];
     
-    return [openElements subarrayWithRange:NSMakeRange(idx, count-idx)];
+    return [self.openElements subarrayWithRange:NSMakeRange(idx, count-idx)];
 }
 
 - (void) _closeElements:(NSArray *)elementsToClose
@@ -421,33 +414,31 @@
     }
 }
 
-- (void) _parseLineWithScanner:(MMScanner *)aScanner
-                    inDocument:(MMDocument *)aDocument
-                  openElements:(NSMutableArray *)openElements
+- (void) _parseNextLine
 {
-    NSUInteger startLocation = aScanner.location;
+    NSUInteger startLocation = self.scanner.location;
     
     // Check the open elements to see if they've been closed
-    NSArray *elementsToClose = [self _checkOpenElements:openElements withScanner:aScanner inDocument:aDocument];
+    NSArray *elementsToClose = [self _checkOpenElements];
     
     // Close any block elements and remove any span elements left on the stack
     [self _closeElements:elementsToClose atLocation:startLocation];
-    [openElements removeObjectsInArray:elementsToClose];
+    [self.openElements removeObjectsInArray:elementsToClose];
     
     // Check for additional block elements
-    [self _startNewElementsWithScanner:aScanner inDocument:aDocument openElements:openElements];
+    [self _startNewBlockElements];
     
     // Remove trailing blank lines. This needs to happen after starting new elements, because those
     // elements may use the blank lines in deciding what to be.
     [self _removeTrailingBlankLinesFromElements:elementsToClose];
     
-    MMElement *topElement    = [openElements lastObject];
+    MMElement *topElement    = [self.openElements lastObject];
     BOOL       shouldAddText = YES;
     
     // Don't add 2 blank lines in a row
-    if ([aScanner atEndOfLine])
+    if ([self.scanner atEndOfLine])
     {
-        MMElement *sibling = topElement ? [topElement.children lastObject] : [aDocument.elements lastObject];
+        MMElement *sibling = topElement ? [topElement.children lastObject] : [self.document.elements lastObject];
         if (sibling.type == MMElementTypeNone && sibling.range.length == 0)
         {
             shouldAddText = NO;
@@ -458,24 +449,22 @@
     {
         MMElement *element = [MMElement new];
         element.type  = MMElementTypeNone;
-        element.range = aScanner.lineRange;
+        element.range = self.scanner.lineRange;
         if (topElement)
             [topElement addChild:element];
         else
-            [aDocument addElement:element];
+            [self.document addElement:element];
     }
 }
 
-- (NSArray *) _startNewElementsWithScanner:(MMScanner *)aScanner
-                                inDocument:(MMDocument *)aDocument
-                              openElements:(NSMutableArray *)openElements
+- (NSArray *) _startNewBlockElements
 {
     NSMutableArray *newElements = [NSMutableArray new];
     
-    MMElement *topElement = [openElements lastObject];
+    MMElement *topElement = [self.openElements lastObject];
     while (!topElement || [self _blockElementCanHaveChildren:topElement])
     {
-        MMElement *element = [self _startElementWithScanner:aScanner inDocument:aDocument openElements:openElements];
+        MMElement *element = [self _startBlockElement];
         
         if (!element)
             break;
@@ -486,12 +475,12 @@
         if (topElement)
             [topElement addChild:element];
         else
-            [aDocument addElement:element];
+            [self.document addElement:element];
         
         // If the element is still open, add it to the stack
         if (element.range.length == 0)
         {
-            [openElements addObject:element];
+            [self.openElements addObject:element];
             topElement = element;
         }
         else
@@ -501,68 +490,67 @@
     return newElements;
 }
 
-- (MMElement *) _startElementWithScanner:(MMScanner *)aScanner
-                              inDocument:(MMDocument *)aDocument
-                            openElements:(NSArray *)openElements
+- (MMElement *) _startBlockElement
 {
+    MMScanner *scanner = self.scanner;
     MMElement *element;
     
-    [aScanner beginTransaction];
-    element = [self _startHTMLWithScanner:aScanner inDocument:aDocument];
-    [aScanner commitTransaction:element != nil];
+    [scanner beginTransaction];
+    element = [self _startHTML];
+    [scanner commitTransaction:element != nil];
     if (element)
         return element;
     
-    [aScanner beginTransaction];
-    element = [self _startHeaderWithScanner:aScanner inDocument:aDocument];
-    [aScanner commitTransaction:element != nil];
+    [scanner beginTransaction];
+    element = [self _startHeader];
+    [scanner commitTransaction:element != nil];
     if (element)
         return element;
     
-    [aScanner beginTransaction];
-    element = [self _startBlockquoteWithScanner:aScanner inDocument:aDocument];
-    [aScanner commitTransaction:element != nil];
+    [scanner beginTransaction];
+    element = [self _startBlockquote];
+    [scanner commitTransaction:element != nil];
     if (element)
         return element;
     
-    [aScanner beginTransaction];
-    element = [self _startListItemWithScanner:aScanner inDocument:aDocument openElements:openElements];
-    [aScanner commitTransaction:element != nil];
+    [scanner beginTransaction];
+    element = [self _startListItem];
+    [scanner commitTransaction:element != nil];
     if (element)
         return element;
     
     // Check code first because its four-space behavior trumps most else
-    [aScanner beginTransaction];
-    element = [self _startCodeWithScanner:aScanner inDocument:aDocument];
-    [aScanner commitTransaction:element != nil];
+    [scanner beginTransaction];
+    element = [self _startCodeBlock];
+    [scanner commitTransaction:element != nil];
     if (element)
         return element;
     
     // Check horizontal rules before lists since they both start with * or -
-    [aScanner beginTransaction];
-    element = [self _startHorizontalRuleWithScanner:aScanner inDocument:aDocument];
-    [aScanner commitTransaction:element != nil];
+    [scanner beginTransaction];
+    element = [self _startHorizontalRule];
+    [scanner commitTransaction:element != nil];
     if (element)
         return element;
     
-    [aScanner beginTransaction];
-    element = [self _startBulletedListWithScanner:aScanner inDocument:aDocument];
-    [aScanner commitTransaction:element != nil];
+    [scanner beginTransaction];
+    element = [self _startBulletedList];
+    [scanner commitTransaction:element != nil];
     if (element)
         return element;
     
-    [aScanner beginTransaction];
-    element = [self _startNumberedListWithScanner:aScanner inDocument:aDocument];
-    [aScanner commitTransaction:element != nil];
+    [scanner beginTransaction];
+    element = [self _startNumberedList];
+    [scanner commitTransaction:element != nil];
     if (element)
         return element;
     
-    MMElement *topElement = [openElements lastObject];
+    MMElement *topElement = [self.openElements lastObject];
     if (!topElement || [self _blockElementCanHaveParagraph:topElement])
     {
-        [aScanner beginTransaction];
-        element = [self _startParagraphWithScanner:aScanner inDocument:aDocument];
-        [aScanner commitTransaction:element != nil];
+        [self.scanner beginTransaction];
+        element = [self _startParagraph];
+        [self.scanner commitTransaction:element != nil];
         if (element)
             return element;
     }
@@ -570,125 +558,135 @@
     return nil;
 }
 
-- (MMElement *) _startHTMLWithScanner:(MMScanner *)aScanner inDocument:(MMDocument *)aDocument
+- (MMElement *) _startHTML
 {
-    NSUInteger startLocation = aScanner.location;
+    MMScanner *scanner = self.scanner;
+    
+    NSUInteger startLocation = self.scanner.location;
     
     // At the beginning of the line
-    if (![aScanner atBeginningOfLine])
+    if (![scanner atBeginningOfLine])
         return nil;
     
     // which starts with a '<'
-    if ([aScanner nextCharacter] != '<')
+    if ([scanner nextCharacter] != '<')
         return nil;
-    [aScanner advance];
+    [scanner advance];
     
     NSSet *htmlBlockTags = [NSSet setWithObjects:
                             @"p", @"div", @"h1", @"h2", @"h3", @"h4", @"h5", @"h6",
                             @"blockquote", @"pre", @"table", @"dl", @"ol", @"ul",
                             @"script", @"noscript", @"form", @"fieldset", @"iframe",
                             @"math", @"ins", @"del", nil];
-    NSString *tagName = [aScanner substringBeforeCharacter:'>'];
+    NSString *tagName = [scanner substringBeforeCharacter:'>'];
     if (![htmlBlockTags containsObject:tagName])
         return nil;
     
     // Skip lines until we come across a blank line
-    while (![aScanner atEndOfLine])
+    while (![scanner atEndOfLine])
     {
-        [aScanner advanceToNextLine];
+        [scanner advanceToNextLine];
     }
     
     MMElement *element = [MMElement new];
     element.type  = MMElementTypeHTML;
-    element.range = NSMakeRange(startLocation, aScanner.location-startLocation);
+    element.range = NSMakeRange(startLocation, scanner.location-startLocation);
         
     return element;
 }
 
-- (MMElement *) _startHeaderWithScanner:(MMScanner *)aScanner inDocument:(MMDocument *)aDocument
+- (MMElement *) _startHeader
 {
+    MMScanner *scanner = self.scanner;
+    
     NSUInteger level = 0;
-    while ([aScanner nextCharacter] == '#' && level < 6)
+    while ([scanner nextCharacter] == '#' && level < 6)
     {
         level++;
-        [aScanner advance];
+        [scanner advance];
     }
     
     if (level == 0)
         return nil;
     
-    [aScanner skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet]];
+    [scanner skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet]];
     
     MMElement *textElement = [MMElement new];
     textElement.type  = MMElementTypeNone;
-    textElement.range = [aScanner lineRange];
+    textElement.range = [scanner lineRange];
     
-    [aScanner skipToEndOfLine];
+    [scanner skipToEndOfLine];
     
     MMElement *element = [MMElement new];
     element.type  = MMElementTypeHeader;
-    element.range = NSMakeRange(aScanner.startLocation, NSMaxRange(textElement.range)-aScanner.startLocation);
+    element.range = NSMakeRange(scanner.startLocation, NSMaxRange(textElement.range)-scanner.startLocation);
     element.level = level;
     [element addChild:textElement];
     
     return element;
 }
 
-- (MMElement *) _startBlockquoteWithScanner:(MMScanner *)aScanner inDocument:(MMDocument *)aDocument
+- (MMElement *) _startBlockquote
 {
+    MMScanner *scanner = self.scanner;
+    
     NSCharacterSet *spaceCharacterSet = [NSCharacterSet characterSetWithCharactersInString:@" "];
-    [aScanner skipCharactersFromSet:spaceCharacterSet max:3];
+    [scanner skipCharactersFromSet:spaceCharacterSet max:3];
     
-    if ([aScanner nextCharacter] != '>')
+    if ([scanner nextCharacter] != '>')
         return nil;
-    [aScanner advance];
+    [scanner advance];
     
-    [aScanner skipCharactersFromSet:spaceCharacterSet max:1];
+    [scanner skipCharactersFromSet:spaceCharacterSet max:1];
     
     MMElement *element = [MMElement new];
     element.type  = MMElementTypeBlockquote;
-    element.range = NSMakeRange(aScanner.startLocation, 0);
+    element.range = NSMakeRange(scanner.startLocation, 0);
     
     return element;
 }
 
-- (MMElement *) _startCodeWithScanner:(MMScanner *)aScanner inDocument:(MMDocument *)aDocument
+- (MMElement *) _startCodeBlock
 {
-    NSUInteger indentation = [aScanner skipIndentationUpTo:4];
+    MMScanner *scanner = self.scanner;
+    
+    NSUInteger indentation = [scanner skipIndentationUpTo:4];
     if (indentation != 4)
         return nil;
     
     MMElement *element = [MMElement new];
     element.type  = MMElementTypeCode;
-    element.range = NSMakeRange(aScanner.startLocation, 0);
+    element.range = NSMakeRange(scanner.startLocation, 0);
     
     return element;
 }
 
-- (MMElement *) _startHorizontalRuleWithScanner:(MMScanner *)aScanner inDocument:(MMDocument *)aDocument
+- (MMElement *) _startHorizontalRule
 {
-    // skip initial whitescape
-    [aScanner skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet]];
+    MMScanner *scanner = self.scanner;
     
-    unichar character = [aScanner nextCharacter];
+    // skip initial whitescape
+    [scanner skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet]];
+    
+    unichar character = [scanner nextCharacter];
     if (character != '*' && character != '-' && character != '_')
         return nil;
     
     unichar    nextChar = character;
     NSUInteger count    = 0;
-    while (![aScanner atEndOfLine] && nextChar == character)
+    while (![scanner atEndOfLine] && nextChar == character)
     {
         count++;
         
         // The *, -, or _
-        [aScanner advance];
-        nextChar = [aScanner nextCharacter];
+        [scanner advance];
+        nextChar = [scanner nextCharacter];
         
         // An optional space
         if (nextChar == ' ')
         {
-            [aScanner advance];
-            nextChar = [aScanner nextCharacter];
+            [scanner advance];
+            nextChar = [scanner nextCharacter];
         }
     }
     
@@ -697,48 +695,47 @@
         return nil;
     
     // skip trailing whitespace
-    [aScanner skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet]];
+    [scanner skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet]];
     
     // must be at the end of the line at this point
-    if (![aScanner atEndOfLine])
+    if (![scanner atEndOfLine])
         return nil;
     
     MMElement *element = [MMElement new];
     element.type  = MMElementTypeHorizontalRule;
-    element.range = NSMakeRange(aScanner.startLocation, aScanner.location - aScanner.startLocation);
+    element.range = NSMakeRange(scanner.startLocation, scanner.location - scanner.startLocation);
     
     return element;
 }
 
-- (MMElement *) _startListItemWithScanner:(MMScanner *)aScanner
-                               inDocument:(MMDocument *)aDocument
-                             openElements:(NSArray *)openElements
+- (MMElement *) _startListItem
 {
     // Don't start a list item unless a list is already on the stack
-    MMElement *topElement = [openElements lastObject];
+    MMElement *topElement = [self.openElements lastObject];
     if (topElement.type != MMElementTypeBulletedList && topElement.type != MMElementTypeNumberedList)
         return nil;
     
+    MMScanner *scanner = self.scanner;
     BOOL foundAnItem = NO;
     
     // Look for a bullet
-    unichar nextChar = [aScanner nextCharacter];
+    unichar nextChar = [scanner nextCharacter];
     if (nextChar == '*' || nextChar == '-' || nextChar == '+')
     {
-        [aScanner advance];
+        [scanner advance];
         foundAnItem = YES;
     }
     
     // Look for a numbered item
     if (!foundAnItem)
     {
-        NSUInteger numOfNums = [aScanner skipCharactersFromSet:[NSCharacterSet decimalDigitCharacterSet]];
+        NSUInteger numOfNums = [scanner skipCharactersFromSet:[NSCharacterSet decimalDigitCharacterSet]];
         if (numOfNums != 0)
         {
-            unichar nextChar = [aScanner nextCharacter];
+            unichar nextChar = [scanner nextCharacter];
             if (nextChar == '.')
             {
-                [aScanner advance];
+                [scanner advance];
                 foundAnItem = YES;
             }
         }
@@ -747,7 +744,7 @@
     if (!foundAnItem)
         return nil;
     
-    [aScanner skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet]];
+    [scanner skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet]];
     
     // If this isn't the first element in the list and it's preceded by a blank line, then all the
     // list items should have paragraphs.
@@ -779,72 +776,78 @@
     
     MMElement *element = [MMElement new];
     element.type = MMElementTypeListItem;
-    element.range = NSMakeRange(aScanner.startLocation, 0);
+    element.range = NSMakeRange(scanner.startLocation, 0);
     
     return element;
 }
 
-- (MMElement *) _startBulletedListWithScanner:(MMScanner *)aScanner inDocument:(MMDocument *)aDocument
+- (MMElement *) _startBulletedList
 {
-    NSUInteger indentation = [aScanner skipIndentationUpTo:4];
+    MMScanner *scanner = self.scanner;
     
-    unichar nextChar = [aScanner nextCharacter];
+    NSUInteger indentation = [scanner skipIndentationUpTo:4];
+    
+    unichar nextChar = [scanner nextCharacter];
     if (!(nextChar == '*' || nextChar == '-' || nextChar == '+'))
         return nil;
     // Don't advance -- the list item will do that
     
     MMElement *element = [MMElement new];
     element.type        = MMElementTypeBulletedList;
-    element.range       = NSMakeRange(aScanner.startLocation, 0);
+    element.range       = NSMakeRange(scanner.startLocation, 0);
     element.indentation = indentation;
     
     return element;
 }
 
-- (MMElement *) _startNumberedListWithScanner:(MMScanner *)aScanner inDocument:(MMDocument *)aDocument
+- (MMElement *) _startNumberedList
 {
-    NSUInteger indentation = [aScanner skipIndentationUpTo:4];
+    MMScanner *scanner = self.scanner;
     
-    [aScanner beginTransaction];
+    NSUInteger indentation = [scanner skipIndentationUpTo:4];
+    
+    [scanner beginTransaction];
     
     // At least one number
-    NSUInteger numOfNums = [aScanner skipCharactersFromSet:[NSCharacterSet decimalDigitCharacterSet]];
+    NSUInteger numOfNums = [scanner skipCharactersFromSet:[NSCharacterSet decimalDigitCharacterSet]];
     if (numOfNums == 0)
     {
-        [aScanner commitTransaction:NO];
+        [scanner commitTransaction:NO];
         return nil;
     }
     
     // And a dot
-    unichar nextChar = [aScanner nextCharacter];
+    unichar nextChar = [scanner nextCharacter];
     if (nextChar != '.')
     {
-        [aScanner commitTransaction:NO];
+        [scanner commitTransaction:NO];
         return nil;
     }
     
     // Don't advance -- the list item will do that
-    [aScanner commitTransaction:NO];
+    [scanner commitTransaction:NO];
     
     MMElement *element = [MMElement new];
     element.type        = MMElementTypeNumberedList;
-    element.range       = NSMakeRange(aScanner.startLocation, 0);
+    element.range       = NSMakeRange(scanner.startLocation, 0);
     element.indentation = indentation;
     
     return element;
 }
 
-- (MMElement *) _startParagraphWithScanner:(MMScanner *)aScanner inDocument:(MMDocument *)aDocument
+- (MMElement *) _startParagraph
 {
-    NSCharacterSet *spaceCharacterSet = [NSCharacterSet characterSetWithCharactersInString:@" "];
-    [aScanner skipCharactersFromSet:spaceCharacterSet max:3];
+    MMScanner *scanner = self.scanner;
     
-    if ([[NSCharacterSet whitespaceAndNewlineCharacterSet] characterIsMember:[aScanner nextCharacter]])
+    NSCharacterSet *spaceCharacterSet = [NSCharacterSet characterSetWithCharactersInString:@" "];
+    [scanner skipCharactersFromSet:spaceCharacterSet max:3];
+    
+    if ([[NSCharacterSet whitespaceAndNewlineCharacterSet] characterIsMember:[scanner nextCharacter]])
         return nil;
     
     MMElement *element = [MMElement new];
     element.type  = MMElementTypeParagraph;
-    element.range = NSMakeRange(aScanner.location, 0);
+    element.range = NSMakeRange(scanner.location, 0);
     
     return element;
 }
