@@ -30,9 +30,11 @@
 #import "MMDocument_Private.h"
 #import "MMElement.h"
 #import "MMScanner.h"
+#import "MMSpanParser.h"
 #import "MMTextSegment.h"
 
 @interface MMParser ()
+@property (strong, nonatomic) MMSpanParser   *spanParser;
 @property (strong, nonatomic) MMScanner      *scanner;
 @property (strong, nonatomic) MMDocument     *document;
 @property (strong, nonatomic) NSMutableArray *openElements;
@@ -41,10 +43,29 @@
 
 @implementation MMParser
 
+@synthesize spanParser   = _spanParser;
 @synthesize scanner      = _scanner;
 @synthesize document     = _document;
 @synthesize openElements = _openElements;
 @synthesize textSegment  = _textSegment;
+
+//==================================================================================================
+#pragma mark -
+#pragma mark NSObject Methods
+//==================================================================================================
+
+- (id) init
+{
+    self = [super init];
+    
+    if (self)
+    {
+        self.spanParser = [MMSpanParser new];
+    }
+    
+    return self;
+}
+
 
 //==================================================================================================
 #pragma mark -
@@ -59,10 +80,11 @@
     self.textSegment  = [MMTextSegment segmentWithString:markdown];
     
     // Parse the markdown line-by-line.
-    while (![self.scanner atEndOfString])
+    MMScanner *scanner = self.scanner;
+    while (![scanner atEndOfString])
     {
         [self _parseNextLine];
-        [self.scanner advanceToNextLine];
+        [scanner advanceToNextLine];
     }
     
     [self _endTextSegment];
@@ -103,8 +125,25 @@
 - (BOOL) _checkCodeElement:(MMElement *)anElement
 {
     NSUInteger indentation = [self.scanner skipIndentationUpTo:4];
+    
     if (indentation != 4)
+    {
+        // Add the text manually here to avoid span parsing
+        for (NSValue *value in self.textSegment.ranges)
+        {
+            MMElement *line = [MMElement new];
+            line.type  = MMElementTypeNone;
+            line.range = [value rangeValue];
+            [anElement addChild:line];
+            MMElement *newline = [MMElement new];
+            newline.type  = MMElementTypeNone;
+            newline.range = NSMakeRange(0, 0);
+            [anElement addChild:newline];
+        }
+        self.textSegment = [MMTextSegment segmentWithString:self.document.markdown];
+        
         return NO;
+    }
     
     return YES;
 }
@@ -128,7 +167,7 @@
     }
 }
 
-- (BOOL) _checkListItemElement:(MMElement *)anElement
+- (BOOL) _checkListItemElement:(MMElement *)anElement makeChanges:(BOOL)makeChangesFlag
 {
     MMScanner *scanner = self.scanner;
     
@@ -160,7 +199,7 @@
             // Check if this list already has paragraphs
             MMElement *list       = anElement.parent;
             MMElement *firstItem  = [list.children objectAtIndex:0];
-            if (firstItem.children.count == 0)
+            if (makeChangesFlag && firstItem.children.count == 0)
             {
                 MMElement *list = anElement.parent;
                 [self _addParagraphsToItemsInList:list];
@@ -232,8 +271,20 @@
                 NSRange range = lastChild.range;
                 range.length = self.scanner.startLocation - range.location;
                 lastChild.range = range;
-                
-                // Also add a blank line so the new list starts on its own line
+            }
+            
+            // If there's not already an open child list, add a blank line so the new list starts on
+            // its own line
+            BOOL hasOpenChildList = NO;
+            NSUInteger idx = [self.openElements indexOfObjectIdenticalTo:anElement];
+            if (idx + 1 < self.openElements.count)
+            {
+                MMElement *openChild = [self.openElements objectAtIndex:idx+1];
+                hasOpenChildList = openChild.type == MMElementTypeBulletedList
+                                || openChild.type == MMElementTypeNumberedList;
+            }
+            if (!hasOpenChildList && makeChangesFlag)
+            {
                 [self.textSegment addRange:NSMakeRange(0, 0)];
             }
             
@@ -254,7 +305,9 @@
     MMScanner *scanner = self.scanner;
     
     [scanner beginTransaction];
-    BOOL item = [self _checkListItemElement:[anElement.children lastObject]];
+    NSArray *lineRanges = [self.textSegment.ranges copy];
+    BOOL item = [self _checkListItemElement:[anElement.children lastObject] makeChanges:NO];
+    self.textSegment.ranges = lineRanges;
     [scanner commitTransaction:NO];
     if (item)
         return YES;
@@ -310,13 +363,13 @@
     {
         case MMElementTypeBlockquote:
             return [self _checkBlockquoteElement:anElement];
-        case MMElementTypeCode:
+        case MMElementTypeCodeBlock:
             return [self _checkCodeElement:anElement];
         case MMElementTypeBulletedList:
         case MMElementTypeNumberedList:
             return [self _checkListElement:anElement];
         case MMElementTypeListItem:
-            return [self _checkListItemElement:anElement];
+            return [self _checkListItemElement:anElement makeChanges:YES];
         case MMElementTypeParagraph:
             return [self _checkParagraphElement:anElement];
         default:
@@ -360,6 +413,8 @@
 - (void) _closeElements:(NSArray *)elementsToClose
              atLocation:(NSUInteger)aLocation
 {
+    [self _endTextSegment];
+    
     for (MMElement *element in elementsToClose)
     {
         NSRange range = element.range;
@@ -384,7 +439,7 @@
 {
     switch (anElement.type)
     {
-        case MMElementTypeCode:
+        case MMElementTypeCodeBlock:
         case MMElementTypeParagraph:
             return NO;
             
@@ -397,7 +452,7 @@
 {
     switch (anElement.type)
     {
-        case MMElementTypeCode:
+        case MMElementTypeCodeBlock:
         case MMElementTypeParagraph:
             return NO;
             
@@ -431,8 +486,11 @@
     NSArray *elementsToClose = [self _checkOpenElements];
     
     // Close any block elements and remove any span elements left on the stack
-    [self _closeElements:elementsToClose atLocation:startLocation];
-    [self.openElements removeObjectsInArray:elementsToClose];
+    if (elementsToClose.count > 0)
+    {
+        [self _closeElements:elementsToClose atLocation:startLocation];
+        [self.openElements removeObjectsInArray:elementsToClose];
+    }
     
     // Check for additional block elements
     [self _startNewBlockElements];
@@ -446,31 +504,15 @@
 
 - (void) _endTextSegment
 {
+    // If there's nothing to add, don't bother
     if (self.textSegment.ranges.count == 0)
         return;
     
-    MMElement *topElement = [self.openElements lastObject];
-    BOOL followsBlankLine = NO;
+    MMElement *topElement   = [self.openElements lastObject];
+    NSArray   *spanElements = [self.spanParser parseTextSegment:self.textSegment];
     
-    // Don't add 2 blank lines in a row
-    for (NSValue *value in self.textSegment.ranges)
+    for (MMElement *element in spanElements)
     {
-        NSRange range = [value rangeValue];
-        
-        if (range.length == 0)
-        {
-            BOOL skip = followsBlankLine;
-            followsBlankLine = YES;
-            if (skip)
-                continue;
-        }
-        else
-            followsBlankLine = NO;
-        
-        MMElement *element = [MMElement new];
-        element.type  = MMElementTypeNone;
-        element.range = range;
-        
         if (topElement)
             [topElement addChild:element];
         else
@@ -680,7 +722,7 @@
         return nil;
     
     MMElement *element = [MMElement new];
-    element.type  = MMElementTypeCode;
+    element.type  = MMElementTypeCodeBlock;
     element.range = NSMakeRange(scanner.startLocation, 0);
     
     return element;
@@ -816,7 +858,16 @@
     unichar nextChar = [scanner nextCharacter];
     if (!(nextChar == '*' || nextChar == '-' || nextChar == '+'))
         return nil;
-    // Don't advance -- the list item will do that
+    
+    // Don't actually advance -- the list item will do that
+    [scanner beginTransaction];
+    [scanner advance];
+    nextChar = [scanner nextCharacter];
+    [scanner commitTransaction:NO];
+    
+    // If there's another bullet, it's not a list
+    if (nextChar == '*' || nextChar == '-' || nextChar == '+')
+        return nil;
     
     MMElement *element = [MMElement new];
     element.type        = MMElementTypeBulletedList;

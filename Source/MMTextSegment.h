@@ -28,7 +28,8 @@
 
 @interface MMTextSegment : NSObject
 
-@property (strong, nonatomic) NSArray *ranges;
+@property (strong, nonatomic, readonly) NSString *string;
+@property (copy,   nonatomic) NSArray *ranges;
 
 + (id) segmentWithString:(NSString *)aString;
 - (id) initWithString:(NSString *)aString;

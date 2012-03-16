@@ -49,10 +49,12 @@ static NSString * __HTMLStartTagForElement(MMElement *anElement)
             return @"<li>";
         case MMElementTypeBlockquote:
             return @"<blockquote>\n";
-        case MMElementTypeCode:
+        case MMElementTypeCodeBlock:
             return @"<pre><code>";
         case MMElementTypeHorizontalRule:
             return @"\n<hr />\n";
+        case MMElementTypeStrongAndEm:
+            return @"<strong><em>";
         default:
             return nil;
     }
@@ -74,8 +76,10 @@ static NSString * __HTMLEndTagForElement(MMElement *anElement)
             return @"</li>\n";
         case MMElementTypeBlockquote:
             return @"</blockquote>\n";
-        case MMElementTypeCode:
+        case MMElementTypeCodeBlock:
             return @"\n</code></pre>\n";
+        case MMElementTypeStrongAndEm:
+            return @"</em></strong>";
         default:
             return nil;
     }
@@ -143,9 +147,14 @@ static NSString * __HTMLEndTagForElement(MMElement *anElement)
         if (child.type == MMElementTypeNone)
         {
             NSString *markdown = aDocument.markdown;
-            [theHTML appendString:[markdown substringWithRange:child.range]];
-            if (child != [anElement.children lastObject])
+            if (child.range.length == 0)
+            {
                 [theHTML appendString:@"\n"];
+            }
+            else
+            {
+                [theHTML appendString:[markdown substringWithRange:child.range]];
+            }
         }
         else
         {

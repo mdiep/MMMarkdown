@@ -1,5 +1,5 @@
 //
-//  MMElement.h
+//  MMSpanParser.h
 //  MMMarkdown
 //
 //  Copyright (c) 2012 Matt Diephouse.
@@ -26,35 +26,10 @@
 #import <Foundation/Foundation.h>
 
 
-typedef enum
-{
-    MMElementTypeNone,
-    MMElementTypeHeader,
-    MMElementTypeParagraph,
-    MMElementTypeBlockquote,
-    MMElementTypeNumberedList,
-    MMElementTypeBulletedList,
-    MMElementTypeListItem,
-    MMElementTypeCodeBlock,
-    MMElementTypeHorizontalRule,
-    MMElementTypeHTML,
-    MMElementTypeStrongAndEm
-} MMElementType;
+@class MMTextSegment;
 
-@interface MMElement : NSObject
+@interface MMSpanParser : NSObject
 
-@property (assign, nonatomic) NSRange        range;
-@property (assign, nonatomic) MMElementType  type;
-
-@property (assign, nonatomic) unichar        character;
-@property (assign, nonatomic) NSUInteger     indentation;
-@property (assign, nonatomic) NSUInteger     level;
-
-@property (assign, nonatomic) MMElement *parent;
-@property (copy,   nonatomic) NSArray   *children;
-
-- (void) addChild:(MMElement *)aChild;
-- (void) removeChild:(MMElement *)aChild;
-- (MMElement *) removeLastChild;
+- (NSArray *) parseTextSegment:(MMTextSegment *)aTextSegment;
 
 @end

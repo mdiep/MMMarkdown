@@ -31,6 +31,7 @@
     NSMutableArray *_ranges;
 }
 
+@synthesize string = _string;
 @synthesize ranges = _ranges;
 
 //==================================================================================================
@@ -49,6 +50,7 @@
     
     if (self)
     {
+        _string = aString;
         _ranges = [NSMutableArray new];
     }
     
@@ -67,6 +69,17 @@
     [self willChangeValueForKey:@"ranges"];
     [_ranges removeLastObject];
     [self didChangeValueForKey:@"ranges"];
+}
+
+
+//==================================================================================================
+#pragma mark -
+#pragma mark Public Methods
+//==================================================================================================
+
+- (void) setRanges:(NSArray *)ranges
+{
+    _ranges = [ranges mutableCopy];
 }
 
 

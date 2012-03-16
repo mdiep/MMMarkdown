@@ -1,5 +1,5 @@
 //
-//  MMElement.h
+//  MMSpanScanner.h
 //  MMMarkdown
 //
 //  Copyright (c) 2012 Matt Diephouse.
@@ -26,35 +26,29 @@
 #import <Foundation/Foundation.h>
 
 
-typedef enum
-{
-    MMElementTypeNone,
-    MMElementTypeHeader,
-    MMElementTypeParagraph,
-    MMElementTypeBlockquote,
-    MMElementTypeNumberedList,
-    MMElementTypeBulletedList,
-    MMElementTypeListItem,
-    MMElementTypeCodeBlock,
-    MMElementTypeHorizontalRule,
-    MMElementTypeHTML,
-    MMElementTypeStrongAndEm
-} MMElementType;
+@interface MMSpanScanner : NSObject
 
-@interface MMElement : NSObject
+@property (strong, nonatomic, readonly) NSString *string;
+@property (copy,   nonatomic, readonly) NSArray  *lineRanges;
 
-@property (assign, nonatomic) NSRange        range;
-@property (assign, nonatomic) MMElementType  type;
+@property (assign, nonatomic) NSUInteger location;
 
-@property (assign, nonatomic) unichar        character;
-@property (assign, nonatomic) NSUInteger     indentation;
-@property (assign, nonatomic) NSUInteger     level;
++ (id) scannerWithString:(NSString *)aString lineRanges:(NSArray *)theLineRanges;
+- (id) initWithString:(NSString *)aString lineRanges:(NSArray *)theLineRanges;
 
-@property (assign, nonatomic) MMElement *parent;
-@property (copy,   nonatomic) NSArray   *children;
+- (void) beginTransaction;
+- (void) commitTransaction:(BOOL)shouldSave;
 
-- (void) addChild:(MMElement *)aChild;
-- (void) removeChild:(MMElement *)aChild;
-- (MMElement *) removeLastChild;
+- (BOOL) atBeginningOfLine;
+- (BOOL) atEndOfLine;
+- (BOOL) atEndOfString;
+
+- (unichar) previousCharacter;
+- (unichar) nextCharacter;
+
+- (void) advance;
+- (void) advanceToNextLine;
+
+- (NSUInteger) skipCharactersFromSet:(NSCharacterSet *)aSet;
 
 @end

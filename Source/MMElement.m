@@ -44,12 +44,14 @@ static NSString * __MMStringFromElementType(MMElementType type)
             return @"ul";
         case MMElementTypeListItem:
             return @"li";
-        case MMElementTypeCode:
+        case MMElementTypeCodeBlock:
             return @"code";
         case MMElementTypeHorizontalRule:
             return @"hr";
         case MMElementTypeHTML:
             return @"html";
+        case MMElementTypeStrongAndEm:
+            return @"strong;em";
         default:
             return @"unknown";
     }
@@ -62,6 +64,8 @@ static NSString * __MMStringFromElementType(MMElementType type)
 
 @synthesize range       = _range;
 @synthesize type        = _type;
+
+@synthesize character   = _character;
 @synthesize indentation = _indentation;
 @synthesize level       = _level;
 
@@ -108,6 +112,14 @@ static NSString * __MMStringFromElementType(MMElementType type)
     [self willChangeValueForKey:@"children"];
     [_children addObject:aChild];
     aChild.parent = self;
+    [self didChangeValueForKey:@"children"];
+}
+
+- (void) removeChild:(MMElement *)aChild
+{
+    [self willChangeValueForKey:@"children"];
+    [_children removeObjectIdenticalTo:aChild];
+    aChild.parent = nil;
     [self didChangeValueForKey:@"children"];
 }
 
