@@ -212,5 +212,16 @@
     [self checkMarkdown:@"1.\tOne\n" againstHTML:@"<ol><li>One</li></ol>"];
 }
 
+- (void) testList_withTabs
+{
+    // Tabs should be converted to spaces
+    NSString *markdown = @"* A\tParagraph\n";
+    NSString *html = @"<ul>\n"
+                      "<li>A Paragraph</li>\n"
+                      "</ul>";
+    
+    [self checkMarkdown:markdown againstHTML:html];
+}
+
 
 @end

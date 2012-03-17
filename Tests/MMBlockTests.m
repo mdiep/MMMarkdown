@@ -34,7 +34,7 @@
 
 //==================================================================================================
 #pragma mark -
-#pragma mark Tests
+#pragma mark Code Block Tests
 //==================================================================================================
 
 - (void) testCodeBlocks_blankLinesInBetween
@@ -71,6 +71,42 @@
                       "</code></pre>\n"
                       "\n"
                       "<p>Bar</p>";
+    
+    [self checkMarkdown:markdown againstHTML:html];
+}
+
+- (void) testCodeBlocks_withTabs
+{
+    // Tabs inside code blocks should be converted to spaces
+    NSString *markdown = @"\t+\tSome Code\n";
+    NSString *html = @"<pre><code>+   Some Code\n"
+                      "</code></pre>";
+    
+    [self checkMarkdown:markdown againstHTML:html];
+}
+
+
+//==================================================================================================
+#pragma mark -
+#pragma mark Paragraph Tests
+//==================================================================================================
+
+- (void) testParagraphs_hangingIndent
+{
+    // Tabs should be converted to spaces
+    NSString *markdown = @"A Paragraph\n    Here\n";
+    NSString *html = @"<p>A Paragraph\n"
+                      "    Here</p>";
+    
+    [self checkMarkdown:markdown againstHTML:html];
+}
+
+- (void) testParagraphs_withTabs
+{
+    // Tabs should be converted to spaces
+    NSString *markdown = @"A\tParagraph\n\tHere\n";
+    NSString *html = @"<p>A   Paragraph\n"
+                      "    Here</p>";
     
     [self checkMarkdown:markdown againstHTML:html];
 }

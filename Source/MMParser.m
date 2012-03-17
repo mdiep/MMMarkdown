@@ -74,6 +74,8 @@
 
 - (MMDocument *) parseMarkdown:(NSString *)markdown error:(__autoreleasing NSError **)error
 {
+    markdown = [self _removeTabsFromString:markdown];
+    
     self.scanner      = [MMScanner scannerWithString:markdown];
     self.document     = [MMDocument documentWithMarkdown:markdown];
     self.openElements = [NSMutableArray new];
@@ -103,6 +105,39 @@
 #pragma mark -
 #pragma mark Private Methods
 //==================================================================================================
+
+- (NSString *) _removeTabsFromString:(NSString *)aString
+{
+    NSMutableString *result = [aString mutableCopy];
+    
+    NSCharacterSet *tabAndNewline = [NSCharacterSet characterSetWithCharactersInString:@"\t\n"];
+    
+    NSRange searchRange = NSMakeRange(0, aString.length);
+    NSRange resultRange;
+    NSUInteger lineLocation;
+    NSArray *strings = [NSArray arrayWithObjects:@"", @" ", @"  ", @"   ", @"    ", nil];
+    
+    resultRange  = [result rangeOfCharacterFromSet:tabAndNewline options:0 range:searchRange];
+    lineLocation = 0;
+    while (resultRange.location != NSNotFound)
+    {
+        unichar character = [result characterAtIndex:resultRange.location];
+        if (character == '\n')
+        {
+            lineLocation = 1 + resultRange.location;
+            searchRange = NSMakeRange(lineLocation, aString.length-lineLocation);
+        }
+        else
+        {
+            NSUInteger numOfSpaces = 4 - ((resultRange.location - lineLocation) % 4);
+            [result replaceCharactersInRange:resultRange withString:[strings objectAtIndex:numOfSpaces]];
+            searchRange = NSMakeRange(resultRange.location, aString.length-resultRange.location);
+        }
+        resultRange = [result rangeOfCharacterFromSet:tabAndNewline options:0 range:searchRange];
+    }
+    
+    return result;
+}
 
 - (BOOL) _checkBlockquoteElement:(MMElement *)anElement
 {
@@ -372,8 +407,6 @@
 - (BOOL) _checkParagraphElement:(MMElement *)anElement
 {
     MMScanner *scanner = self.scanner;
-    
-    [scanner skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet]];
     
     if ([scanner atEndOfLine])
         return NO;
