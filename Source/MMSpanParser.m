@@ -77,7 +77,7 @@
 {
     MMSpanScanner *scanner = self.scanner;
     
-    NSCharacterSet *specialChars = [NSCharacterSet characterSetWithCharactersInString:@"\\`*_<"];
+    NSCharacterSet *specialChars = [NSCharacterSet characterSetWithCharactersInString:@"\\`*_<&"];
     NSCharacterSet *boringChars  = [specialChars invertedSet];
     
     NSUInteger textLocation = scanner.location;
@@ -114,6 +114,17 @@
         {
             [self _addTextFromLocation:textLocation toLocation:startLocation];
             [self _addElement:elementToAdd];
+            textLocation = scanner.location;
+            continue;
+        }
+        
+        // Add any escaped entites
+        MMElement *newEntity = [self _newEscapedEntity];
+        if (newEntity)
+        {
+            [self _addTextFromLocation:textLocation toLocation:newEntity.range.location];
+            [self _addElement:newEntity];
+            [self _closeElement:newEntity];
             textLocation = scanner.location;
             continue;
         }
@@ -290,7 +301,7 @@
     MMElement *element = [MMElement new];
     element.type  = MMElementTypeLink;
     element.range = NSMakeRange(startLoc, 0);
-    element.href  = linkText;
+    element.stringValue = linkText;
     
     [self _addTextFromLocation:textLocation toLocation:NSMaxRange(linkRange) toElement:element];
     
@@ -428,6 +439,49 @@
     
     [scanner beginTransaction];
     element = [self _startAutomaticLink];
+    [scanner commitTransaction:element != nil];
+    if (element)
+        return element;
+    
+    return nil;
+}
+
+- (MMElement *) _escapeAmpersand
+{
+    MMSpanScanner *scanner = self.scanner;
+    
+    if ([scanner nextCharacter] != '&')
+        return nil;
+    [scanner advance];
+    
+    // check if this is an html entity
+    [scanner beginTransaction];
+    
+    if ([scanner nextCharacter] == '#')
+        [scanner advance];
+    [scanner skipCharactersFromSet:[NSCharacterSet alphanumericCharacterSet]];
+    if ([scanner nextCharacter] == ';')
+    {
+        [scanner commitTransaction:NO];
+        return nil;
+    }
+    [scanner commitTransaction:NO];
+    
+    MMElement *element = [MMElement new];
+    element.type  = MMElementTypeEntity;
+    element.range = NSMakeRange(scanner.location-1, 1);
+    element.stringValue = @"&amp;";
+    
+    return element;
+}
+
+- (MMElement *) _newEscapedEntity
+{
+    MMSpanScanner *scanner = self.scanner;
+    MMElement *element;
+    
+    [scanner beginTransaction];
+    element = [self _escapeAmpersand];
     [scanner commitTransaction:element != nil];
     if (element)
         return element;

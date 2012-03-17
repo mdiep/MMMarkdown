@@ -37,5 +37,16 @@
 #pragma mark Tests
 //==================================================================================================
 
+- (void) testEncodeAmpersand
+{
+    [self checkMarkdown:@"A & B" againstHTML:@"<p>A &amp; B</p>"];
+}
+
+- (void) testHTMLEntityReferences
+{
+    [self checkMarkdown:@"A &amp; B" againstHTML:@"<p>A &amp; B</p>"];
+    [self checkMarkdown:@"A &#38; B" againstHTML:@"<p>A &#38; B</p>"];
+}
+
 
 @end

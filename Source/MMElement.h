@@ -40,7 +40,8 @@ typedef enum
     MMElementTypeHTML,
     MMElementTypeStrongAndEm,
     MMElementTypeCodeSpan,
-    MMElementTypeLink
+    MMElementTypeLink,
+    MMElementTypeEntity
 } MMElementType;
 
 @interface MMElement : NSObject
@@ -51,7 +52,7 @@ typedef enum
 @property (assign, nonatomic) unichar        character;
 @property (assign, nonatomic) NSUInteger     indentation;
 @property (assign, nonatomic) NSUInteger     level;
-@property (copy,   nonatomic) NSString      *href;
+@property (copy,   nonatomic) NSString      *stringValue;
 
 @property (assign, nonatomic) MMElement *parent;
 @property (copy,   nonatomic) NSArray   *children;
