@@ -86,6 +86,16 @@
         // Skip boring characters
         [scanner skipCharactersFromSet:boringChars];
         
+        // Check for a backslash
+        if ([scanner nextCharacter] == '\\')
+        {
+            [self _addTextFromLocation:textLocation toLocation:scanner.location];
+            [scanner advance]; // skip over the backslash
+            textLocation = scanner.location;
+            [scanner advance]; // skip over the escaped character
+            continue;
+        }
+        
         // Try to end open elements
         NSUInteger  endLocation    = scanner.location;
         MMElement  *elementToClose = [self _checkOpenElements];
