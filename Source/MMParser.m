@@ -124,10 +124,22 @@
 
 - (BOOL) _checkCodeElement:(MMElement *)anElement
 {
-    NSUInteger indentation = [self.scanner skipIndentationUpTo:4];
+    MMScanner *scanner = self.scanner;
     
-    if (indentation != 4)
+    NSUInteger indentation = [scanner skipIndentationUpTo:4];
+    
+    // Code blocks end when there's text that's at an indentation that's less than 4.
+    // Blank lines do not end a code block.
+    if (indentation < 4 && ![scanner atEndOfLine])
     {
+        // Remove trailing blank lines
+        NSValue *lastRange = [self.textSegment.ranges lastObject];
+        while ([lastRange rangeValue].length == 0)
+        {
+            [self.textSegment removeLastRange];
+            lastRange = [self.textSegment.ranges lastObject];
+        }
+        
         // Add the text manually here to avoid span parsing
         for (NSValue *value in self.textSegment.ranges)
         {
@@ -135,10 +147,15 @@
             line.type  = MMElementTypeNone;
             line.range = [value rangeValue];
             [anElement addChild:line];
-            MMElement *newline = [MMElement new];
-            newline.type  = MMElementTypeNone;
-            newline.range = NSMakeRange(0, 0);
-            [anElement addChild:newline];
+            
+            // Add a newline if this isn't just a blank line
+            if (line.range.length != 0)
+            {
+                MMElement *newline = [MMElement new];
+                newline.type  = MMElementTypeNone;
+                newline.range = NSMakeRange(0, 0);
+                [anElement addChild:newline];
+            }
         }
         self.textSegment = [MMTextSegment segmentWithString:self.document.markdown];
         
