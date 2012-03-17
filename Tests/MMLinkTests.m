@@ -1,5 +1,5 @@
 //
-//  MMElement.h
+//  MMEscapingTests.m
 //  MMMarkdown
 //
 //  Copyright (c) 2012 Matt Diephouse.
@@ -23,41 +23,27 @@
 // THE SOFTWARE.
 //
 
-#import <Foundation/Foundation.h>
+#import "MMTestCase.h"
 
 
-typedef enum
+@interface MMLinkTests : MMTestCase
+
+@end 
+
+@implementation MMLinkTests
+
+//==================================================================================================
+#pragma mark -
+#pragma mark Automatic Link Tests
+//==================================================================================================
+
+- (void) testBasicAutomaticLink
 {
-    MMElementTypeNone,
-    MMElementTypeHeader,
-    MMElementTypeParagraph,
-    MMElementTypeBlockquote,
-    MMElementTypeNumberedList,
-    MMElementTypeBulletedList,
-    MMElementTypeListItem,
-    MMElementTypeCodeBlock,
-    MMElementTypeHorizontalRule,
-    MMElementTypeHTML,
-    MMElementTypeStrongAndEm,
-    MMElementTypeCodeSpan,
-    MMElementTypeLink
-} MMElementType;
+    NSString *markdown = @"<http://daringfireball.net>";
+    NSString *html = @"<p><a href='http://daringfireball.net'>http://daringfireball.net</a></p>";
+    
+    [self checkMarkdown:markdown againstHTML:html];
+}
 
-@interface MMElement : NSObject
-
-@property (assign, nonatomic) NSRange        range;
-@property (assign, nonatomic) MMElementType  type;
-
-@property (assign, nonatomic) unichar        character;
-@property (assign, nonatomic) NSUInteger     indentation;
-@property (assign, nonatomic) NSUInteger     level;
-@property (copy,   nonatomic) NSString      *href;
-
-@property (assign, nonatomic) MMElement *parent;
-@property (copy,   nonatomic) NSArray   *children;
-
-- (void) addChild:(MMElement *)aChild;
-- (void) removeChild:(MMElement *)aChild;
-- (MMElement *) removeLastChild;
 
 @end

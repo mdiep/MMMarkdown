@@ -57,6 +57,8 @@ static NSString * __HTMLStartTagForElement(MMElement *anElement)
             return @"<strong><em>";
         case MMElementTypeCodeSpan:
             return @"<code>";
+        case MMElementTypeLink:
+            return [NSString stringWithFormat:@"<a href=\"%@\">", anElement.href];
         default:
             return nil;
     }
@@ -84,6 +86,8 @@ static NSString * __HTMLEndTagForElement(MMElement *anElement)
             return @"</em></strong>";
         case MMElementTypeCodeSpan:
             return @"</code>";
+        case MMElementTypeLink:
+            return @"</a>";
         default:
             return nil;
     }

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		BE1DB5D51514184000B26092 /* MMSpanTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BE1DB5D41514184000B26092 /* MMSpanTests.m */; };
 		BE1DB5DA15143F4200B26092 /* MMBlockTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BE1DB5D915143F4200B26092 /* MMBlockTests.m */; };
+		BE1DB5DD1515033000B26092 /* MMLinkTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BE1DB5DC1515032F00B26092 /* MMLinkTests.m */; };
 		BE813DE414F893EB00EC9469 /* MMMarkdown.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813DE314F893EB00EC9469 /* MMMarkdown.m */; };
 		BE813DEC14F893EB00EC9469 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE813DEB14F893EB00EC9469 /* SenTestingKit.framework */; };
 		BE813DF014F893EB00EC9469 /* libMMMarkdown-Mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE813DD614F893EB00EC9469 /* libMMMarkdown-Mac.a */; };
@@ -121,6 +122,7 @@
 /* Begin PBXFileReference section */
 		BE1DB5D41514184000B26092 /* MMSpanTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMSpanTests.m; sourceTree = "<group>"; };
 		BE1DB5D915143F4200B26092 /* MMBlockTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMBlockTests.m; sourceTree = "<group>"; };
+		BE1DB5DC1515032F00B26092 /* MMLinkTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMLinkTests.m; sourceTree = "<group>"; };
 		BE813DD614F893EB00EC9469 /* libMMMarkdown-Mac.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libMMMarkdown-Mac.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE813DDE14F893EB00EC9469 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		BE813DE114F893EB00EC9469 /* MMMarkdown-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MMMarkdown-Prefix.pch"; sourceTree = "<group>"; };
@@ -299,6 +301,7 @@
 				BE813E2114F93D8700EC9469 /* MarkdownTest_1.0 */,
 				BE1DB5D915143F4200B26092 /* MMBlockTests.m */,
 				BE813E9D1503C14200EC9469 /* MMEscapingTests.m */,
+				BE1DB5DC1515032F00B26092 /* MMLinkTests.m */,
 				BE813E9A15031B4000EC9469 /* MMListTests.m */,
 				BE1DB5D41514184000B26092 /* MMSpanTests.m */,
 				BE813DF714F893EB00EC9469 /* MMMarkdownTests.h */,
@@ -602,6 +605,7 @@
 				BE813E9E1503C14300EC9469 /* MMEscapingTests.m in Sources */,
 				BE1DB5D51514184000B26092 /* MMSpanTests.m in Sources */,
 				BE1DB5DA15143F4200B26092 /* MMBlockTests.m in Sources */,
+				BE1DB5DD1515033000B26092 /* MMLinkTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

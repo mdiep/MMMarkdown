@@ -77,7 +77,7 @@
 {
     MMSpanScanner *scanner = self.scanner;
     
-    NSCharacterSet *specialChars = [NSCharacterSet characterSetWithCharactersInString:@"\\`*_"];
+    NSCharacterSet *specialChars = [NSCharacterSet characterSetWithCharactersInString:@"\\`*_<"];
     NSCharacterSet *boringChars  = [specialChars invertedSet];
     
     NSUInteger textLocation = scanner.location;
@@ -261,6 +261,42 @@
     [self.openElements addObject:anElement];
 }
 
+- (MMElement *) _startAutomaticLink
+{
+    MMSpanScanner *scanner  = self.scanner;
+    NSUInteger     startLoc = scanner.location;
+    
+    // Leading <
+    if ([scanner nextCharacter] != '<')
+        return nil;
+    [scanner advance];
+    
+    NSUInteger textLocation = scanner.location;
+    
+    // Find the trailing >
+    [scanner skipCharactersFromSet:[[NSCharacterSet characterSetWithCharactersInString:@">"] invertedSet]];
+    if ([scanner atEndOfLine])
+        return nil;
+    [scanner advance];
+    
+    NSRange   linkRange = NSMakeRange(textLocation, (scanner.location-1)-textLocation);
+    NSString *linkText  = [scanner.string substringWithRange:linkRange];
+    
+    // Make sure it looks like a link
+    NSURL *url = [NSURL URLWithString:linkText];
+    if (!url)
+        return nil;
+    
+    MMElement *element = [MMElement new];
+    element.type  = MMElementTypeLink;
+    element.range = NSMakeRange(startLoc, 0);
+    element.href  = linkText;
+    
+    [self _addTextFromLocation:textLocation toLocation:NSMaxRange(linkRange) toElement:element];
+    
+    return element;
+}
+
 - (MMElement *) _startCodeSpan
 {
     MMSpanScanner *scanner  = self.scanner;
@@ -386,6 +422,12 @@
     
     [scanner beginTransaction];
     element = [self _startCodeSpan];
+    [scanner commitTransaction:element != nil];
+    if (element)
+        return element;
+    
+    [scanner beginTransaction];
+    element = [self _startAutomaticLink];
     [scanner commitTransaction:element != nil];
     if (element)
         return element;

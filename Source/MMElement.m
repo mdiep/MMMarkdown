@@ -54,6 +54,8 @@ static NSString * __MMStringFromElementType(MMElementType type)
             return @"strong;em";
         case MMElementTypeCodeSpan:
             return @"code";
+        case MMElementTypeLink:
+            return @"link";
         default:
             return @"unknown";
     }
@@ -70,6 +72,7 @@ static NSString * __MMStringFromElementType(MMElementType type)
 @synthesize character   = _character;
 @synthesize indentation = _indentation;
 @synthesize level       = _level;
+@synthesize href        = _href;
 
 @synthesize parent   = _parent;
 @synthesize children = _children;
