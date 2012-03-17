@@ -54,5 +54,21 @@
     [self checkMarkdown:markdown againstHTML:html];
 }
 
+- (void) testCodeSpans_withSpaces
+{
+    NSString *markdown = @"a ` b ` c";
+    NSString *html = @"<p>a <code>b</code> c</p>";
+    
+    [self checkMarkdown:markdown againstHTML:html];
+}
+
+- (void) testCodeSpans_doubleBackticks
+{
+    NSString *markdown = @"`` `foo` ``\n";
+    NSString *html = @"<p><code>`foo`</code></p>";
+    
+    [self checkMarkdown:markdown againstHTML:html];
+}
+
 
 @end

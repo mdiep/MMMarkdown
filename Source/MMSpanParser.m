@@ -209,10 +209,12 @@
 {
     MMSpanScanner *scanner = self.scanner;
     
-    if ([scanner nextCharacter] != '`')
-        return NO;
-    
-    [scanner advance];
+    for (NSUInteger idx=0; idx<anElement.level; idx++)
+    {
+        if ([scanner nextCharacter] != '`')
+            return NO;
+        [scanner advance];
+    }
     
     return YES;
 }
@@ -271,6 +273,17 @@
     MMElement *element = [MMElement new];
     element.type  = MMElementTypeCodeSpan;
     element.range = NSMakeRange(startLoc, 0);
+    element.level = 1;
+    
+    // Check for a 2nd `
+    if ([scanner nextCharacter] == '`')
+    {
+        element.level = 2;
+        [scanner advance];
+    }
+    
+    // skip leading whitespace
+    [scanner skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet]];
     
     // Skip to the next '`'
     NSCharacterSet *nonTickCharacters = [[NSCharacterSet characterSetWithCharactersInString:@"`"] invertedSet];
@@ -285,10 +298,43 @@
         
         // Did we find the closing `?
         if ([scanner nextCharacter] == '`')
+        {
+            if (element.level == 2)
+            {
+                // set the location for if this isn't the 2nd backtick--because if it is,
+                // the location doesn't matter
+                textLocation = scanner.location;
+                
+                [scanner beginTransaction];
+                [scanner advance];
+                if ([scanner nextCharacter] == '`')
+                    [scanner commitTransaction:NO];
+                else
+                {
+                    [scanner commitTransaction:YES];
+                    continue;
+                }
+            }
             break;
+        }
         
         [scanner advanceToNextLine];
         textLocation = scanner.location;
+    }
+    
+    // remove trailing whitespace
+    if (element.children.count > 0)
+    {
+        MMElement *lastText = element.children.lastObject;
+        unichar lastCharacter = [scanner.string characterAtIndex:NSMaxRange(lastText.range)-1];
+        while ([[NSCharacterSet whitespaceCharacterSet] characterIsMember:lastCharacter])
+        {
+            NSRange range = lastText.range;
+            range.length -= 1;
+            lastText.range = range;
+            
+            lastCharacter = [scanner.string characterAtIndex:NSMaxRange(lastText.range)-1];
+        }
     }
     
     return element;
