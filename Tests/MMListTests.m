@@ -191,5 +191,26 @@
     [self checkMarkdown:markdown againstHTML:html];
 }
 
+- (void) testList_mustHaveWhitespaceAfterMarker
+{
+    // First element
+    [self checkMarkdown:@"*One\n" againstHTML:@"<p>*One</p>"];
+    [self checkMarkdown:@"-One\n" againstHTML:@"<p>-One</p>"];
+    [self checkMarkdown:@"+One\n" againstHTML:@"<p>+One</p>"];
+    [self checkMarkdown:@"1.One\n" againstHTML:@"<p>1.One</p>"];
+    
+    // Second element
+    [self checkMarkdown:@"* One\n*Two" againstHTML:@"<ul><li>One\n*Two</li></ul>"];
+    [self checkMarkdown:@"- One\n-Two" againstHTML:@"<ul><li>One\n-Two</li></ul>"];
+    [self checkMarkdown:@"+ One\n+Two" againstHTML:@"<ul><li>One\n+Two</li></ul>"];
+    [self checkMarkdown:@"1. One\n1.Two" againstHTML:@"<ol><li>One\n1.Two</li></ol>"];
+
+    // Check with tabs
+    [self checkMarkdown:@"*\tOne\n" againstHTML:@"<ul><li>One</li></ul>"];
+    [self checkMarkdown:@"-\tOne\n" againstHTML:@"<ul><li>One</li></ul>"];
+    [self checkMarkdown:@"+\tOne\n" againstHTML:@"<ul><li>One</li></ul>"];
+    [self checkMarkdown:@"1.\tOne\n" againstHTML:@"<ol><li>One</li></ol>"];
+}
+
 
 @end

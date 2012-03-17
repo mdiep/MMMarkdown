@@ -252,6 +252,13 @@
             }
         }
         
+        // Check for a space after the marker
+        if (foundAnItem)
+        {
+            [scanner advance];
+            foundAnItem = [[NSCharacterSet whitespaceCharacterSet] characterIsMember:[scanner nextCharacter]];
+        }
+        
         if (foundAnItem)
         {
             [scanner commitTransaction:NO];
@@ -865,8 +872,8 @@
     nextChar = [scanner nextCharacter];
     [scanner commitTransaction:NO];
     
-    // If there's another bullet, it's not a list
-    if (nextChar == '*' || nextChar == '-' || nextChar == '+')
+    // Must have a space after the marker
+    if (![[NSCharacterSet whitespaceCharacterSet] characterIsMember:nextChar])
         return nil;
     
     MMElement *element = [MMElement new];
@@ -900,6 +907,11 @@
         [scanner commitTransaction:NO];
         return nil;
     }
+    [scanner advance];
+    
+    // Must have a space after the marker
+    if (![[NSCharacterSet whitespaceCharacterSet] characterIsMember:[scanner nextCharacter]])
+        return nil;
     
     // Don't advance -- the list item will do that
     [scanner commitTransaction:NO];
