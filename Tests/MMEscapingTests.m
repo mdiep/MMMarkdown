@@ -42,6 +42,11 @@
     [self checkMarkdown:@"A & B" againstHTML:@"<p>A &amp; B</p>"];
 }
 
+- (void) testEncodeLeftAngleBracket
+{
+    [self checkMarkdown:@"2 << 0 < 2 << 1" againstHTML:@"<p>2 &lt;&lt; 0 &lt; 2 &lt;&lt; 1</p>"];
+}
+
 - (void) testHTMLEntityReferences
 {
     [self checkMarkdown:@"A &amp; B" againstHTML:@"<p>A &amp; B</p>"];

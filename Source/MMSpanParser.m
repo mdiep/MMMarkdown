@@ -475,6 +475,29 @@
     return element;
 }
 
+- (MMElement *) _escapeLeftAngleBracket
+{
+    MMSpanScanner *scanner = self.scanner;
+    
+    if ([scanner nextCharacter] != '<')
+        return nil;
+    [scanner advance];
+    
+    // Can't be followed by a letter, /, ?, $, or !
+    unichar nextChar = [scanner nextCharacter];
+    if ([[NSCharacterSet letterCharacterSet] characterIsMember:nextChar])
+        return nil;
+    if ([[NSCharacterSet characterSetWithCharactersInString:@"/?$!"] characterIsMember:nextChar])
+        return nil;
+    
+    MMElement *element = [MMElement new];
+    element.type  = MMElementTypeEntity;
+    element.range = NSMakeRange(scanner.location-1, 1);
+    element.stringValue = @"&lt;";
+    
+    return element;
+}
+
 - (MMElement *) _newEscapedEntity
 {
     MMSpanScanner *scanner = self.scanner;
@@ -482,6 +505,12 @@
     
     [scanner beginTransaction];
     element = [self _escapeAmpersand];
+    [scanner commitTransaction:element != nil];
+    if (element)
+        return element;
+    
+    [scanner beginTransaction];
+    element = [self _escapeLeftAngleBracket];
     [scanner commitTransaction:element != nil];
     if (element)
         return element;
