@@ -46,4 +46,13 @@
     [self checkMarkdown:markdown againstHTML:html];
 }
 
+- (void) testCodeSpans
+{
+    NSString *markdown = @"`*Test* \\\\ code`\n";
+    NSString *html = @"<p><code>*Test* \\\\ code</code></p>";
+    
+    [self checkMarkdown:markdown againstHTML:html];
+}
+
+
 @end

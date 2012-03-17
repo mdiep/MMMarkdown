@@ -55,6 +55,8 @@ static NSString * __HTMLStartTagForElement(MMElement *anElement)
             return @"\n<hr />\n";
         case MMElementTypeStrongAndEm:
             return @"<strong><em>";
+        case MMElementTypeCodeSpan:
+            return @"<code>";
         default:
             return nil;
     }
@@ -80,6 +82,8 @@ static NSString * __HTMLEndTagForElement(MMElement *anElement)
             return @"\n</code></pre>\n";
         case MMElementTypeStrongAndEm:
             return @"</em></strong>";
+        case MMElementTypeCodeSpan:
+            return @"</code>";
         default:
             return nil;
     }

@@ -142,6 +142,11 @@
 
 - (void) _addTextFromLocation:(NSUInteger)startLocation toLocation:(NSUInteger)endLocation
 {
+    [self _addTextFromLocation:startLocation toLocation:endLocation toElement:self.openElements.lastObject];
+}
+
+- (void) _addTextFromLocation:(NSUInteger)startLocation toLocation:(NSUInteger)endLocation toElement:(MMElement *)toElement
+{
     // Don't add empty text
     if (startLocation == endLocation)
         return;
@@ -150,9 +155,8 @@
     element.type  = MMElementTypeNone;
     element.range = NSMakeRange(startLocation, endLocation-startLocation);
     
-    MMElement *topElement = self.openElements.lastObject;
-    if (topElement)
-        [topElement addChild:element];
+    if (toElement)
+        [toElement addChild:element];
     else
         [self.elements addObject:element];
 }
@@ -201,12 +205,26 @@
     return YES;
 }
 
+- (BOOL) _canCloseCodeSpan:(MMElement *)anElement
+{
+    MMSpanScanner *scanner = self.scanner;
+    
+    if ([scanner nextCharacter] != '`')
+        return NO;
+    
+    [scanner advance];
+    
+    return YES;
+}
+
 - (BOOL) _canCloseElement:(MMElement *)anElement
 {
     switch (anElement.type)
     {
         case MMElementTypeStrongAndEm:
             return [self _canCloseStrongAndEm:anElement];
+        case MMElementTypeCodeSpan:
+            return [self _canCloseCodeSpan:anElement];
         default:
             return YES;
     }
@@ -239,6 +257,41 @@
     
     // Add it to the open elements
     [self.openElements addObject:anElement];
+}
+
+- (MMElement *) _startCodeSpan
+{
+    MMSpanScanner *scanner  = self.scanner;
+    NSUInteger     startLoc = scanner.location;
+    
+    if ([scanner nextCharacter] != '`')
+        return nil;
+    [scanner advance];
+    
+    MMElement *element = [MMElement new];
+    element.type  = MMElementTypeCodeSpan;
+    element.range = NSMakeRange(startLoc, 0);
+    
+    // Skip to the next '`'
+    NSCharacterSet *nonTickCharacters = [[NSCharacterSet characterSetWithCharactersInString:@"`"] invertedSet];
+    NSUInteger      textLocation      = scanner.location;
+    while (![scanner atEndOfString])
+    {
+        // Skip other characters
+        [scanner skipCharactersFromSet:nonTickCharacters];
+        
+        // Add the code as text
+        [self _addTextFromLocation:textLocation toLocation:scanner.location toElement:element];
+        
+        // Did we find the closing `?
+        if ([scanner nextCharacter] == '`')
+            break;
+        
+        [scanner advanceToNextLine];
+        textLocation = scanner.location;
+    }
+    
+    return element;
 }
 
 - (MMElement *) _startStrongAndEm
@@ -281,6 +334,12 @@
     
     [scanner beginTransaction];
     element = [self _startStrongAndEm];
+    [scanner commitTransaction:element != nil];
+    if (element)
+        return element;
+    
+    [scanner beginTransaction];
+    element = [self _startCodeSpan];
     [scanner commitTransaction:element != nil];
     if (element)
         return element;

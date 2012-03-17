@@ -38,7 +38,8 @@ typedef enum
     MMElementTypeCodeBlock,
     MMElementTypeHorizontalRule,
     MMElementTypeHTML,
-    MMElementTypeStrongAndEm
+    MMElementTypeStrongAndEm,
+    MMElementTypeCodeSpan
 } MMElementType;
 
 @interface MMElement : NSObject

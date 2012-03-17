@@ -52,6 +52,8 @@ static NSString * __MMStringFromElementType(MMElementType type)
             return @"html";
         case MMElementTypeStrongAndEm:
             return @"strong;em";
+        case MMElementTypeCodeSpan:
+            return @"code";
         default:
             return @"unknown";
     }
