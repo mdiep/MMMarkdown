@@ -56,5 +56,20 @@
     [self checkMarkdown:@"[URL](/url/)" againstHTML:@"<p><a href=\"/url/\">URL</a></p>"];
 }
 
+- (void) testInlineLinkWithSpans
+{
+    [self checkMarkdown:@"[**A Title**](/the-url/)" againstHTML:@"<p><a href=\"/the-url/\"><strong>A Title</strong></a></p>"];
+}
+
+- (void) testInlineLinkWithEscapedBracket
+{
+    [self checkMarkdown:@"[\\]](/)" againstHTML:@"<p><a href=\"/\">]</a></p>"];
+}
+
+- (void) testNotAnInlineLink_loneBracket
+{
+    [self checkMarkdown:@"An empty [ by itself" againstHTML:@"<p>An empty [ by itself</p>"];
+}
+
 
 @end
