@@ -77,7 +77,7 @@
 {
     MMSpanScanner *scanner = self.scanner;
     
-    NSCharacterSet *specialChars = [NSCharacterSet characterSetWithCharactersInString:@"\\`*_<&"];
+    NSCharacterSet *specialChars = [NSCharacterSet characterSetWithCharactersInString:@"\\`*_<&["];
     NSCharacterSet *boringChars  = [specialChars invertedSet];
     
     NSUInteger textLocation = scanner.location;
@@ -177,7 +177,7 @@
     // Get rid of any elements that aren't closed.
     NSMutableArray *openElements = self.openElements;
     MMElement *element = [openElements lastObject];
-    while (element != anElement)
+    while (element && element != anElement)
     {
         if (element.parent)
             [element.parent removeChild:element];
@@ -269,7 +269,10 @@
         [self.elements addObject:anElement];
     
     // Add it to the open elements
-    [self.openElements addObject:anElement];
+    if (anElement.range.length == 0)
+    {
+        [self.openElements addObject:anElement];
+    }
 }
 
 - (MMElement *) _startAutomaticLink
@@ -387,6 +390,54 @@
     return element;
 }
 
+- (MMElement *) _startLink
+{
+    MMSpanScanner *scanner  = self.scanner;
+    NSUInteger     startLoc = scanner.location;
+    
+    // Start with a [
+    if ([scanner nextCharacter] != '[')
+        return nil;
+    [scanner advance];
+    
+    NSUInteger textLocation = scanner.location;
+    
+    // skip to next ]
+    [scanner skipCharactersFromSet:[[NSCharacterSet characterSetWithCharactersInString:@"]"] invertedSet]];
+    if ([scanner nextCharacter] != ']')
+        return nil;
+    [scanner advance];
+    
+    NSUInteger textEnd = scanner.location - 1;
+    
+    // Must be followed by a (
+    if ([scanner nextCharacter] != '(')
+        return nil;
+    [scanner advance];
+    
+    NSUInteger urlLocation = scanner.location;
+    
+    // skip to next )
+    [scanner skipCharactersFromSet:[[NSCharacterSet characterSetWithCharactersInString:@")"] invertedSet]];
+    if ([scanner nextCharacter] != ')')
+        return nil;
+    [scanner advance];
+    
+    NSUInteger urlEnd = scanner.location - 1;
+    
+    MMElement *text = [MMElement new];
+    text.type  = MMElementTypeNone;
+    text.range = NSMakeRange(textLocation, textEnd-textLocation);
+    
+    MMElement *element = [MMElement new];
+    element.type  = MMElementTypeLink;
+    element.range = NSMakeRange(startLoc, scanner.location-startLoc);
+    element.stringValue = [scanner.string substringWithRange:NSMakeRange(urlLocation, urlEnd-urlLocation)];
+    [element addChild:text];
+    
+    return element;
+}
+
 - (MMElement *) _startStrongAndEm
 {
     MMSpanScanner *scanner  = self.scanner;
@@ -439,6 +490,12 @@
     
     [scanner beginTransaction];
     element = [self _startAutomaticLink];
+    [scanner commitTransaction:element != nil];
+    if (element)
+        return element;
+    
+    [scanner beginTransaction];
+    element = [self _startLink];
     [scanner commitTransaction:element != nil];
     if (element)
         return element;
