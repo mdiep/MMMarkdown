@@ -66,6 +66,29 @@
     [self checkMarkdown:@"[\\]](/)" againstHTML:@"<p><a href=\"/\">]</a></p>"];
 }
 
+- (void) testInlineLinkWithNestedBrackets
+{
+    [self checkMarkdown:@"[ A [ title ] ](/foo)" againstHTML:@"<p><a href=\"/foo\"> A [ title ] </a></p>"];
+}
+
+- (void) testInlineLinkWithNestedParentheses
+{
+    [self checkMarkdown:@"[Apple](http://en.wikipedia.org/wiki/Apple_(disambiguation))"
+            againstHTML:@"<p><a href=\"http://en.wikipedia.org/wiki/Apple_(disambiguation)\">Apple</a></p>"];
+}
+
+- (void) testInlineLinkWithTitle
+{
+    [self checkMarkdown:@"[URL](/url \"title\")"
+            againstHTML:@"<p><a href=\"/url\" title=\"title\">URL</a></p>"];
+}
+
+- (void) testInlineLinkWithInlineLinkInside
+{
+    [self checkMarkdown:@"[ [URL](/blah) ](/url)"
+            againstHTML:@"<p><a href=\"/url\"> [URL](/blah) </a></p>"];
+}
+
 - (void) testNotAnInlineLink_loneBracket
 {
     [self checkMarkdown:@"An empty [ by itself" againstHTML:@"<p>An empty [ by itself</p>"];
