@@ -95,4 +95,37 @@
 }
 
 
+//==================================================================================================
+#pragma mark -
+#pragma mark Reference Link Tests
+//==================================================================================================
+
+- (void) testBasicReferenceLink
+{
+    NSString *markdown = @"Foo [bar][1].\n"
+                          "\n"
+                          "[1]: /blah";
+    NSString *html = @"<p>Foo <a href=\"/blah\">bar</a>.</p>";
+    [self checkMarkdown:markdown againstHTML:html];
+}
+
+- (void) testReferenceLinkWithOneSpace
+{
+    NSString *markdown = @"Foo [bar] [1].\n"
+                          "\n"
+                          "[1]: /blah";
+    NSString *html = @"<p>Foo <a href=\"/blah\">bar</a>.</p>";
+    [self checkMarkdown:markdown againstHTML:html];
+}
+
+- (void) testReferenceLinkWithTitle
+{
+    NSString *markdown = @"Foo [bar][1].\n"
+                          "\n"
+                          "[1]: /blah \"blah\"";
+    NSString *html = @"<p>Foo <a href=\"/blah\" title=\"blah\">bar</a>.</p>";
+    [self checkMarkdown:markdown againstHTML:html];
+}
+
+
 @end
