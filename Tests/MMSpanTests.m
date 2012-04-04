@@ -70,5 +70,20 @@
     [self checkMarkdown:markdown againstHTML:html];
 }
 
+- (void) testEm
+{
+    [self checkMarkdown:@"*foo*" againstHTML:@"<p><em>foo</em></p>"];
+}
+
+- (void) testStrong
+{
+    [self checkMarkdown:@"**foo**" againstHTML:@"<p><strong>foo</strong></p>"];
+}
+
+- (void) testStrongEm
+{
+    [self checkMarkdown:@"***foo***" againstHTML:@"<p><strong><em>foo</em></strong></p>"];
+}
+
 
 @end
