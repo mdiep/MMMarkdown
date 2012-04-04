@@ -34,6 +34,9 @@
 @property (strong, nonatomic) MMSpanScanner  *scanner;
 @property (strong, nonatomic) NSMutableArray *elements;
 @property (strong, nonatomic) NSMutableArray *openElements;
+
+@property (assign, nonatomic) BOOL parseLinks;
+- (NSArray *) _parseRange:(NSRange)aRange ofString:(NSString *)aString;
 @end
 
 @implementation MMSpanParser
@@ -41,6 +44,26 @@
 @synthesize scanner      = _scanner;
 @synthesize elements     = _elements;
 @synthesize openElements = _openElements;
+
+@synthesize parseLinks = _parseLinks;
+
+//==================================================================================================
+#pragma mark -
+#pragma mark NSObject Methods
+//==================================================================================================
+
+- (id) init
+{
+    self = [super init];
+    
+    if (self)
+    {
+        self.parseLinks = YES;
+    }
+    
+    return self;
+}
+
 
 //==================================================================================================
 #pragma mark -
@@ -72,6 +95,28 @@
 #pragma mark -
 #pragma mark Private Methods
 //==================================================================================================
+
+- (NSArray *) _parseRange:(NSRange)aRange ofString:(NSString *)aString
+{
+    // Save the state
+    MMSpanScanner  *scanner      = self.scanner;
+    NSMutableArray *elements     = self.elements;
+    NSMutableArray *openElements = self.openElements;
+    
+    NSArray *lineRanges = [NSArray arrayWithObject:[NSValue valueWithRange:aRange]];
+    self.scanner      = [MMSpanScanner scannerWithString:aString lineRanges:lineRanges];
+    self.elements     = [NSMutableArray new];
+    self.openElements = [NSMutableArray new];
+    
+    [self _parseNextLine];
+    
+    NSArray *result = self.elements;
+    // Restore the state
+    self.scanner      = scanner;
+    self.elements     = elements;
+    self.openElements = openElements;
+    return result;
+}
 
 - (void) _parseNextLine
 {
@@ -410,15 +455,18 @@
     
     NSRange urlRange = NSMakeRange(scanner.location-(length-1), length-2);
     
-    MMElement *text = [MMElement new];
-    text.type  = MMElementTypeNone;
-    text.range = textRange;
-    
     MMElement *element = [MMElement new];
     element.type  = MMElementTypeLink;
     element.range = NSMakeRange(startLoc, scanner.location-startLoc);
     element.stringValue = [scanner.string substringWithRange:urlRange];
-    [element addChild:text];
+    
+    self.parseLinks = NO;
+    NSArray *innerElements = [self _parseRange:textRange ofString:scanner.string];
+    for (MMElement *inner in innerElements)
+    {
+        [element addChild:inner];
+    }
+    self.parseLinks = YES;
     
     return element;
 }
@@ -473,17 +521,20 @@
     if (element)
         return element;
     
-    [scanner beginTransaction];
-    element = [self _startAutomaticLink];
-    [scanner commitTransaction:element != nil];
-    if (element)
-        return element;
-    
-    [scanner beginTransaction];
-    element = [self _startLink];
-    [scanner commitTransaction:element != nil];
-    if (element)
-        return element;
+    if (self.parseLinks)
+    {
+        [scanner beginTransaction];
+        element = [self _startAutomaticLink];
+        [scanner commitTransaction:element != nil];
+        if (element)
+            return element;
+        
+        [scanner beginTransaction];
+        element = [self _startLink];
+        [scanner commitTransaction:element != nil];
+        if (element)
+            return element;
+    }
     
     return nil;
 }

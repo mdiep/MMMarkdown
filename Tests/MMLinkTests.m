@@ -58,7 +58,7 @@
 
 - (void) testInlineLinkWithSpans
 {
-    [self checkMarkdown:@"[**A Title**](/the-url/)" againstHTML:@"<p><a href=\"/the-url/\"><strong>A Title</strong></a></p>"];
+    [self checkMarkdown:@"[***A Title***](/the-url/)" againstHTML:@"<p><a href=\"/the-url/\"><strong><em>A Title</em></strong></a></p>"];
 }
 
 - (void) testInlineLinkWithEscapedBracket
