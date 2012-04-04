@@ -394,45 +394,30 @@
 {
     MMSpanScanner *scanner  = self.scanner;
     NSUInteger     startLoc = scanner.location;
+    NSUInteger     length;
     
-    // Start with a [
-    if ([scanner nextCharacter] != '[')
+    // Find the []
+    length = [scanner skipNestedBracketsWithDelimiter:'['];
+    if (length == 0)
         return nil;
-    [scanner advance];
     
-    NSUInteger textLocation = scanner.location;
+    NSRange textRange = NSMakeRange(startLoc+1, length-2);
     
-    // skip to next ]
-    [scanner skipCharactersFromSet:[[NSCharacterSet characterSetWithCharactersInString:@"]"] invertedSet]];
-    if ([scanner nextCharacter] != ']')
+    // Find the ()
+    length = [scanner skipNestedBracketsWithDelimiter:'('];
+    if (length == 0)
         return nil;
-    [scanner advance];
     
-    NSUInteger textEnd = scanner.location - 1;
-    
-    // Must be followed by a (
-    if ([scanner nextCharacter] != '(')
-        return nil;
-    [scanner advance];
-    
-    NSUInteger urlLocation = scanner.location;
-    
-    // skip to next )
-    [scanner skipCharactersFromSet:[[NSCharacterSet characterSetWithCharactersInString:@")"] invertedSet]];
-    if ([scanner nextCharacter] != ')')
-        return nil;
-    [scanner advance];
-    
-    NSUInteger urlEnd = scanner.location - 1;
+    NSRange urlRange = NSMakeRange(scanner.location-(length-1), length-2);
     
     MMElement *text = [MMElement new];
     text.type  = MMElementTypeNone;
-    text.range = NSMakeRange(textLocation, textEnd-textLocation);
+    text.range = textRange;
     
     MMElement *element = [MMElement new];
     element.type  = MMElementTypeLink;
     element.range = NSMakeRange(startLoc, scanner.location-startLoc);
-    element.stringValue = [scanner.string substringWithRange:NSMakeRange(urlLocation, urlEnd-urlLocation)];
+    element.stringValue = [scanner.string substringWithRange:urlRange];
     [element addChild:text];
     
     return element;

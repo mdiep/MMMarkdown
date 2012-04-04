@@ -50,5 +50,6 @@
 - (void) advanceToNextLine;
 
 - (NSUInteger) skipCharactersFromSet:(NSCharacterSet *)aSet;
+- (NSUInteger) skipNestedBracketsWithDelimiter:(unichar)delimiter;
 
 @end
