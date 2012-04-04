@@ -89,6 +89,11 @@
             againstHTML:@"<p><a href=\"/url\"> [URL](/blah) </a></p>"];
 }
 
+- (void) testInlineLinkWithNoHref
+{
+    [self checkMarkdown:@"[foo]()" againstHTML:@"<p><a href=\"\">foo</a></p>"];
+}
+
 - (void) testNotAnInlineLink_loneBracket
 {
     [self checkMarkdown:@"An empty [ by itself" againstHTML:@"<p>An empty [ by itself</p>"];
