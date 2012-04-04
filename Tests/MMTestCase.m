@@ -26,29 +26,6 @@
 #import "MMTestCase.h"
 
 
-#import "MMMarkdown.h"
-
 @implementation MMTestCase
-
-//==================================================================================================
-#pragma mark -
-#pragma mark Public Methods
-//==================================================================================================
-
-- (void) checkMarkdown:(NSString *)markdown againstHTML:(NSString *)html
-{
-    NSError *error;
-    NSString *output = [MMMarkdown HTMLStringWithMarkdown:markdown error:&error];
-    
-    // Add root elements for parsing
-    output = [NSString stringWithFormat:@"<test>%@</test>", output];
-    html   = [NSString stringWithFormat:@"<test>%@</test>", html];
-    
-    NSXMLDocument *actual   = [[NSXMLDocument alloc] initWithXMLString:output options:0 error:nil];
-    NSXMLDocument *expected = [[NSXMLDocument alloc] initWithXMLString:html   options:0 error:nil];
-    
-    STAssertEqualObjects(actual, expected, @"HTML doesn't match expected value");
-}
-
 
 @end

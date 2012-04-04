@@ -44,7 +44,7 @@
                           "* Three\n";
     NSString *html = @"<ul><li>One</li><li>Two</li><li>Three</li></ul>";
     
-    [self checkMarkdown:markdown againstHTML:html];
+    MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
 - (void) testBasicList_bulletedWithDashes
@@ -54,7 +54,7 @@
                           "- Three\n";
     NSString *html = @"<ul><li>One</li><li>Two</li><li>Three</li></ul>";
     
-    [self checkMarkdown:markdown againstHTML:html];
+    MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
 - (void) testBasicList_numbered
@@ -64,7 +64,7 @@
                           "0. Three\n";
     NSString *html = @"<ol><li>One</li><li>Two</li><li>Three</li></ol>";
     
-    [self checkMarkdown:markdown againstHTML:html];
+    MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
 - (void) testList_bulletedWithParagraphs
@@ -78,7 +78,7 @@
                       "<li><p>Two</p></li>"
                       "<li><p>Three</p></li></ul>";
     
-    [self checkMarkdown:markdown againstHTML:html];
+    MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
 - (void) testList_multipleParagraphs
@@ -92,7 +92,7 @@
                       "<li><p>Two</p></li>"
                       "<li><p>Three</p></li></ul>";
     
-    [self checkMarkdown:markdown againstHTML:html];
+    MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
 - (void) testList_hangingIndents
@@ -110,7 +110,7 @@
                       "Suspendisse id sem consectetuer libero luctus adipiscing.</li>\n"
                       "</ul>\n";
     
-    [self checkMarkdown:markdown againstHTML:html];
+    MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
 - (void) testNestedLists
@@ -124,7 +124,7 @@
                       "<li>Two</li>"
                       "<li>Three</li></ul>";
     
-    [self checkMarkdown:markdown againstHTML:html];
+    MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
 - (void) testNestedLists_multipleParagraphs
@@ -140,7 +140,7 @@
                       "<li><p>Two</p><ul><li>A</li><li>B</li></ul></li>"
                       "<li><p>Three</p></li></ul>";
     
-    [self checkMarkdown:markdown againstHTML:html];
+    MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
 - (void) testNestedLists_multipleLevels
@@ -157,7 +157,7 @@
                       "<li><p>Two</p><ul><li>A\n<ul><li>I</li></ul></li><li>B</li></ul></li>"
                       "<li><p>Three</p></li></ul>";
     
-    [self checkMarkdown:markdown againstHTML:html];
+    MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
 - (void) testNestedLists_trailingNested
@@ -172,8 +172,7 @@
                       "<li>Two\n<ul><li>A</li><li>B</li></ul></li></ul>"
                       "<p>New Paragraph</p>";
     
-    [self checkMarkdown:markdown againstHTML:html];
-    
+    MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
 - (void) testList_followedByHorizontalRule
@@ -188,28 +187,28 @@
                       "<li>Three</li></ul>"
                       "<hr />";
     
-    [self checkMarkdown:markdown againstHTML:html];
+    MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
 - (void) testList_mustHaveWhitespaceAfterMarker
 {
     // First element
-    [self checkMarkdown:@"*One\n" againstHTML:@"<p>*One</p>"];
-    [self checkMarkdown:@"-One\n" againstHTML:@"<p>-One</p>"];
-    [self checkMarkdown:@"+One\n" againstHTML:@"<p>+One</p>"];
-    [self checkMarkdown:@"1.One\n" againstHTML:@"<p>1.One</p>"];
+    MMAssertMarkdownEqualsHTML(@"*One\n",  @"<p>*One</p>");
+    MMAssertMarkdownEqualsHTML(@"-One\n",  @"<p>-One</p>");
+    MMAssertMarkdownEqualsHTML(@"+One\n",  @"<p>+One</p>");
+    MMAssertMarkdownEqualsHTML(@"1.One\n", @"<p>1.One</p>");
     
     // Second element
-    [self checkMarkdown:@"* One\n*Two" againstHTML:@"<ul><li>One\n*Two</li></ul>"];
-    [self checkMarkdown:@"- One\n-Two" againstHTML:@"<ul><li>One\n-Two</li></ul>"];
-    [self checkMarkdown:@"+ One\n+Two" againstHTML:@"<ul><li>One\n+Two</li></ul>"];
-    [self checkMarkdown:@"1. One\n1.Two" againstHTML:@"<ol><li>One\n1.Two</li></ol>"];
+    MMAssertMarkdownEqualsHTML(@"* One\n*Two",   @"<ul><li>One\n*Two</li></ul>");
+    MMAssertMarkdownEqualsHTML(@"- One\n-Two",   @"<ul><li>One\n-Two</li></ul>");
+    MMAssertMarkdownEqualsHTML(@"+ One\n+Two",   @"<ul><li>One\n+Two</li></ul>");
+    MMAssertMarkdownEqualsHTML(@"1. One\n1.Two", @"<ol><li>One\n1.Two</li></ol>");
 
     // Check with tabs
-    [self checkMarkdown:@"*\tOne\n" againstHTML:@"<ul><li>One</li></ul>"];
-    [self checkMarkdown:@"-\tOne\n" againstHTML:@"<ul><li>One</li></ul>"];
-    [self checkMarkdown:@"+\tOne\n" againstHTML:@"<ul><li>One</li></ul>"];
-    [self checkMarkdown:@"1.\tOne\n" againstHTML:@"<ol><li>One</li></ol>"];
+    MMAssertMarkdownEqualsHTML(@"*\tOne\n",  @"<ul><li>One</li></ul>");
+    MMAssertMarkdownEqualsHTML(@"-\tOne\n",  @"<ul><li>One</li></ul>");
+    MMAssertMarkdownEqualsHTML(@"+\tOne\n",  @"<ul><li>One</li></ul>");
+    MMAssertMarkdownEqualsHTML(@"1.\tOne\n", @"<ol><li>One</li></ol>");
 }
 
 - (void) testList_withTabs
@@ -220,7 +219,7 @@
                       "<li>A Paragraph</li>\n"
                       "</ul>";
     
-    [self checkMarkdown:markdown againstHTML:html];
+    MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
 

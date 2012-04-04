@@ -43,7 +43,7 @@
     NSString *markdown = @"\\\\ \\` \\* \\_ \\{ \\} \\[ \\] \\( \\) \\> \\# \\. \\! \\+ \\-";
     NSString *html = @"<p>\\ ` * _ { } [ ] ( ) > # . ! + -</p>";
     
-    [self checkMarkdown:markdown againstHTML:html];
+    MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
 - (void) testCodeSpans
@@ -51,7 +51,7 @@
     NSString *markdown = @"`*Test* \\\\ code`\n";
     NSString *html = @"<p><code>*Test* \\\\ code</code></p>";
     
-    [self checkMarkdown:markdown againstHTML:html];
+    MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
 - (void) testCodeSpans_withSpaces
@@ -59,7 +59,7 @@
     NSString *markdown = @"a ` b ` c";
     NSString *html = @"<p>a <code>b</code> c</p>";
     
-    [self checkMarkdown:markdown againstHTML:html];
+    MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
 - (void) testCodeSpans_doubleBackticks
@@ -67,22 +67,22 @@
     NSString *markdown = @"`` `foo` ``\n";
     NSString *html = @"<p><code>`foo`</code></p>";
     
-    [self checkMarkdown:markdown againstHTML:html];
+    MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
 - (void) testEm
 {
-    [self checkMarkdown:@"*foo*" againstHTML:@"<p><em>foo</em></p>"];
+    MMAssertMarkdownEqualsHTML(@"*foo*", @"<p><em>foo</em></p>");
 }
 
 - (void) testStrong
 {
-    [self checkMarkdown:@"**foo**" againstHTML:@"<p><strong>foo</strong></p>"];
+    MMAssertMarkdownEqualsHTML(@"**foo**", @"<p><strong>foo</strong></p>");
 }
 
 - (void) testStrongEm
 {
-    [self checkMarkdown:@"***foo***" againstHTML:@"<p><strong><em>foo</em></strong></p>"];
+    MMAssertMarkdownEqualsHTML(@"***foo***", @"<p><strong><em>foo</em></strong></p>");
 }
 
 

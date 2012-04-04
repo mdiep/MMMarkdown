@@ -47,7 +47,7 @@
                       "More Code\n"
                       "</code></pre>";
     
-    [self checkMarkdown:markdown againstHTML:html];
+    MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
 - (void) testCodeBlocks_blankLinesInBetween_betweenParagraphs
@@ -72,7 +72,7 @@
                       "\n"
                       "<p>Bar</p>";
     
-    [self checkMarkdown:markdown againstHTML:html];
+    MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
 - (void) testCodeBlocks_withTabs
@@ -82,7 +82,7 @@
     NSString *html = @"<pre><code>+   Some Code\n"
                       "</code></pre>";
     
-    [self checkMarkdown:markdown againstHTML:html];
+    MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
 
@@ -98,7 +98,7 @@
     NSString *html = @"<p>A Paragraph\n"
                       "    Here</p>";
     
-    [self checkMarkdown:markdown againstHTML:html];
+    MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
 - (void) testParagraphs_withTabs
@@ -108,7 +108,7 @@
     NSString *html = @"<p>A   Paragraph\n"
                       "    Here</p>";
     
-    [self checkMarkdown:markdown againstHTML:html];
+    MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
 

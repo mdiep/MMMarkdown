@@ -49,7 +49,7 @@
     NSString *input  = [self stringWithContentsOfFile:[NSString stringWithFormat:@"%@.text", aName]];
     NSString *html   = [self stringWithContentsOfFile:[NSString stringWithFormat:@"%@.html", aName]];
     
-    [self checkMarkdown:input againstHTML:html];
+    MMAssertMarkdownEqualsHTML(input, html);
 }
 
 

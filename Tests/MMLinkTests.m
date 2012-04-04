@@ -42,7 +42,7 @@
     NSString *markdown = @"<http://daringfireball.net>";
     NSString *html = @"<p><a href='http://daringfireball.net'>http://daringfireball.net</a></p>";
     
-    [self checkMarkdown:markdown againstHTML:html];
+    MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
 
@@ -53,50 +53,50 @@
 
 - (void) testBasicInlineLink
 {
-    [self checkMarkdown:@"[URL](/url/)" againstHTML:@"<p><a href=\"/url/\">URL</a></p>"];
+    MMAssertMarkdownEqualsHTML(@"[URL](/url/)", @"<p><a href=\"/url/\">URL</a></p>");
 }
 
 - (void) testInlineLinkWithSpans
 {
-    [self checkMarkdown:@"[***A Title***](/the-url/)" againstHTML:@"<p><a href=\"/the-url/\"><strong><em>A Title</em></strong></a></p>"];
+    MMAssertMarkdownEqualsHTML(@"[***A Title***](/the-url/)", @"<p><a href=\"/the-url/\"><strong><em>A Title</em></strong></a></p>");
 }
 
 - (void) testInlineLinkWithEscapedBracket
 {
-    [self checkMarkdown:@"[\\]](/)" againstHTML:@"<p><a href=\"/\">]</a></p>"];
+    MMAssertMarkdownEqualsHTML(@"[\\]](/)", @"<p><a href=\"/\">]</a></p>");
 }
 
 - (void) testInlineLinkWithNestedBrackets
 {
-    [self checkMarkdown:@"[ A [ title ] ](/foo)" againstHTML:@"<p><a href=\"/foo\"> A [ title ] </a></p>"];
+    MMAssertMarkdownEqualsHTML(@"[ A [ title ] ](/foo)", @"<p><a href=\"/foo\"> A [ title ] </a></p>");
 }
 
 - (void) testInlineLinkWithNestedParentheses
 {
-    [self checkMarkdown:@"[Apple](http://en.wikipedia.org/wiki/Apple_(disambiguation))"
-            againstHTML:@"<p><a href=\"http://en.wikipedia.org/wiki/Apple_(disambiguation)\">Apple</a></p>"];
+    MMAssertMarkdownEqualsHTML(@"[Apple](http://en.wikipedia.org/wiki/Apple_(disambiguation))",
+                               @"<p><a href=\"http://en.wikipedia.org/wiki/Apple_(disambiguation)\">Apple</a></p>");
 }
 
 - (void) testInlineLinkWithTitle
 {
-    [self checkMarkdown:@"[URL](/url \"title\")"
-            againstHTML:@"<p><a href=\"/url\" title=\"title\">URL</a></p>"];
+    MMAssertMarkdownEqualsHTML(@"[URL](/url \"title\")",
+                               @"<p><a href=\"/url\" title=\"title\">URL</a></p>");
 }
 
 - (void) testInlineLinkWithInlineLinkInside
 {
-    [self checkMarkdown:@"[ [URL](/blah) ](/url)"
-            againstHTML:@"<p><a href=\"/url\"> [URL](/blah) </a></p>"];
+    MMAssertMarkdownEqualsHTML(@"[ [URL](/blah) ](/url)",
+                               @"<p><a href=\"/url\"> [URL](/blah) </a></p>");
 }
 
 - (void) testInlineLinkWithNoHref
 {
-    [self checkMarkdown:@"[foo]()" againstHTML:@"<p><a href=\"\">foo</a></p>"];
+    MMAssertMarkdownEqualsHTML(@"[foo]()", @"<p><a href=\"\">foo</a></p>");
 }
 
 - (void) testNotAnInlineLink_loneBracket
 {
-    [self checkMarkdown:@"An empty [ by itself" againstHTML:@"<p>An empty [ by itself</p>"];
+    MMAssertMarkdownEqualsHTML(@"An empty [ by itself", @"<p>An empty [ by itself</p>");
 }
 
 
@@ -111,7 +111,7 @@
                           "\n"
                           "[1]: /blah";
     NSString *html = @"<p>Foo <a href=\"/blah\">bar</a>.</p>";
-    [self checkMarkdown:markdown againstHTML:html];
+    MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
 - (void) testReferenceLinkWithOneSpace
@@ -120,7 +120,7 @@
                           "\n"
                           "[1]: /blah";
     NSString *html = @"<p>Foo <a href=\"/blah\">bar</a>.</p>";
-    [self checkMarkdown:markdown againstHTML:html];
+    MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
 - (void) testReferenceLinkWithTitle
@@ -129,7 +129,7 @@
                           "\n"
                           "[1]: /blah \"blah\"";
     NSString *html = @"<p>Foo <a href=\"/blah\" title=\"blah\">bar</a>.</p>";
-    [self checkMarkdown:markdown againstHTML:html];
+    MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
 
