@@ -75,9 +75,19 @@
     MMAssertMarkdownEqualsHTML(@"*foo*", @"<p><em>foo</em></p>");
 }
 
+- (void) testEmAcrossNewline
+{
+    MMAssertMarkdownEqualsHTML(@"*Foo\nbar*", @"<p><em>Foo\nbar</em></p>");
+}
+
 - (void) testStrong
 {
     MMAssertMarkdownEqualsHTML(@"**foo**", @"<p><strong>foo</strong></p>");
+}
+
+- (void) testStrongAcrossNewline
+{
+    MMAssertMarkdownEqualsHTML(@"**Foo\nbar**", @"<p><strong>Foo\nbar</strong></p>");
 }
 
 - (void) testStrongEm

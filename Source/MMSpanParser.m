@@ -77,10 +77,34 @@
     self.openElements = [NSMutableArray array];
     
     MMSpanScanner *scanner = self.scanner;
-    while (![scanner atEndOfString])
+    
+    while (1)
     {
-        [self _parseNextLine];
-        [scanner advanceToNextLine];
+        while (![scanner atEndOfString])
+        {
+            [self _parseNextLine];
+            [scanner advanceToNextLine];
+        }
+        
+        // Backtrack if there are any open elements
+        if (self.openElements.count)
+        {
+            // Remove the open elements
+            MMElement *bottomElement = [self.openElements objectAtIndex:0];
+            [self.elements removeObjectIdenticalTo:bottomElement];
+            [self.openElements removeAllObjects];
+            
+            // Reset the location of the scanner
+            self.scanner.location = bottomElement.range.location + 1;
+            
+            // Add a text element for the skipped character
+            MMElement *text = [MMElement new];
+            text.type  = MMElementTypeNone;
+            text.range = NSMakeRange(bottomElement.range.location, 1);
+            [self.elements addObject:text];
+        }
+        else
+            break;
     }
     
     NSArray *elements = self.elements;
@@ -237,7 +261,7 @@
     [openElements removeLastObject];
 }
 
-- (BOOL) _canCloseStrongAndEm:(MMElement *)anElement
+- (BOOL) _canCloseStrong:(MMElement *)anElement
 {
     MMSpanScanner *scanner = self.scanner;
     
@@ -250,13 +274,34 @@
     if (![wordSet characterIsMember:[scanner previousCharacter]])
         return NO;
     
-    // Must have 3 *s or _s
-    for (NSUInteger idx=0; idx<3; idx++)
+    // Must have 2 *s or _s
+    for (NSUInteger idx=0; idx<2; idx++)
     {
         if ([scanner nextCharacter] != anElement.character)
             return NO;
         [scanner advance];
     }
+    
+    return YES;
+}
+
+- (BOOL) _canCloseEm:(MMElement *)anElement
+{
+    MMSpanScanner *scanner = self.scanner;
+    
+    // Can't be at the beginning of the line
+    if ([scanner atBeginningOfLine])
+        return NO;
+    
+    // Must follow the end of a word
+    NSCharacterSet *wordSet = [[NSCharacterSet whitespaceCharacterSet] invertedSet];
+    if (![wordSet characterIsMember:[scanner previousCharacter]])
+        return NO;
+    
+    // Must have a * or _
+    if ([scanner nextCharacter] != anElement.character)
+        return NO;
+    [scanner advance];
     
     return YES;
 }
@@ -279,8 +324,10 @@
 {
     switch (anElement.type)
     {
-        case MMElementTypeStrongAndEm:
-            return [self _canCloseStrongAndEm:anElement];
+        case MMElementTypeStrong:
+            return [self _canCloseStrong:anElement];
+        case MMElementTypeEm:
+            return [self _canCloseEm:anElement];
         case MMElementTypeCodeSpan:
             return [self _canCloseCodeSpan:anElement];
         default:
@@ -471,33 +518,52 @@
     return element;
 }
 
-- (MMElement *) _startStrongAndEm
+- (MMElement *) _startStrong
 {
     MMSpanScanner *scanner  = self.scanner;
     NSUInteger     startLoc = scanner.location;
     
-    // Must be at the beginning of a line...
-    if (![scanner atBeginningOfLine])
-    {
-        // ...or after a space
-        if ([scanner previousCharacter] != ' ')
-            return nil;
-    }
-    
-    // Must have 3 *s or _s
+    // Must have 2 *s or _s
     unichar character = [scanner nextCharacter];
     if (!(character == '*' || character == '_'))
         return nil;
     
-    for (NSUInteger idx=0; idx<3; idx++)
+    for (NSUInteger idx=0; idx<2; idx++)
     {
         if ([scanner nextCharacter] != character)
             return nil;
         [scanner advance];
     }
     
+    // Can't be at the end of a line or before a space
+    if ([[NSCharacterSet whitespaceAndNewlineCharacterSet] characterIsMember:[scanner nextCharacter]])
+        return nil;
+    
     MMElement *element = [MMElement new];
-    element.type      = MMElementTypeStrongAndEm;
+    element.type      = MMElementTypeStrong;
+    element.range     = NSMakeRange(startLoc, 0);
+    element.character = character;
+    
+    return element;
+}
+
+- (MMElement *) _startEm
+{
+    MMSpanScanner *scanner  = self.scanner;
+    NSUInteger     startLoc = scanner.location;
+    
+    // Must have 1 * or _
+    unichar character = [scanner nextCharacter];
+    if (!(character == '*' || character == '_'))
+        return nil;
+    [scanner advance];
+    
+    // Can't be at the end of a line or before a space
+    if ([[NSCharacterSet whitespaceAndNewlineCharacterSet] characterIsMember:[scanner nextCharacter]])
+        return nil;
+    
+    MMElement *element = [MMElement new];
+    element.type      = MMElementTypeEm;
     element.range     = NSMakeRange(startLoc, 0);
     element.character = character;
     
@@ -510,7 +576,13 @@
     MMElement *element;
     
     [scanner beginTransaction];
-    element = [self _startStrongAndEm];
+    element = [self _startStrong];
+    [scanner commitTransaction:element != nil];
+    if (element)
+        return element;
+    
+    [scanner beginTransaction];
+    element = [self _startEm];
     [scanner commitTransaction:element != nil];
     if (element)
         return element;

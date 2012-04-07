@@ -38,7 +38,8 @@ typedef enum
     MMElementTypeCodeBlock,
     MMElementTypeHorizontalRule,
     MMElementTypeHTML,
-    MMElementTypeStrongAndEm,
+    MMElementTypeStrong,
+    MMElementTypeEm,
     MMElementTypeCodeSpan,
     MMElementTypeLink,
     MMElementTypeEntity

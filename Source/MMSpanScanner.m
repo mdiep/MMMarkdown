@@ -242,6 +242,29 @@ NSString *__delimitersForCharacter(unichar character)
 
 //==================================================================================================
 #pragma mark -
+#pragma mark Public Properties
+//==================================================================================================
+
+- (void) setLocation:(NSUInteger)location
+{
+    // If the new location isn't a part of the current range, then find the range it belongs to.
+    if (!NSLocationInRange(location, self.currentLineRange))
+    {
+        __block NSUInteger index = 0;
+        [self.lineRanges enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop){
+            NSRange range = [obj rangeValue];
+            *stop = NSLocationInRange(location, range) || location == NSMaxRange(range);
+            index = idx;
+        }];
+        self.rangeIndex = index;
+    }
+    
+    _location = location;
+}
+
+
+//==================================================================================================
+#pragma mark -
 #pragma mark Private Properties
 //==================================================================================================
 
