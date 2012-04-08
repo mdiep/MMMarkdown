@@ -395,8 +395,8 @@
     
     MMElement *element = [MMElement new];
     element.type  = MMElementTypeLink;
-    element.range = NSMakeRange(startLoc, 0);
-    element.stringValue = linkText;
+    element.range = NSMakeRange(startLoc, scanner.location-startLoc);
+    element.href  = linkText;
     
     [self _addTextFromLocation:textLocation toLocation:NSMaxRange(linkRange) toElement:element];
     
@@ -496,16 +496,85 @@
     NSRange textRange = NSMakeRange(startLoc+1, length-2);
     
     // Find the ()
-    length = [scanner skipNestedBracketsWithDelimiter:'('];
-    if (length == 0)
+    if ([scanner nextCharacter] != '(')
         return nil;
+    [scanner advance];
     
-    NSRange urlRange = NSMakeRange(scanner.location-(length-1), length-2);
+    NSCharacterSet *boringChars = [[NSCharacterSet characterSetWithCharactersInString:@"() \t"] invertedSet];
+    NSUInteger      urlLocation = scanner.location;
+    NSUInteger      urlEnd      = urlLocation;
+    NSUInteger      level       = 1;
+    while (level > 0)
+    {
+        [scanner skipCharactersFromSet:boringChars];
+        if ([scanner atEndOfLine])
+            return nil;
+        urlEnd = scanner.location;
+        
+        unichar character = [scanner nextCharacter];
+        if (character == '(')
+        {
+            level += 1;
+        }
+        else if (character == ')')
+        {
+                level -= 1;
+        }
+        else if ([[NSCharacterSet whitespaceCharacterSet] characterIsMember:character])
+        {
+            if (level != 1)
+                return nil;
+            break;
+        }
+        urlEnd = scanner.location;
+        [scanner advance];
+    }
+    
+    NSUInteger titleLocation = NSNotFound;
+    NSUInteger titleEnd      = NSNotFound;
+    
+    // If the level is still 1, then we hit a space.
+    if (level == 1)
+    {
+        // skip the whitespace
+        [scanner skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet]];
+        
+        // make sure there's a "
+        if ([scanner nextCharacter] != '"')
+            return nil;
+        [scanner advance];
+        
+        titleLocation = scanner.location;
+        boringChars   = [[NSCharacterSet characterSetWithCharactersInString:@"\""] invertedSet];
+        while (1)
+        {
+            [scanner skipCharactersFromSet:boringChars];
+            
+            if ([scanner atEndOfLine])
+                return nil;
+            
+            [scanner advance];
+            if ([scanner nextCharacter] == ')')
+            {
+                titleEnd = scanner.location - 1;
+                [scanner advance];
+                break;
+            }
+        }
+    }
+    
+    NSRange urlRange = NSMakeRange(urlLocation, urlEnd-urlLocation);
     
     MMElement *element = [MMElement new];
     element.type  = MMElementTypeLink;
     element.range = NSMakeRange(startLoc, scanner.location-startLoc);
-    element.stringValue = [scanner.string substringWithRange:urlRange];
+    element.href  = [scanner.string substringWithRange:urlRange];
+    
+    if (titleLocation != NSNotFound)
+    {
+        NSRange titleRange = NSMakeRange(titleLocation, titleEnd-titleLocation);
+        element.stringValue = [scanner.string substringWithRange:titleRange];
+    }
     
     self.parseLinks = NO;
     NSArray *innerElements = [self _parseRange:textRange ofString:scanner.string];

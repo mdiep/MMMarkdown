@@ -76,6 +76,7 @@ static NSString * __MMStringFromElementType(MMElementType type)
 @synthesize character   = _character;
 @synthesize indentation = _indentation;
 @synthesize level       = _level;
+@synthesize href        = _href;
 @synthesize stringValue = _stringValue;
 
 @synthesize parent   = _parent;
