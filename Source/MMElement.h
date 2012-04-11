@@ -42,6 +42,7 @@ typedef enum
     MMElementTypeEm,
     MMElementTypeCodeSpan,
     MMElementTypeLink,
+    MMElementTypeDefinition,
     MMElementTypeEntity
 } MMElementType;
 
@@ -54,6 +55,7 @@ typedef enum
 @property (assign, nonatomic) NSUInteger     indentation;
 @property (assign, nonatomic) NSUInteger     level;
 @property (copy,   nonatomic) NSString      *href;
+@property (copy,   nonatomic) NSString      *identifier;
 @property (copy,   nonatomic) NSString      *stringValue;
 
 @property (assign, nonatomic) MMElement *parent;

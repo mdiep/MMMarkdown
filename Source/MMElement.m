@@ -60,6 +60,8 @@ static NSString * __MMStringFromElementType(MMElementType type)
             return @"link";
         case MMElementTypeEntity:
             return @"entity";
+        case MMElementTypeDefinition:
+            return @"definition";
         default:
             return @"unknown";
     }
@@ -77,6 +79,7 @@ static NSString * __MMStringFromElementType(MMElementType type)
 @synthesize indentation = _indentation;
 @synthesize level       = _level;
 @synthesize href        = _href;
+@synthesize identifier  = _identifier;
 @synthesize stringValue = _stringValue;
 
 @synthesize parent   = _parent;

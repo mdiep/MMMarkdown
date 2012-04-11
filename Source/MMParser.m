@@ -92,6 +92,8 @@
     [self _endTextSegment];
     [self _closeElements:self.openElements atLocation:markdown.length];
     
+    [self _updateLinksFromDefinitions];
+    
     MMDocument *document = self.document;
     self.scanner      = nil;
     self.document     = nil;
@@ -669,6 +671,12 @@
     if (element)
         return element;
     
+    [scanner beginTransaction];
+    element = [self _startLinkDefinition];
+    [scanner commitTransaction:element != nil];
+    if (element)
+        return element;
+    
     MMElement *topElement = [self.openElements lastObject];
     if (!topElement || [self _blockElementCanHaveParagraph:topElement])
     {
@@ -934,6 +942,63 @@
     return element;
 }
 
+- (MMElement *) _startLinkDefinition
+{
+    MMScanner *scanner = self.scanner;
+    NSUInteger location;
+    NSUInteger length;
+    
+    [scanner skipIndentationUpTo:3];
+    
+    // find the identifier
+    location = scanner.location;
+    length   = [scanner skipNestedBracketsWithDelimiter:'['];
+    if (length == 0)
+        return nil;
+    
+    NSRange idRange = NSMakeRange(location+1, length-2);
+    
+    // and the semicolon
+    if ([scanner nextCharacter] != ':')
+        return nil;
+    [scanner advance];
+    
+    // skip any whitespace
+    [scanner skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet]];
+    
+    // find the url
+    location = scanner.location;
+    [scanner skipCharactersFromSet:[[NSCharacterSet whitespaceCharacterSet] invertedSet]];
+    
+    NSRange urlRange = NSMakeRange(location, scanner.location-location);
+    
+    // skip trailing whitespace
+    [scanner skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet]];
+    
+    // check for a title
+    NSRange titleRange = [scanner skipDoubleQuotedString];
+    
+    // skip trailing whitespace
+    [scanner skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet]];
+    
+    // make sure we're at the end of the line
+    if (![scanner atEndOfLine])
+        return nil;
+    
+    MMElement *element = [MMElement new];
+    element.type  = MMElementTypeDefinition;
+    element.range = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
+    element.identifier = [scanner.string substringWithRange:idRange];
+    element.href       = [scanner.string substringWithRange:urlRange];
+    
+    if (titleRange.location != NSNotFound)
+    {
+        element.stringValue = [scanner.string substringWithRange:titleRange];
+    }
+    
+    return element;
+}
+
 - (MMElement *) _startNumberedList
 {
     MMScanner *scanner = self.scanner;
@@ -989,6 +1054,59 @@
     element.range = NSMakeRange(scanner.location, 0);
     
     return element;
+}
+
+- (void) _updateLinksFromDefinitions
+{
+    NSMutableArray      *references  = [NSMutableArray new];
+    NSMutableDictionary *definitions = [NSMutableDictionary new];
+    NSMutableArray      *queue       = [NSMutableArray new];
+    
+    [queue addObjectsFromArray:self.document.elements];
+    
+    // First, find the references and definitions
+    while (queue.count > 0)
+    {
+        MMElement *element = [queue objectAtIndex:0];
+        [queue removeObjectAtIndex:0];
+        [queue addObjectsFromArray:element.children];
+        
+        switch (element.type)
+        {
+            case MMElementTypeDefinition:
+                [definitions setObject:element forKey:[element.identifier lowercaseString]];
+                break;
+            case MMElementTypeLink:
+                if (element.identifier && !element.href)
+                {
+                    [references addObject:element];
+                }
+                break;
+            default:
+                break;
+        }
+    }
+    
+    // Set the hrefs for all the references
+    for (MMElement *link in references)
+    {
+        MMElement *definition = [definitions objectForKey:[link.identifier lowercaseString]];
+        
+        // If there's no definition, change the link to a text element and remove its children
+        if (!definition)
+        {
+            link.type = MMElementTypeNone;
+            while (link.children.count > 0)
+            {
+                [link removeLastChild];
+            }
+        }
+        // otherwise, set the href and title
+        {
+            link.href        = definition.href;
+            link.stringValue = definition.stringValue;
+        }
+    }
 }
 
 

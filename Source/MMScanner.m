@@ -26,6 +26,29 @@
 #import "MMScanner.h"
 
 
+static NSString *__delimitersForCharacter(unichar character)
+{
+    switch (character)
+    {
+        case '[':
+        case ']':
+            return @"[]";
+        case '(':
+        case ')':
+            return @"()";
+        case '<':
+        case '>':
+            return @"<>";
+        case '{':
+        case '}':
+            return @"{}";
+        default:
+            [NSException raise:@"Invalid delimiter character"
+                        format:@"Character '%C' is not a valid delimiter", character, nil];
+            return '\0';
+    }
+}
+
 @interface MMScanner ()
 @property (assign, nonatomic) NSUInteger startLocation;
 @property (assign, nonatomic) NSUInteger lineStartLocation;
@@ -172,6 +195,42 @@
     return idx;
 }
 
+- (NSRange) skipDoubleQuotedString
+{
+    if ([self nextCharacter] != '"')
+        return NSMakeRange(NSNotFound, 0);
+    
+    [self beginTransaction];
+    [self advance];
+    
+    NSRange result = NSMakeRange(self.location, 0);
+    
+    NSCharacterSet *boringChars = [[NSCharacterSet characterSetWithCharactersInString:@"\"\\"] invertedSet];
+    while (![self atEndOfLine])
+    {
+        [self skipCharactersFromSet:boringChars];
+        
+        switch ([self nextCharacter]) {
+            case '\\':
+                [self advance];
+                [self advance];
+                break;
+                
+            case '"':
+                result.length = self.location - result.location;
+                [self advance];
+                [self commitTransaction:YES];
+                return result;
+                
+            default:
+                break;
+        }
+    }
+    
+    [self commitTransaction:NO];
+    return NSMakeRange(NSNotFound, 0);
+}
+
 - (NSUInteger) skipIndentationUpTo:(NSUInteger)maxSpacesToSkip
 {
     NSUInteger skipped = 0;
@@ -196,6 +255,55 @@
     
     [self commitTransaction:skipped <= maxSpacesToSkip];
     return skipped;
+}
+
+- (NSUInteger) skipNestedBracketsWithDelimiter:(unichar)delimiter
+{
+    NSString *delimiters     = __delimitersForCharacter(delimiter);
+    unichar   openDelimiter  = [delimiters characterAtIndex:0];
+    unichar   closeDelimeter = [delimiters characterAtIndex:1];
+    
+    if ([self nextCharacter] != openDelimiter)
+        return 0;
+    
+    [self beginTransaction];
+    NSUInteger location = self.location;
+    [self advance];
+    
+    NSString       *specialChars = [NSString stringWithFormat:@"%@\\", delimiters];
+    NSCharacterSet *boringChars  = [[NSCharacterSet characterSetWithCharactersInString:specialChars] invertedSet];
+    NSUInteger      nestingLevel = 1;
+    
+    while (nestingLevel > 0)
+    {
+        if ([self atEndOfLine])
+        {
+            [self commitTransaction:NO];
+            return 0;
+        }
+        
+        [self skipCharactersFromSet:boringChars];
+        
+        unichar nextChar = [self nextCharacter];
+        [self advance];
+        
+        if (nextChar == openDelimiter)
+        {
+            nestingLevel++;
+        }
+        else if (nextChar == closeDelimeter)
+        {
+            nestingLevel--;
+        }
+        else if (nextChar == '\\')
+        {
+            // skip a second character after a backslash
+            [self advance];
+        }
+    }
+    
+    [self commitTransaction:YES];
+    return self.location - location;
 }
 
 - (NSUInteger) skipToEndOfLine

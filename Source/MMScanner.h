@@ -52,7 +52,9 @@
 
 - (NSUInteger) skipCharactersFromSet:(NSCharacterSet *)aSet;
 - (NSUInteger) skipCharactersFromSet:(NSCharacterSet *)aSet max:(NSUInteger)maxToSkip;
+- (NSRange)    skipDoubleQuotedString;
 - (NSUInteger) skipIndentationUpTo:(NSUInteger)maxSpacesToSkip;
+- (NSUInteger) skipNestedBracketsWithDelimiter:(unichar)delimiter;
 - (NSUInteger) skipToEndOfLine;
 
 @end

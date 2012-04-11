@@ -123,6 +123,15 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
+- (void) testReferenceLinkWithDifferentCapitalization
+{
+    NSString *markdown = @"[Foo][BaR]\n"
+                          "\n"
+                          "[bAr]: /blah";
+    NSString *html = @"<p><a href=\"/blah\">Foo</a></p>";
+    MMAssertMarkdownEqualsHTML(markdown, html);
+}
+
 - (void) testReferenceLinkWithTitle
 {
     NSString *markdown = @"Foo [bar][1].\n"
@@ -130,6 +139,11 @@
                           "[1]: /blah \"blah\"";
     NSString *html = @"<p>Foo <a href=\"/blah\" title=\"blah\">bar</a>.</p>";
     MMAssertMarkdownEqualsHTML(markdown, html);
+}
+
+- (void) testReferenceLinkWithNoReference
+{
+    MMAssertMarkdownEqualsHTML(@"[Foo][bar]", @"<p>[Foo][bar]</p>");
 }
 
 

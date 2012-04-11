@@ -26,7 +26,7 @@
 #import "MMSpanScanner.h"
 
 
-NSString *__delimitersForCharacter(unichar character)
+static NSString *__delimitersForCharacter(unichar character)
 {
     switch (character)
     {

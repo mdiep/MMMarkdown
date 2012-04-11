@@ -482,7 +482,7 @@
     return element;
 }
 
-- (MMElement *) _startLink
+- (MMElement *) _startInlineLink
 {
     MMSpanScanner *scanner  = self.scanner;
     NSUInteger     startLoc = scanner.location;
@@ -587,6 +587,50 @@
     return element;
 }
 
+- (MMElement *) _startReferenceLink
+{
+    MMSpanScanner *scanner  = self.scanner;
+    NSUInteger     startLoc = scanner.location;
+    NSUInteger     length;
+    
+    // Find the []
+    length = [scanner skipNestedBracketsWithDelimiter:'['];
+    if (length == 0)
+        return nil;
+    
+    NSRange textRange = NSMakeRange(startLoc+1, length-2);
+    
+    // Skip optional whitespace
+    if ([scanner nextCharacter] == ' ')
+        [scanner advance];
+    
+    // Look for the second []
+    NSUInteger nameLocation;
+    nameLocation = scanner.location;
+    length       = [scanner skipNestedBracketsWithDelimiter:'['];
+    if (length == 0)
+        return nil;
+    
+    NSRange idRange = NSMakeRange(nameLocation+1, length-2);
+    if (idRange.length == 0)
+        idRange = textRange;
+    
+    MMElement *element = [MMElement new];
+    element.type  = MMElementTypeLink;
+    element.range = NSMakeRange(startLoc, scanner.location-startLoc);
+    element.identifier = [scanner.string substringWithRange:idRange];
+    
+    self.parseLinks = NO;
+    NSArray *innerElements = [self _parseRange:textRange ofString:scanner.string];
+    for (MMElement *inner in innerElements)
+    {
+        [element addChild:inner];
+    }
+    self.parseLinks = YES;
+    
+    return element;
+}
+
 - (MMElement *) _startStrong
 {
     MMSpanScanner *scanner  = self.scanner;
@@ -671,7 +715,13 @@
             return element;
         
         [scanner beginTransaction];
-        element = [self _startLink];
+        element = [self _startInlineLink];
+        [scanner commitTransaction:element != nil];
+        if (element)
+            return element;
+        
+        [scanner beginTransaction];
+        element = [self _startReferenceLink];
         [scanner commitTransaction:element != nil];
         if (element)
             return element;
