@@ -45,6 +45,12 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
+- (void) testAutomaticLinkWithAmpersand
+{
+    MMAssertMarkdownEqualsHTML(@"<http://example.com/?a=1&b=1>",
+                               @"<p><a href=\"http://example.com/?a=1&amp;b=1\">http://example.com/?a=1&amp;b=1</a></p>");
+}
+
 
 //==================================================================================================
 #pragma mark -

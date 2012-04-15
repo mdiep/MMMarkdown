@@ -398,7 +398,33 @@
     element.range = NSMakeRange(startLoc, scanner.location-startLoc);
     element.href  = linkText;
     
-    [self _addTextFromLocation:textLocation toLocation:NSMaxRange(linkRange) toElement:element];
+    // Do the text the hard way to take care of ampersands
+    NSRange textRange = NSMakeRange(textLocation, NSMaxRange(linkRange)-textLocation);
+    NSCharacterSet *ampersands = [NSCharacterSet characterSetWithCharactersInString:@"&"];
+    while (textRange.length > 0)
+    {
+        NSRange result = [scanner.string rangeOfCharacterFromSet:ampersands
+                                                         options:0
+                                                           range:textRange];
+        
+        if (result.location != NSNotFound)
+        {
+            [self _addTextFromLocation:textRange.location toLocation:result.location toElement:element];
+            
+            MMElement *ampersand = [MMElement new];
+            ampersand.type  = MMElementTypeEntity;
+            ampersand.range = NSMakeRange(textRange.location, 1);
+            ampersand.stringValue = @"&amp;";
+            [element addChild:ampersand];
+            
+            textRange = NSMakeRange(result.location+1, NSMaxRange(textRange)-(result.location+1));
+        }
+        else
+        {
+            [self _addTextFromLocation:textRange.location toLocation:NSMaxRange(textRange) toElement:element];
+            break;
+        }
+    }
     
     return element;
 }
