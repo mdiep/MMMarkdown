@@ -70,6 +70,16 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
+- (void) testCodeSpans_withAmpersand
+{
+    MMAssertMarkdownEqualsHTML(@"`a&b`", @"<p><code>a&amp;b</code></p>");
+}
+
+- (void) testCodeSpans_withAngleBrackets
+{
+    MMAssertMarkdownEqualsHTML(@"`<html>`", @"<p><code>&lt;html&gt;</code></p>");
+}
+
 - (void) testEm
 {
     MMAssertMarkdownEqualsHTML(@"*foo*", @"<p><em>foo</em></p>");

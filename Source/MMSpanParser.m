@@ -454,18 +454,19 @@
     [scanner skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet]];
     
     // Skip to the next '`'
-    NSCharacterSet *nonTickCharacters = [[NSCharacterSet characterSetWithCharactersInString:@"`"] invertedSet];
-    NSUInteger      textLocation      = scanner.location;
+    NSCharacterSet *boringChars  = [[NSCharacterSet characterSetWithCharactersInString:@"`&<>"] invertedSet];
+    NSUInteger      textLocation = scanner.location;
     while (![scanner atEndOfString])
     {
         // Skip other characters
-        [scanner skipCharactersFromSet:nonTickCharacters];
+        [scanner skipCharactersFromSet:boringChars];
         
         // Add the code as text
         [self _addTextFromLocation:textLocation toLocation:scanner.location toElement:element];
         
+        unichar nextChar = [scanner nextCharacter];
         // Did we find the closing `?
-        if ([scanner nextCharacter] == '`')
+        if (nextChar == '`')
         {
             if (element.level == 2)
             {
@@ -485,8 +486,40 @@
             }
             break;
         }
+        // Or is it an entity
+        else if (nextChar == '&')
+        {
+            MMElement *entity = [MMElement new];
+            entity.type  = MMElementTypeEntity;
+            entity.range = NSMakeRange(scanner.location, 1);
+            entity.stringValue = @"&amp;";
+            [element addChild:entity];
+            [scanner advance];
+        }
+        else if (nextChar == '<')
+        {
+            MMElement *entity = [MMElement new];
+            entity.type  = MMElementTypeEntity;
+            entity.range = NSMakeRange(scanner.location, 1);
+            entity.stringValue = @"&lt;";
+            [element addChild:entity];
+            [scanner advance];
+        }
+        else if (nextChar == '>')
+        {
+            MMElement *entity = [MMElement new];
+            entity.type  = MMElementTypeEntity;
+            entity.range = NSMakeRange(scanner.location, 1);
+            entity.stringValue = @"&gt;";
+            [element addChild:entity];
+            [scanner advance];
+        }
+        // Or did we hit the end of the line?
+        else if ([scanner atEndOfLine])
+        {
+            [scanner advanceToNextLine];
+        }
         
-        [scanner advanceToNextLine];
         textLocation = scanner.location;
     }
     
