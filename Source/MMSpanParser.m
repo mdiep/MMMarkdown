@@ -563,12 +563,19 @@
         }
     }
     
-    NSRange urlRange = NSMakeRange(urlLocation, urlEnd-urlLocation);
+    NSRange   urlRange = NSMakeRange(urlLocation, urlEnd-urlLocation);
+    NSString *href     = [scanner.string substringWithRange:urlRange];
+    
+    // If the URL is surrounded by angle brackets, ditch them
+    if ([href hasPrefix:@"<"] && [href hasSuffix:@">"])
+    {
+        href = [href substringWithRange:NSMakeRange(1, href.length-2)];
+    }
     
     MMElement *element = [MMElement new];
     element.type  = MMElementTypeLink;
     element.range = NSMakeRange(startLoc, scanner.location-startLoc);
-    element.href  = [scanner.string substringWithRange:urlRange];
+    element.href  = href;
     
     if (titleLocation != NSNotFound)
     {

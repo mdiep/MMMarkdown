@@ -77,6 +77,11 @@
                                @"<p><a href=\"http://en.wikipedia.org/wiki/Apple_(disambiguation)\">Apple</a></p>");
 }
 
+- (void) testInlineLinkWithURLInAngleBrackets
+{
+    MMAssertMarkdownEqualsHTML(@"[Foo](<bar>)", @"<p><a href=\"bar\">Foo</a></p>");
+}
+
 - (void) testInlineLinkWithTitle
 {
     MMAssertMarkdownEqualsHTML(@"[URL](/url \"title\")",
