@@ -85,6 +85,16 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
+- (void) testCodeBlocks_withAmpersand
+{
+    MMAssertMarkdownEqualsHTML(@"    a&b", @"<pre><code>a&amp;b\n</code></pre>");
+}
+
+- (void) testCodeBlocks_withAngleBrackets
+{
+    MMAssertMarkdownEqualsHTML(@"    <html>", @"<pre><code>&lt;html&gt;\n</code></pre>");
+}
+
 - (void) testCodeBlocks_doNotParseSpansBeforeAmpersand
 {
     // Code blocks handle text segments on their own. But there was a bug where the text in a code

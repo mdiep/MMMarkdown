@@ -33,6 +33,21 @@
 #import "MMSpanParser.h"
 #import "MMTextSegment.h"
 
+static NSString * __HTMLEntityForCharacter(unichar character)
+{
+    switch (character)
+    {
+        case '&':
+            return @"&amp;";
+        case '<':
+            return @"&lt;";
+        case '>':
+            return @"&gt;";
+        default:
+            return @"";
+    }
+}
+
 @interface MMParser ()
 @property (strong, nonatomic) MMSpanParser   *spanParser;
 @property (strong, nonatomic) MMScanner      *scanner;
@@ -184,19 +199,51 @@
         // Add the text manually here to avoid span parsing
         for (NSValue *value in self.textSegment.ranges)
         {
-            MMElement *line = [MMElement new];
-            line.type  = MMElementTypeNone;
-            line.range = [value rangeValue];
-            [anElement addChild:line];
+            NSRange range = [value rangeValue];
             
-            // Add a newline if this isn't just a blank line
-            if (line.range.length != 0)
+            // &, <, and > need to be escaped
+            NSCharacterSet *entities = [NSCharacterSet characterSetWithCharactersInString:@"&<>"];
+            while (range.length > 0)
             {
-                MMElement *newline = [MMElement new];
-                newline.type  = MMElementTypeNone;
-                newline.range = NSMakeRange(0, 0);
-                [anElement addChild:newline];
+                NSRange result    = [scanner.string rangeOfCharacterFromSet:entities options:0 range:range];
+                NSRange textRange = result.location == NSNotFound ? range : NSMakeRange(range.location, result.location-range.location);
+                
+                // Add the text that was skipped over
+                if (textRange.length > 0)
+                {
+                    MMElement *text = [MMElement new];
+                    text.type  = MMElementTypeNone;
+                    text.range = textRange;
+                    [anElement addChild:text];
+                }
+                
+                // Add the entity
+                if (result.location != NSNotFound)
+                {
+                    unichar    character = [scanner.string characterAtIndex:result.location];
+                    MMElement *entity    = [MMElement new];
+                    entity.type  = MMElementTypeEntity;
+                    entity.range = result;
+                    entity.stringValue = __HTMLEntityForCharacter(character);
+                    [anElement addChild:entity];
+                }
+                
+                // Adjust the range
+                if (result.location != NSNotFound)
+                {
+                    range = NSMakeRange(NSMaxRange(result), NSMaxRange(range)-NSMaxRange(result));
+                }
+                else
+                {
+                    range = NSMakeRange(NSMaxRange(textRange), NSMaxRange(range)-NSMaxRange(textRange));
+                }
             }
+            
+            // Add a newline
+            MMElement *newline = [MMElement new];
+            newline.type  = MMElementTypeNone;
+            newline.range = NSMakeRange(0, 0);
+            [anElement addChild:newline];
         }
         self.textSegment = [MMTextSegment segmentWithString:self.document.markdown];
         
