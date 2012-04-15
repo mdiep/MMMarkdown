@@ -976,7 +976,18 @@
     [scanner skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet]];
     
     // check for a title
-    NSRange titleRange = [scanner skipDoubleQuotedString];
+    NSRange titleRange = NSMakeRange(NSNotFound, 0);
+    if ([scanner nextCharacter] == '"')
+    {
+        [scanner advance];
+        NSUInteger titleLocation = scanner.location;
+        NSUInteger titleLength   = [scanner skipToLastCharacterOfLine];
+        if ([scanner nextCharacter] == '"')
+        {
+            [scanner advance];
+            titleRange = NSMakeRange(titleLocation, titleLength);
+        }
+    }
     
     // skip trailing whitespace
     [scanner skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet]];

@@ -147,6 +147,15 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
+- (void) testReferenceLinkWithQuoteInTitle
+{
+    NSString *markdown = @"[Foo][]\n"
+                          "\n"
+                          "[foo]: /bar \"a \" in the title\"";
+    NSString *html = @"<p><a href=\"/bar\" title=\"a &quot; in the title\">Foo</a></p>";
+    MMAssertMarkdownEqualsHTML(markdown, html);
+}
+
 - (void) testReferenceLinkWithNoReference
 {
     MMAssertMarkdownEqualsHTML(@"[Foo][bar]", @"<p>[Foo][bar]</p>");

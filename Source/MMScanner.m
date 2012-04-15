@@ -195,42 +195,6 @@ static NSString *__delimitersForCharacter(unichar character)
     return idx;
 }
 
-- (NSRange) skipDoubleQuotedString
-{
-    if ([self nextCharacter] != '"')
-        return NSMakeRange(NSNotFound, 0);
-    
-    [self beginTransaction];
-    [self advance];
-    
-    NSRange result = NSMakeRange(self.location, 0);
-    
-    NSCharacterSet *boringChars = [[NSCharacterSet characterSetWithCharactersInString:@"\"\\"] invertedSet];
-    while (![self atEndOfLine])
-    {
-        [self skipCharactersFromSet:boringChars];
-        
-        switch ([self nextCharacter]) {
-            case '\\':
-                [self advance];
-                [self advance];
-                break;
-                
-            case '"':
-                result.length = self.location - result.location;
-                [self advance];
-                [self commitTransaction:YES];
-                return result;
-                
-            default:
-                break;
-        }
-    }
-    
-    [self commitTransaction:NO];
-    return NSMakeRange(NSNotFound, 0);
-}
-
 - (NSUInteger) skipIndentationUpTo:(NSUInteger)maxSpacesToSkip
 {
     NSUInteger skipped = 0;
@@ -311,6 +275,13 @@ static NSString *__delimitersForCharacter(unichar character)
     NSUInteger length = self.lineRange.length;
     self.location          = NSMaxRange(self.lineRange);
     self.lineStartLocation = self.location;
+    return length;
+}
+
+- (NSUInteger) skipToLastCharacterOfLine
+{
+    NSUInteger length = self.lineRange.length - 1;
+    self.location = NSMaxRange(self.lineRange) - 1;
     return length;
 }
 
