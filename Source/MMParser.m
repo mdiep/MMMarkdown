@@ -89,8 +89,12 @@
         [scanner advanceToNextLine];
     }
     
-    [self _endTextSegment];
-    [self _closeElements:self.openElements atLocation:markdown.length];
+    // Use all the check methods so that they have a chance to process their contents
+    NSArray *elementsToClose = [self _checkOpenElements];
+    NSAssert([elementsToClose isEqual:self.openElements],
+             @"All elements should be closed at the end of the document");
+    [self _closeElements:elementsToClose atLocation:scanner.location];
+    [self _removeTrailingBlankLinesFromElements:elementsToClose];
     
     [self _updateLinksFromDefinitions];
     
@@ -167,7 +171,7 @@
     
     // Code blocks end when there's text that's at an indentation that's less than 4.
     // Blank lines do not end a code block.
-    if (indentation < 4 && ![scanner atEndOfLine])
+    if ([scanner atEndOfString] || (indentation < 4 && ![scanner atEndOfLine]))
     {
         // Remove trailing blank lines
         NSValue *lastRange = [self.textSegment.ranges lastObject];
@@ -224,6 +228,10 @@
 - (BOOL) _checkListItemElement:(MMElement *)anElement makeChanges:(BOOL)makeChangesFlag
 {
     MMScanner *scanner = self.scanner;
+    
+    // If at the end of the document, the list is definitely over
+    if ([scanner atEndOfString])
+        return NO;
     
     // Make sure there's enough indentation
     NSUInteger indentation = [scanner skipIndentationUpTo:anElement.parent.indentation];
@@ -373,8 +381,11 @@
     if (item)
         return YES;
     
-    // Check for a new list item
+    // If at the end of the document, the list is definitely over
+    if ([scanner atEndOfString])
+        return NO;
     
+    // Check for a new list item
     [scanner skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet]];
     
     unichar nextChar = [scanner nextCharacter];

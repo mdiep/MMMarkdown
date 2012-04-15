@@ -120,7 +120,7 @@ static NSString *__delimitersForCharacter(unichar character)
 
 - (BOOL) atEndOfLine
 {
-    return self.lineRange.length == 0;
+    return self.lineRange.length == 0 || [self atEndOfString];
 }
 
 - (BOOL) atEndOfString

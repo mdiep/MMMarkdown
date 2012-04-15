@@ -85,6 +85,14 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
+- (void) testCodeBlocks_doNotParseSpansBeforeAmpersand
+{
+    // Code blocks handle text segments on their own. But there was a bug where the text in a code
+    // block would be parsed if the block extended to the end of the document.
+    MMAssertMarkdownEqualsHTML(@"    [foo](bar)",
+                               @"<pre><code>[foo](bar)\n</code></pre>");
+}
+
 
 //==================================================================================================
 #pragma mark -
