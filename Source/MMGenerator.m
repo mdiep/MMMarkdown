@@ -37,6 +37,10 @@ static NSString * __HTMLEscapedString(NSString *aString)
 {
     NSMutableString *result = [aString mutableCopy];
     
+    [result replaceOccurrencesOfString:@"&"
+                            withString:@"&amp;"
+                               options:NSLiteralSearch
+                                 range:NSMakeRange(0, result.length)];
     [result replaceOccurrencesOfString:@"\""
                             withString:@"&quot;"
                                options:NSLiteralSearch
@@ -75,9 +79,9 @@ static NSString * __HTMLStartTagForElement(MMElement *anElement)
             if (anElement.stringValue != nil)
             {
                 return [NSString stringWithFormat:@"<a title=\"%@\" href=\"%@\">",
-                        __HTMLEscapedString(anElement.stringValue), anElement.href];
+                        __HTMLEscapedString(anElement.stringValue), __HTMLEscapedString(anElement.href)];
             }
-            return [NSString stringWithFormat:@"<a href=\"%@\">", anElement.href];
+            return [NSString stringWithFormat:@"<a href=\"%@\">", __HTMLEscapedString(anElement.href)];
         case MMElementTypeEntity:
             return anElement.stringValue;
         default:

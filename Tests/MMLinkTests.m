@@ -94,6 +94,11 @@
                                @"<p><a href=\"/bar\" title=\"a &quot; in the title\">Foo</a></p>");
 }
 
+- (void) testInlineLinkWithAmpersandInTitle
+{
+    MMAssertMarkdownEqualsHTML(@"[Foo](bar \"&baz\")", @"<p><a href=\"bar\" title=\"&amp;baz\">Foo</a></p>");
+}
+
 - (void) testInlineLinkWithInlineLinkInside
 {
     MMAssertMarkdownEqualsHTML(@"[ [URL](/blah) ](/url)",
