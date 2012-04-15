@@ -83,6 +83,12 @@
                                @"<p><a href=\"/url\" title=\"title\">URL</a></p>");
 }
 
+- (void) testInlineLinkWithQuoteInTitle
+{
+    MMAssertMarkdownEqualsHTML(@"[Foo](/bar \"a \" in the title\")",
+                               @"<p><a href=\"/bar\" title=\"a &quot; in the title\">Foo</a></p>");
+}
+
 - (void) testInlineLinkWithInlineLinkInside
 {
     MMAssertMarkdownEqualsHTML(@"[ [URL](/blah) ](/url)",

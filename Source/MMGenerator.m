@@ -33,6 +33,18 @@
 // is multplied by it to create an NSMutableString with an initial capacity.
 static const Float64 kHTMLDocumentLengthMultiplier = 1.25;
 
+static NSString * __HTMLEscapedString(NSString *aString)
+{
+    NSMutableString *result = [aString mutableCopy];
+    
+    [result replaceOccurrencesOfString:@"\""
+                            withString:@"&quot;"
+                               options:NSLiteralSearch
+                                 range:NSMakeRange(0, result.length)];
+    
+    return result;
+}
+
 static NSString * __HTMLStartTagForElement(MMElement *anElement)
 {
     switch (anElement.type)
@@ -63,7 +75,7 @@ static NSString * __HTMLStartTagForElement(MMElement *anElement)
             if (anElement.stringValue != nil)
             {
                 return [NSString stringWithFormat:@"<a title=\"%@\" href=\"%@\">",
-                        anElement.stringValue, anElement.href];
+                        __HTMLEscapedString(anElement.stringValue), anElement.href];
             }
             return [NSString stringWithFormat:@"<a href=\"%@\">", anElement.href];
         case MMElementTypeEntity:
