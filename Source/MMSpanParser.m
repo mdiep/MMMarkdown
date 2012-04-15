@@ -669,6 +669,9 @@
     // Skip optional whitespace
     if ([scanner nextCharacter] == ' ')
         [scanner advance];
+    // or possible newline
+    else if ([scanner atEndOfLine])
+        [scanner advanceToNextLine];
     
     // Look for the second []
     NSUInteger nameLocation;

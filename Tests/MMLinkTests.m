@@ -145,6 +145,16 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
+- (void) testReferenceLinkWithNewline
+{
+    NSString *markdown = @"[Foo]\n"
+                          "[bar]\n"
+                          "\n"
+                          "[bar]: /blah";
+    NSString *html = @"<p><a href=\"/blah\">Foo</a></p>";
+    MMAssertMarkdownEqualsHTML(markdown, html);
+}
+
 - (void) testReferenceLinkWithDifferentCapitalization
 {
     NSString *markdown = @"[Foo][BaR]\n"
