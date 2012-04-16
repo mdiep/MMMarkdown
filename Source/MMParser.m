@@ -468,8 +468,15 @@ static NSString * __HTMLEntityForCharacter(unichar character)
 {
     MMScanner *scanner = self.scanner;
     
+    // Skip whitespace if it's the only thing on the line
+    [scanner beginTransaction];
+    [scanner skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet]];
     if ([scanner atEndOfLine])
+    {
+        [scanner commitTransaction:YES];
         return NO;
+    }
+    [scanner commitTransaction:NO];
     
     return YES;
 }

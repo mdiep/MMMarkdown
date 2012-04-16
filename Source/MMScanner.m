@@ -169,6 +169,9 @@ static NSString *__delimitersForCharacter(unichar character)
 
 - (NSUInteger) skipCharactersFromSet:(NSCharacterSet *)aSet
 {
+    if ([self atEndOfLine])
+        return 0;
+    
     NSRange range = [self.string rangeOfCharacterFromSet:[aSet invertedSet]
                                                  options:0
                                                    range:self.lineRange];

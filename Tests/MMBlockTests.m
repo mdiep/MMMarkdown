@@ -129,5 +129,10 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
+- (void) testParagraphs_blankLineHasSpaces
+{
+    MMAssertMarkdownEqualsHTML(@"A\n \nB", @"<p>A</p><p>B</p>");
+}
+
 
 @end
