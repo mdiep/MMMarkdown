@@ -623,7 +623,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     // elements may use the blank lines in deciding what to be.
     [self _removeTrailingBlankLinesFromElements:elementsToClose];
     
-    [self.textSegment addRange:self.scanner.lineRange];
+    [self.textSegment addRange:self.scanner.currentRange];
 }
 
 - (void) _endTextSegment
@@ -810,7 +810,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     
     MMElement *textElement = [MMElement new];
     textElement.type  = MMElementTypeNone;
-    textElement.range = [scanner lineRange];
+    textElement.range = [scanner currentRange];
     
     [scanner skipToEndOfLine];
     

@@ -27,11 +27,11 @@
 
 
 #import "MMElement.h"
-#import "MMSpanScanner.h"
+#import "MMScanner.h"
 #import "MMTextSegment.h"
 
 @interface MMSpanParser ()
-@property (strong, nonatomic) MMSpanScanner  *scanner;
+@property (strong, nonatomic) MMScanner      *scanner;
 @property (strong, nonatomic) NSMutableArray *elements;
 @property (strong, nonatomic) NSMutableArray *openElements;
 
@@ -72,11 +72,11 @@
 
 - (NSArray *) parseTextSegment:(MMTextSegment *)aTextSegment
 {
-    self.scanner      = [MMSpanScanner scannerWithString:aTextSegment.string lineRanges:aTextSegment.ranges];
+    self.scanner      = [MMScanner scannerWithString:aTextSegment.string lineRanges:aTextSegment.ranges];
     self.elements     = [NSMutableArray array];
     self.openElements = [NSMutableArray array];
     
-    MMSpanScanner *scanner = self.scanner;
+    MMScanner *scanner = self.scanner;
     
     while (1)
     {
@@ -123,12 +123,12 @@
 - (NSArray *) _parseRange:(NSRange)aRange ofString:(NSString *)aString
 {
     // Save the state
-    MMSpanScanner  *scanner      = self.scanner;
+    MMScanner      *scanner      = self.scanner;
     NSMutableArray *elements     = self.elements;
     NSMutableArray *openElements = self.openElements;
     
     NSArray *lineRanges = [NSArray arrayWithObject:[NSValue valueWithRange:aRange]];
-    self.scanner      = [MMSpanScanner scannerWithString:aString lineRanges:lineRanges];
+    self.scanner      = [MMScanner scannerWithString:aString lineRanges:lineRanges];
     self.elements     = [NSMutableArray new];
     self.openElements = [NSMutableArray new];
     
@@ -144,7 +144,7 @@
 
 - (void) _parseNextLine
 {
-    MMSpanScanner *scanner = self.scanner;
+    MMScanner *scanner = self.scanner;
     
     NSCharacterSet *specialChars = [NSCharacterSet characterSetWithCharactersInString:@"\\`*_<&["];
     NSCharacterSet *boringChars  = [specialChars invertedSet];
@@ -263,7 +263,7 @@
 
 - (BOOL) _canCloseStrong:(MMElement *)anElement
 {
-    MMSpanScanner *scanner = self.scanner;
+    MMScanner *scanner = self.scanner;
     
     // Can't be at the beginning of the line
     if ([scanner atBeginningOfLine])
@@ -287,7 +287,7 @@
 
 - (BOOL) _canCloseEm:(MMElement *)anElement
 {
-    MMSpanScanner *scanner = self.scanner;
+    MMScanner *scanner = self.scanner;
     
     // Can't be at the beginning of the line
     if ([scanner atBeginningOfLine])
@@ -308,7 +308,7 @@
 
 - (BOOL) _canCloseCodeSpan:(MMElement *)anElement
 {
-    MMSpanScanner *scanner = self.scanner;
+    MMScanner *scanner = self.scanner;
     
     for (NSUInteger idx=0; idx<anElement.level; idx++)
     {
@@ -337,7 +337,7 @@
 
 - (MMElement *) _checkOpenElements
 {
-    MMSpanScanner *scanner = self.scanner;
+    MMScanner *scanner = self.scanner;
     
     for (MMElement *element in [self.openElements reverseObjectEnumerator])
     {
@@ -369,8 +369,8 @@
 
 - (MMElement *) _startAutomaticLink
 {
-    MMSpanScanner *scanner  = self.scanner;
-    NSUInteger     startLoc = scanner.location;
+    MMScanner  *scanner  = self.scanner;
+    NSUInteger  startLoc = scanner.location;
     
     // Leading <
     if ([scanner nextCharacter] != '<')
@@ -431,8 +431,8 @@
 
 - (MMElement *) _startCodeSpan
 {
-    MMSpanScanner *scanner  = self.scanner;
-    NSUInteger     startLoc = scanner.location;
+    MMScanner  *scanner  = self.scanner;
+    NSUInteger  startLoc = scanner.location;
     
     if ([scanner nextCharacter] != '`')
         return nil;
@@ -543,9 +543,9 @@
 
 - (MMElement *) _startInlineLink
 {
-    MMSpanScanner *scanner  = self.scanner;
-    NSUInteger     startLoc = scanner.location;
-    NSUInteger     length;
+    MMScanner  *scanner  = self.scanner;
+    NSUInteger  startLoc = scanner.location;
+    NSUInteger  length;
     
     // Find the []
     length = [scanner skipNestedBracketsWithDelimiter:'['];
@@ -655,9 +655,9 @@
 
 - (MMElement *) _startReferenceLink
 {
-    MMSpanScanner *scanner  = self.scanner;
-    NSUInteger     startLoc = scanner.location;
-    NSUInteger     length;
+    MMScanner  *scanner  = self.scanner;
+    NSUInteger  startLoc = scanner.location;
+    NSUInteger  length;
     
     // Find the []
     length = [scanner skipNestedBracketsWithDelimiter:'['];
@@ -702,8 +702,8 @@
 
 - (MMElement *) _startStrong
 {
-    MMSpanScanner *scanner  = self.scanner;
-    NSUInteger     startLoc = scanner.location;
+    MMScanner  *scanner  = self.scanner;
+    NSUInteger  startLoc = scanner.location;
     
     // Must have 2 *s or _s
     unichar character = [scanner nextCharacter];
@@ -731,8 +731,8 @@
 
 - (MMElement *) _startEm
 {
-    MMSpanScanner *scanner  = self.scanner;
-    NSUInteger     startLoc = scanner.location;
+    MMScanner  *scanner  = self.scanner;
+    NSUInteger  startLoc = scanner.location;
     
     // Must have 1 * or _
     unichar character = [scanner nextCharacter];
@@ -754,7 +754,7 @@
 
 - (MMElement *) _startNewElement
 {
-    MMSpanScanner *scanner = self.scanner;
+    MMScanner *scanner = self.scanner;
     MMElement *element;
     
     [scanner beginTransaction];
@@ -801,7 +801,7 @@
 
 - (MMElement *) _escapeAmpersand
 {
-    MMSpanScanner *scanner = self.scanner;
+    MMScanner *scanner = self.scanner;
     
     if ([scanner nextCharacter] != '&')
         return nil;
@@ -830,7 +830,7 @@
 
 - (MMElement *) _escapeLeftAngleBracket
 {
-    MMSpanScanner *scanner = self.scanner;
+    MMScanner *scanner = self.scanner;
     
     if ([scanner nextCharacter] != '<')
         return nil;
@@ -853,7 +853,7 @@
 
 - (MMElement *) _newEscapedEntity
 {
-    MMSpanScanner *scanner = self.scanner;
+    MMScanner *scanner = self.scanner;
     MMElement *element;
     
     [scanner beginTransaction];

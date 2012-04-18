@@ -28,14 +28,22 @@
 
 @interface MMScanner : NSObject
 
+// Constant info
 @property (strong, nonatomic, readonly) NSString *string;
+@property (copy,   nonatomic, readonly) NSArray  *lineRanges;
 
+// Changing
 @property (assign, nonatomic, readonly) NSUInteger startLocation;
-@property (assign, nonatomic, readonly) NSRange    lineRange;
+@property (assign, nonatomic, readonly) NSRange    currentRange;
+
+// Settable
 @property (assign, nonatomic) NSUInteger location;
 
 + (id) scannerWithString:(NSString *)aString;
 - (id) initWithString:(NSString *)aString;
+
++ (id) scannerWithString:(NSString *)aString lineRanges:(NSArray *)theLineRanges;
+- (id) initWithString:(NSString *)aString lineRanges:(NSArray *)theLineRanges;
 
 - (void) beginTransaction;
 - (void) commitTransaction:(BOOL)shouldSave;
@@ -44,6 +52,7 @@
 - (BOOL) atEndOfLine;
 - (BOOL) atEndOfString;
 
+- (unichar) previousCharacter;
 - (unichar) nextCharacter;
 - (NSString *) substringBeforeCharacter:(unichar)character;
 
