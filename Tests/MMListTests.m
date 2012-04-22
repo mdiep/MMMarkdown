@@ -89,8 +89,8 @@
                           "- Two\n"
                           "- Three\n";
     NSString *html = @"<ul><li><p>One</p><p>More</p></li>"
-                      "<li><p>Two</p></li>"
-                      "<li><p>Three</p></li></ul>";
+                      "<li>Two</li>"
+                      "<li>Three</li></ul>";
     
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
