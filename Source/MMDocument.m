@@ -27,6 +27,10 @@
 #import "MMDocument_Private.h"
 
 
+@interface MMDocument ()
+@property (copy, nonatomic) NSArray *elements;
+@end
+
 @implementation MMDocument
 {
     NSMutableArray *_elements;

@@ -69,14 +69,15 @@ static NSString * __MMStringFromElementType(MMElementType type)
 
 @implementation MMElement
 {
+    NSMutableArray *_innerRanges;
     NSMutableArray *_children;
 }
 
 @synthesize range       = _range;
 @synthesize type        = _type;
+@synthesize innerRanges = _innerRanges;
 
 @synthesize character   = _character;
-@synthesize indentation = _indentation;
 @synthesize level       = _level;
 @synthesize href        = _href;
 @synthesize identifier  = _identifier;
@@ -96,7 +97,8 @@ static NSString * __MMStringFromElementType(MMElementType type)
     
     if (self)
     {
-        _children   = [NSMutableArray new];
+        _innerRanges = [NSMutableArray new];
+        _children    = [NSMutableArray new];
     }
     
     return self;
@@ -119,6 +121,20 @@ static NSString * __MMStringFromElementType(MMElementType type)
 #pragma mark -
 #pragma mark Public Methods
 //==================================================================================================
+
+- (void) addInnerRange:(NSRange)aRange
+{
+    [self willChangeValueForKey:@"innerRanges"];
+    [_innerRanges addObject:[NSValue valueWithRange:aRange]];
+    [self didChangeValueForKey:@"innerRanges"];
+}
+
+- (void) removeLastInnerRange
+{
+    [self willChangeValueForKey:@"innerRanges"];
+    [_innerRanges removeLastObject];
+    [self didChangeValueForKey:@"innerRanges"];
+}
 
 - (void) addChild:(MMElement *)aChild
 {
@@ -148,6 +164,11 @@ static NSString * __MMStringFromElementType(MMElementType type)
 #pragma mark -
 #pragma mark Public Properties
 //==================================================================================================
+
+- (void) setInnerRanges:(NSArray *)innerRanges
+{
+    _innerRanges = [innerRanges mutableCopy];
+}
 
 - (void) setChildren:(NSArray *)children
 {

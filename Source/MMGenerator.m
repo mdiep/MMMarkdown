@@ -106,7 +106,7 @@ static NSString * __HTMLEndTagForElement(MMElement *anElement)
         case MMElementTypeBlockquote:
             return @"</blockquote>\n";
         case MMElementTypeCodeBlock:
-            return @"\n</code></pre>\n";
+            return @"</code></pre>\n";
         case MMElementTypeStrong:
             return @"</strong>";
         case MMElementTypeEm:

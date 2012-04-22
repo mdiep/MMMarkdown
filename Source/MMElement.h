@@ -50,9 +50,9 @@ typedef enum
 
 @property (assign, nonatomic) NSRange        range;
 @property (assign, nonatomic) MMElementType  type;
+@property (copy,   nonatomic) NSArray       *innerRanges;
 
 @property (assign, nonatomic) unichar        character;
-@property (assign, nonatomic) NSUInteger     indentation;
 @property (assign, nonatomic) NSUInteger     level;
 @property (copy,   nonatomic) NSString      *href;
 @property (copy,   nonatomic) NSString      *identifier;
@@ -60,6 +60,9 @@ typedef enum
 
 @property (assign, nonatomic) MMElement *parent;
 @property (copy,   nonatomic) NSArray   *children;
+
+- (void) addInnerRange:(NSRange)aRange;
+- (void) removeLastInnerRange;
 
 - (void) addChild:(MMElement *)aChild;
 - (void) removeChild:(MMElement *)aChild;

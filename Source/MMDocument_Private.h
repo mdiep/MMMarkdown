@@ -30,6 +30,8 @@
 
 @interface MMDocument (MMDocumentPrivate)
 
+@property (copy, nonatomic) NSArray *elements;
+
 - (void) addElement:(MMElement *)anElement;
 
 @end

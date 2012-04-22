@@ -29,7 +29,7 @@
 @interface MMDocument : NSObject
 
 @property (strong, nonatomic, readonly) NSString *markdown;
-@property (strong, nonatomic, readonly) NSArray  *elements;
+@property (copy,   nonatomic, readonly) NSArray  *elements;
 
 + (id) documentWithMarkdown:(NSString *)markdown;
 - (id) initWithMarkdown:(NSString *)markdown;

@@ -70,9 +70,9 @@
 #pragma mark Public Methods
 //==================================================================================================
 
-- (NSArray *) parseTextSegment:(MMTextSegment *)aTextSegment
+- (NSArray *) parseSpansWithScanner:(MMScanner *)aScanner
 {
-    self.scanner      = [MMScanner scannerWithString:aTextSegment.string lineRanges:aTextSegment.ranges];
+    self.scanner      = aScanner;
     self.elements     = [NSMutableArray array];
     self.openElements = [NSMutableArray array];
     

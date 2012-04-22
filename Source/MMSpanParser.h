@@ -26,10 +26,10 @@
 #import <Foundation/Foundation.h>
 
 
-@class MMTextSegment;
+@class MMScanner;
 
 @interface MMSpanParser : NSObject
 
-- (NSArray *) parseTextSegment:(MMTextSegment *)aTextSegment;
+- (NSArray *) parseSpansWithScanner:(MMScanner *)aScanner;
 
 @end
