@@ -230,6 +230,12 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         return element;
     
     [scanner beginTransaction];
+    element = [self _parseUnderlinedHeaderWithScanner:scanner];
+    [scanner commitTransaction:element != nil];
+    if (element)
+        return element;
+    
+    [scanner beginTransaction];
     element = [self _parseBlockquoteWithScanner:scanner];
     [scanner commitTransaction:element != nil];
     if (element)
@@ -324,6 +330,65 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     [element addInnerRange:scanner.currentRange];
     
     [scanner advanceToNextLine];
+    
+    return element;
+}
+
+- (MMElement *) _parseUnderlinedHeaderWithScanner:(MMScanner *)scanner
+{
+    [scanner beginTransaction];
+    
+    // Make sure that the first line isn't empty
+    [scanner skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet]];
+    if ([scanner atEndOfLine])
+    {
+        [scanner commitTransaction:NO];
+        return nil;
+    }
+    
+    [scanner advanceToNextLine];
+    
+    // There has to be more to the string
+    if ([scanner atEndOfString])
+    {
+        [scanner commitTransaction:NO];
+        return nil;
+    }
+    
+    // The first character has to be a - or =
+    unichar character = [scanner nextCharacter];
+    if (character != '-' && character != '=')
+    {
+        [scanner commitTransaction:NO];
+        return nil;
+    }
+    
+    // Every other character must also be a - or =
+    while (![scanner atEndOfLine])
+    {
+        if (character != [scanner nextCharacter])
+        {
+            // If it's not a - or =, check if it's just optional whitespace before the newline
+            [scanner skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet]];
+            if ([scanner atEndOfLine])
+                break;
+            
+            [scanner commitTransaction:NO];
+            return nil;
+        }
+        [scanner advance];
+    }
+    [scanner commitTransaction:NO];
+    
+    MMElement *element = [MMElement new];
+    element.type  = MMElementTypeHeader;
+    element.level = character == '=' ? 1 : 2;
+    [element addInnerRange:scanner.currentRange];
+    
+    [scanner advanceToNextLine]; // The header
+    [scanner advanceToNextLine]; // The underlines
+    
+    element.range = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
     
     return element;
 }
@@ -874,6 +939,13 @@ static NSString * __HTMLEntityForCharacter(unichar character)
             break;
         }
         [scanner commitTransaction:NO];
+        
+        // Check for an underlined header
+        [scanner beginTransaction];
+        MMElement *header = [self _parseUnderlinedHeaderWithScanner:scanner];
+        [scanner commitTransaction:NO];
+        if (header)
+            break;
         
         [element addInnerRange:scanner.currentRange];
         [scanner advanceToNextLine];
