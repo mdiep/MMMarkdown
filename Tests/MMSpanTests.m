@@ -90,23 +90,6 @@
     MMAssertMarkdownEqualsHTML(@"*Foo\nbar*", @"<p><em>Foo\nbar</em></p>");
 }
 
-- (void) testUnderlinedHeaderWithEqualsSigns
-{
-    MMAssertMarkdownEqualsHTML(@"Foo\n=",   @"<h1>Foo</h1>");
-    MMAssertMarkdownEqualsHTML(@"Foo\n===", @"<h1>Foo</h1>");
-}
-
-- (void) testUnderlinedHeaderWithDashes
-{
-    MMAssertMarkdownEqualsHTML(@"Foo\n-",   @"<h2>Foo</h2>");
-    MMAssertMarkdownEqualsHTML(@"Foo\n---", @"<h2>Foo</h2>");
-}
-
-- (void) testUnderlinedHeaderInBlockquote
-{
-    MMAssertMarkdownEqualsHTML(@"> A\n> -", @"<blockquote><h2>A</h2></blockquote>");
-}
-
 - (void) testStrong
 {
     MMAssertMarkdownEqualsHTML(@"**foo**", @"<p><strong>foo</strong></p>");
