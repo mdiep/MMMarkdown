@@ -323,11 +323,34 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     
     [scanner skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet]];
     
+    NSRange headerRange = scanner.currentRange;
+    
+    // Check for trailing #s
+    while (headerRange.length > 0)
+    {
+        unichar character = [scanner.string characterAtIndex:NSMaxRange(headerRange)-1];
+        if (character == '#')
+            headerRange.length--;
+        else
+            break;
+    }
+    
+    // Remove trailing whitespace
+    NSCharacterSet *whitespaceSet = [NSCharacterSet whitespaceCharacterSet];
+    while (headerRange.length > 0)
+    {
+        unichar character = [scanner.string characterAtIndex:NSMaxRange(headerRange)-1];
+        if ([whitespaceSet characterIsMember:character])
+            headerRange.length--;
+        else
+            break;
+    }
+    
     MMElement *element = [MMElement new];
     element.type  = MMElementTypeHeader;
     element.range = NSMakeRange(scanner.startLocation, NSMaxRange(scanner.currentRange)-scanner.startLocation);
     element.level = level;
-    [element addInnerRange:scanner.currentRange];
+    [element addInnerRange:headerRange];
     
     [scanner advanceToNextLine];
     
