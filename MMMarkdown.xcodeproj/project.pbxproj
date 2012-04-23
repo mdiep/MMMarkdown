@@ -83,6 +83,7 @@
 		BE813E981502E78900EC9469 /* MMTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E971502E78700EC9469 /* MMTestCase.m */; };
 		BE813E9B15031B4000EC9469 /* MMListTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E9A15031B4000EC9469 /* MMListTests.m */; };
 		BE813E9E1503C14300EC9469 /* MMEscapingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E9D1503C14200EC9469 /* MMEscapingTests.m */; };
+		BEDDD54A1544E42200EA7D65 /* MMHTMLTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BEDDD5491544E42200EA7D65 /* MMHTMLTests.m */; };
 		BEF34216150C45ED00BFA0E2 /* MMTextSegment.h in Headers */ = {isa = PBXBuildFile; fileRef = BEF34214150C45ED00BFA0E2 /* MMTextSegment.h */; };
 		BEF34217150C45ED00BFA0E2 /* MMTextSegment.h in Headers */ = {isa = PBXBuildFile; fileRef = BEF34214150C45ED00BFA0E2 /* MMTextSegment.h */; };
 		BEF34218150C45ED00BFA0E2 /* MMTextSegment.m in Sources */ = {isa = PBXBuildFile; fileRef = BEF34215150C45ED00BFA0E2 /* MMTextSegment.m */; };
@@ -188,6 +189,7 @@
 		BE813E971502E78700EC9469 /* MMTestCase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMTestCase.m; sourceTree = "<group>"; };
 		BE813E9A15031B4000EC9469 /* MMListTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMListTests.m; sourceTree = "<group>"; };
 		BE813E9D1503C14200EC9469 /* MMEscapingTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMEscapingTests.m; sourceTree = "<group>"; };
+		BEDDD5491544E42200EA7D65 /* MMHTMLTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMHTMLTests.m; sourceTree = "<group>"; };
 		BEF34214150C45ED00BFA0E2 /* MMTextSegment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMTextSegment.h; sourceTree = "<group>"; };
 		BEF34215150C45ED00BFA0E2 /* MMTextSegment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMTextSegment.m; sourceTree = "<group>"; };
 		BEF3421A150CEA6D00BFA0E2 /* MMSpanParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMSpanParser.h; sourceTree = "<group>"; };
@@ -293,6 +295,7 @@
 				BE813E2114F93D8700EC9469 /* MarkdownTest_1.0 */,
 				BE1DB5D915143F4200B26092 /* MMBlockTests.m */,
 				BE813E9D1503C14200EC9469 /* MMEscapingTests.m */,
+				BEDDD5491544E42200EA7D65 /* MMHTMLTests.m */,
 				BE1DB5DC1515032F00B26092 /* MMLinkTests.m */,
 				BE813E9A15031B4000EC9469 /* MMListTests.m */,
 				BE1DB5D41514184000B26092 /* MMSpanTests.m */,
@@ -595,6 +598,7 @@
 				BE1DB5D51514184000B26092 /* MMSpanTests.m in Sources */,
 				BE1DB5DA15143F4200B26092 /* MMBlockTests.m in Sources */,
 				BE1DB5DD1515033000B26092 /* MMLinkTests.m in Sources */,
+				BEDDD54A1544E42200EA7D65 /* MMHTMLTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

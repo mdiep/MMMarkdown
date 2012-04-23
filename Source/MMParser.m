@@ -292,7 +292,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
                             @"blockquote", @"pre", @"table", @"dl", @"ol", @"ul",
                             @"script", @"noscript", @"form", @"fieldset", @"iframe",
                             @"math", @"ins", @"del", nil];
-    NSString *tagName = [scanner substringBeforeCharacter:'>'];
+    NSString *tagName = [scanner nextWord];
     if (![htmlBlockTags containsObject:tagName])
         return nil;
     

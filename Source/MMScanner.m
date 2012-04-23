@@ -168,16 +168,19 @@ static NSString *__delimitersForCharacter(unichar character)
     return [self.string characterAtIndex:self.location];
 }
 
-- (NSString *) substringBeforeCharacter:(unichar)character
+- (NSString *) nextWord
 {
-    NSUInteger location = [self _locationOfCharacter:character inRange:self.currentRange];
-    if (location == NSNotFound)
-        return nil;
+    NSRange result = [self.string rangeOfCharacterFromSet:[[NSCharacterSet alphanumericCharacterSet] invertedSet]
+                                                  options:0
+                                                    range:self.currentRange];
     
-    NSRange   range     = NSMakeRange(self.currentRange.location, location-self.currentRange.location);
-    NSString *substring = [self.string substringWithRange:range];
+    if (result.location == NSNotFound)
+        return @"";
     
-    return substring;
+    NSRange wordRange = self.currentRange;
+    wordRange.length = result.location - wordRange.location;
+    
+    return [self.string substringWithRange:wordRange];
 }
 
 - (void) advance

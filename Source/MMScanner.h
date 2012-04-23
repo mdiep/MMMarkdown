@@ -54,7 +54,7 @@
 
 - (unichar) previousCharacter;
 - (unichar) nextCharacter;
-- (NSString *) substringBeforeCharacter:(unichar)character;
+- (NSString *) nextWord;
 
 - (void) advance;
 - (void) advanceToNextLine;
