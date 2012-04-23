@@ -118,13 +118,13 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         if (character == '\n')
         {
             lineLocation = 1 + resultRange.location;
-            searchRange = NSMakeRange(lineLocation, aString.length-lineLocation);
+            searchRange = NSMakeRange(lineLocation, result.length-lineLocation);
         }
         else
         {
             NSUInteger numOfSpaces = 4 - ((resultRange.location - lineLocation) % 4);
             [result replaceCharactersInRange:resultRange withString:[strings objectAtIndex:numOfSpaces]];
-            searchRange = NSMakeRange(resultRange.location, aString.length-resultRange.location);
+            searchRange = NSMakeRange(resultRange.location, result.length-resultRange.location);
         }
         resultRange = [result rangeOfCharacterFromSet:tabAndNewline options:0 range:searchRange];
     }
