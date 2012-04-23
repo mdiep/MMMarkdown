@@ -95,6 +95,12 @@
     MMAssertMarkdownEqualsHTML(@"    <html>", @"<pre><code>&lt;html&gt;\n</code></pre>");
 }
 
+- (void) testCodeBlocks_withTrailingSpaces
+{
+    // Trailing spaces should be removed from the last line in the code block
+    MMAssertMarkdownEqualsHTML(@"    A  \n    B  ", @"<pre><code>A  \nB\n</code></pre>");
+}
+
 - (void) testCodeBlocks_doNotParseSpansBeforeAmpersand
 {
     // Code blocks handle text segments on their own. But there was a bug where the text in a code

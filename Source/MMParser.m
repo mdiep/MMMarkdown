@@ -505,6 +505,25 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         [element removeLastInnerRange];
     }
     
+    // Remove any trailing whitespace from the last line
+    if (element.innerRanges.count > 0)
+    {
+        NSRange lineRange = [[element.innerRanges lastObject] rangeValue];
+        [element removeLastInnerRange];
+        
+        NSCharacterSet *whitespaceSet = [NSCharacterSet whitespaceCharacterSet];
+        while (lineRange.length > 0)
+        {
+            unichar character = [scanner.string characterAtIndex:NSMaxRange(lineRange)-1];
+            if ([whitespaceSet characterIsMember:character])
+                lineRange.length--;
+            else
+                break;
+        }
+        
+        [element addInnerRange:lineRange];
+    }
+    
     // Add the text manually to avoid span parsing// Add the text manually here to avoid span parsing
     for (NSValue *value in element.innerRanges)
     {
