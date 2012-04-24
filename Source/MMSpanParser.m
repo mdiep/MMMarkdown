@@ -28,7 +28,6 @@
 
 #import "MMElement.h"
 #import "MMScanner.h"
-#import "MMTextSegment.h"
 
 @interface MMSpanParser ()
 @property (strong, nonatomic) MMScanner      *scanner;

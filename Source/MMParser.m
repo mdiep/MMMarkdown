@@ -31,7 +31,6 @@
 #import "MMElement.h"
 #import "MMScanner.h"
 #import "MMSpanParser.h"
-#import "MMTextSegment.h"
 
 static NSString * __HTMLEntityForCharacter(unichar character)
 {
