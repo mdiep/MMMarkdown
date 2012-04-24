@@ -1,6 +1,6 @@
 //
-//  MMMarkdownTests.h
-//  MMMarkdownTests
+//  MMDocument_Private.h
+//  MMMarkdown
 //
 //  Copyright (c) 2012 Matt Diephouse.
 //
@@ -23,8 +23,15 @@
 // THE SOFTWARE.
 //
 
-#import "MMTestCase.h"
+#import "MMDocument.h"
 
-@interface MMMarkdownTests : MMTestCase
+
+@class MMElement;
+
+@interface MMDocument (MMDocumentPrivate)
+
+@property (copy, nonatomic) NSArray *elements;
+
+- (void) addElement:(MMElement *)anElement;
 
 @end

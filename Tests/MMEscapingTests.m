@@ -1,6 +1,6 @@
 //
-//  MMMarkdownTests.h
-//  MMMarkdownTests
+//  MMEscapingTests.m
+//  MMMarkdown
 //
 //  Copyright (c) 2012 Matt Diephouse.
 //
@@ -25,6 +25,33 @@
 
 #import "MMTestCase.h"
 
-@interface MMMarkdownTests : MMTestCase
+
+@interface MMEscapingTests : MMTestCase
+
+@end
+
+@implementation MMEscapingTests
+
+//==================================================================================================
+#pragma mark -
+#pragma mark Tests
+//==================================================================================================
+
+- (void) testEncodeAmpersand
+{
+    MMAssertMarkdownEqualsHTML(@"A & B", @"<p>A &amp; B</p>");
+}
+
+- (void) testEncodeLeftAngleBracket
+{
+    MMAssertMarkdownEqualsHTML(@"2 << 0 < 2 << 1", @"<p>2 &lt;&lt; 0 &lt; 2 &lt;&lt; 1</p>");
+}
+
+- (void) testHTMLEntityReferences
+{
+    MMAssertMarkdownEqualsHTML(@"A &amp; B", @"<p>A &amp; B</p>");
+    MMAssertMarkdownEqualsHTML(@"A &#38; B", @"<p>A &#38; B</p>");
+}
+
 
 @end

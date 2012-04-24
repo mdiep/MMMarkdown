@@ -1,6 +1,6 @@
 //
-//  MMMarkdownTests.h
-//  MMMarkdownTests
+//  MMTestCase.m
+//  MMMarkdown
 //
 //  Copyright (c) 2012 Matt Diephouse.
 //
@@ -25,6 +25,7 @@
 
 #import "MMTestCase.h"
 
-@interface MMMarkdownTests : MMTestCase
+
+@implementation MMTestCase
 
 @end

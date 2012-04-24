@@ -25,10 +25,132 @@
 
 #import "MMMarkdownTests.h"
 
+
+#import "MMMarkdown.h"
+
 @implementation MMMarkdownTests
 
-- (void) testStub
+//==================================================================================================
+#pragma mark -
+#pragma mark Helpers
+//==================================================================================================
+
+- (NSString *) stringWithContentsOfFile:(NSString *)aString
 {
+    NSBundle *bundle  = [NSBundle bundleForClass:[self class]];
+    NSURL    *fileURL = [bundle URLForResource:aString withExtension:nil];
+    NSData   *data    = [NSData dataWithContentsOfURL:fileURL];
+    NSString *string  = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    return string;
+}
+
+- (void) runTestWithName:(NSString *)aName
+{
+    NSString *input  = [self stringWithContentsOfFile:[NSString stringWithFormat:@"%@.text", aName]];
+    NSString *html   = [self stringWithContentsOfFile:[NSString stringWithFormat:@"%@.html", aName]];
+    
+    MMAssertMarkdownEqualsHTML(input, html);
+}
+
+
+//==================================================================================================
+#pragma mark -
+#pragma mark Test Cases
+//==================================================================================================
+
+- (void) testAmpsAndAngleEncoding
+{
+    [self runTestWithName:@"Amps and angle encoding"];
+}
+
+- (void) testAutoLinks
+{
+    [self runTestWithName:@"Auto links"];
+}
+
+- (void) testBackslashEscapes
+{
+    [self runTestWithName:@"Backslash escapes"];
+}
+
+- (void) testBlockquotesWithCodeBlocks
+{
+    [self runTestWithName:@"Blockquotes with code blocks"];
+}
+
+- (void) testHardWrappedParagraphsWithListLikeLines
+{
+    [self runTestWithName:@"Hard-wrapped paragraphs with list-like lines"];
+}
+
+- (void) testHorizontalRules
+{
+    [self runTestWithName:@"Horizontal rules"];
+}
+
+- (void) testInlineHTMLAdvanced
+{
+    [self runTestWithName:@"Inline HTML (Advanced)"];
+}
+
+- (void) testInlineHTMLSimple
+{
+    [self runTestWithName:@"Inline HTML (Simple)"];
+}
+
+- (void) testInlineHTMLComments
+{
+    [self runTestWithName:@"Inline HTML comments"];
+}
+
+- (void) testLinksInlineStyle
+{
+    [self runTestWithName:@"Links, inline style"];
+}
+
+- (void) testLinksReferenceStyle
+{
+    [self runTestWithName:@"Links, reference style"];
+}
+
+- (void) testLiteralQuotesInTitles
+{
+    [self runTestWithName:@"Literal quotes in titles"];
+}
+
+- (void) testMarkdownDocumentationBasics
+{
+    [self runTestWithName:@"Markdown Documentation - Basics"];
+}
+
+- (void) testMarkdownDocumentationSyntax
+{
+    [self runTestWithName:@"Markdown Documentation - Syntax"];
+}
+
+- (void) testNestedBlockquotes
+{
+    [self runTestWithName:@"Nested blockquotes"];
+}
+
+- (void) testOrderedAndUnorderedLists
+{
+    [self runTestWithName:@"Ordered and unordered lists"];
+}
+
+- (void) testStrongAndEmTogether
+{
+    [self runTestWithName:@"Strong and em together"];
+}
+
+- (void) testTabs
+{
+    [self runTestWithName:@"Tabs"];
+}
+
+- (void) testTidyness
+{
+    [self runTestWithName:@"Tidyness"];
 }
 
 

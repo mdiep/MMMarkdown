@@ -14,7 +14,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "BE813E0614F8961D00EC9469"
-               BuildableName = "libMMMarkdown-Mac copy.a"
+               BuildableName = "libMMMarkdown-iOS.a"
                BlueprintName = "MMMarkdown-iOS"
                ReferencedContainer = "container:MMMarkdown.xcodeproj">
             </BuildableReference>
