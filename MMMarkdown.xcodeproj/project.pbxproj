@@ -84,6 +84,7 @@
 		BE813E9B15031B4000EC9469 /* MMListTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E9A15031B4000EC9469 /* MMListTests.m */; };
 		BE813E9E1503C14300EC9469 /* MMEscapingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E9D1503C14200EC9469 /* MMEscapingTests.m */; };
 		BEAAEB431549DD1700EF1EA0 /* MMImageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BEAAEB421549DD1700EF1EA0 /* MMImageTests.m */; };
+		BEAAEB62154A4A1D00EF1EA0 /* MMErrorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BEAAEB5E154A49B500EF1EA0 /* MMErrorTests.m */; };
 		BEDDD54A1544E42200EA7D65 /* MMHTMLTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BEDDD5491544E42200EA7D65 /* MMHTMLTests.m */; };
 		BEF3421C150CEA6D00BFA0E2 /* MMSpanParser.h in Headers */ = {isa = PBXBuildFile; fileRef = BEF3421A150CEA6D00BFA0E2 /* MMSpanParser.h */; };
 		BEF3421D150CEA6D00BFA0E2 /* MMSpanParser.h in Headers */ = {isa = PBXBuildFile; fileRef = BEF3421A150CEA6D00BFA0E2 /* MMSpanParser.h */; };
@@ -187,6 +188,7 @@
 		BE813E9A15031B4000EC9469 /* MMListTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMListTests.m; sourceTree = "<group>"; };
 		BE813E9D1503C14200EC9469 /* MMEscapingTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMEscapingTests.m; sourceTree = "<group>"; };
 		BEAAEB421549DD1700EF1EA0 /* MMImageTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMImageTests.m; sourceTree = "<group>"; };
+		BEAAEB5E154A49B500EF1EA0 /* MMErrorTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMErrorTests.m; sourceTree = "<group>"; };
 		BEDDD5491544E42200EA7D65 /* MMHTMLTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMHTMLTests.m; sourceTree = "<group>"; };
 		BEF3421A150CEA6D00BFA0E2 /* MMSpanParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMSpanParser.h; sourceTree = "<group>"; };
 		BEF3421B150CEA6D00BFA0E2 /* MMSpanParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMSpanParser.m; sourceTree = "<group>"; };
@@ -288,6 +290,7 @@
 			children = (
 				BE813E2114F93D8700EC9469 /* MarkdownTest_1.0 */,
 				BE1DB5D915143F4200B26092 /* MMBlockTests.m */,
+				BEAAEB5E154A49B500EF1EA0 /* MMErrorTests.m */,
 				BE813E9D1503C14200EC9469 /* MMEscapingTests.m */,
 				BEDDD5491544E42200EA7D65 /* MMHTMLTests.m */,
 				BEAAEB421549DD1700EF1EA0 /* MMImageTests.m */,
@@ -592,6 +595,7 @@
 				BE1DB5DD1515033000B26092 /* MMLinkTests.m in Sources */,
 				BEDDD54A1544E42200EA7D65 /* MMHTMLTests.m in Sources */,
 				BEAAEB431549DD1700EF1EA0 /* MMImageTests.m in Sources */,
+				BEAAEB62154A4A1D00EF1EA0 /* MMErrorTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

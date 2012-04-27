@@ -1,5 +1,5 @@
 //
-//  MMMarkdown.m
+//  MMErrorTests.m
 //  MMMarkdown
 //
 //  Copyright (c) 2012 Matt Diephouse.
@@ -23,33 +23,23 @@
 // THE SOFTWARE.
 //
 
-#import "MMMarkdown.h"
+#import "MMTestCase.h"
 
 
-#import "MMParser.h"
-#import "MMGenerator.h"
+@interface MMErrorTests : MMTestCase
 
-@implementation MMMarkdown
+@end 
+
+@implementation MMErrorTests
 
 //==================================================================================================
 #pragma mark -
-#pragma mark Public Methods
+#pragma mark Tests
 //==================================================================================================
 
-+ (NSString *) HTMLStringWithMarkdown:(NSString *)string error:(__autoreleasing NSError **)error
+- (void) testNilInput
 {
-    if (string == nil)
-        return nil;
-    
-    MMParser    *parser    = [MMParser new];
-    MMGenerator *generator = [MMGenerator new];
-    
-    MMDocument *document = [parser parseMarkdown:string error:error];
-    if (!document)
-        return nil;
-    
-    return [generator generateHTML:document];
+    STAssertNil([MMMarkdown HTMLStringWithMarkdown:nil error:nil], @"nil input should give nil output");
 }
-
 
 @end
