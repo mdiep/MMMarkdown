@@ -51,6 +51,30 @@
                                @"<p><a href=\"http://example.com/?a=1&amp;b=1\">http://example.com/?a=1&amp;b=1</a></p>");
 }
 
+#if RUN_KNOWN_FAILURES
+- (void) testNotAnActualAutomaticLink
+{
+    MMAssertMarkdownEqualsHTML(@"A <i> test with no HTML.", @"<p>A <i> test with no HTML.</p>");
+}
+#endif
+
+#if RUN_KNOWN_FAILURES
+- (void) testAutomaticEmailLink
+{
+    // The Markdown documentation says that automatic email links like this should have "randomized
+    // decimal and hex entity-encoding to help obscure your address from address-harvesting
+    // spambots". So test this the hard way: (1) unescape the output to test against the expected
+    // value and (2) make sure that the output doesn't match the expected value if it hasn't been
+    // unescaped.
+    NSString *markdown  = @"<address@example.com>";
+    NSString *generated = [MMMarkdown HTMLStringWithMarkdown:markdown error:nil];
+    NSString *unescaped = (__bridge_transfer NSString *)CFXMLCreateStringByUnescapingEntities(NULL, (__bridge CFStringRef)generated, NULL);
+    NSString *expected  = @"<p><a href=\"mailto:address@example.com\">address@example.com</a></p>";
+    STAssertTrue([expected isEqualToString:unescaped], @"Unescaped output doesn't match expected");
+    STAssertFalse([expected isEqualToString:generated], @"Generated output should be escaped");
+}
+#endif
+
 
 //==================================================================================================
 #pragma mark -
@@ -164,6 +188,17 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
+#if RUN_KNOWN_FAILURES
+- (void) testReferenceLinkWithAngleBrackets
+{
+    NSString *markdown = @"[Apple][].\n"
+                          "\n"
+                          "[apple]: <http://apple.com> \"Apple Inc\"";
+    NSString *html = @"<p><a href=\"http://apple.com\" title=\"Apple Inc\">Apple</a>.</p>";
+    MMAssertMarkdownEqualsHTML(markdown, html);
+}
+#endif
+
 - (void) testReferenceLinkWithTitle
 {
     NSString *markdown = @"Foo [bar][1].\n"
@@ -173,6 +208,18 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
+#if RUN_KNOWN_FAILURES
+- (void) testReferenceLinkWithTitleOnNextLine
+{
+    NSString *markdown = @"[Apple][].\n"
+                          "\n"
+                          "[apple]: <http://apple.com>\n"
+                          "         \"Apple Inc\"";
+    NSString *html = @"<p><a href=\"http://apple.com\" title=\"Apple Inc\">Apple</a>.</p>";
+    MMAssertMarkdownEqualsHTML(markdown, html);
+}
+#endif
+
 - (void) testReferenceLinkWithQuoteInTitle
 {
     NSString *markdown = @"[Foo][]\n"
@@ -181,6 +228,28 @@
     NSString *html = @"<p><a href=\"/bar\" title=\"a &quot; in the title\">Foo</a></p>";
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
+
+#if RUN_KNOWN_FAILURES
+- (void) testReferenceLinkWithTitleInSingleQuotes
+{
+    NSString *markdown = @"[Apple][].\n"
+                          "\n"
+                          "[apple]: http://apple.com 'Apple Inc'";
+    NSString *html = @"<p><a href=\"http://apple.com\" title=\"Apple Inc\">Apple</a>.</p>";
+    MMAssertMarkdownEqualsHTML(markdown, html);
+}
+#endif
+
+#if RUN_KNOWN_FAILURES
+- (void) testReferenceLinkWithTitleInParentheses
+{
+    NSString *markdown = @"[Apple][].\n"
+                          "\n"
+                          "[apple]: http://apple.com (Apple Inc)";
+    NSString *html = @"<p><a href=\"http://apple.com\" title=\"Apple Inc\">Apple</a>.</p>";
+    MMAssertMarkdownEqualsHTML(markdown, html);
+}
+#endif
 
 - (void) testReferenceLinkWithNoReference
 {

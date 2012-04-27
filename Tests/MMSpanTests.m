@@ -34,7 +34,7 @@
 
 //==================================================================================================
 #pragma mark -
-#pragma mark Tests
+#pragma mark Backslash Escape Tests
 //==================================================================================================
 
 - (void) testBackslashEscapes
@@ -45,6 +45,12 @@
     
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
+
+
+//==================================================================================================
+#pragma mark -
+#pragma mark Code Span Tests
+//==================================================================================================
 
 - (void) testCodeSpans
 {
@@ -80,30 +86,76 @@
     MMAssertMarkdownEqualsHTML(@"`<html>`", @"<p><code>&lt;html&gt;</code></p>");
 }
 
+
+//==================================================================================================
+#pragma mark -
+#pragma mark Em and Strong Tests
+//==================================================================================================
+
 - (void) testEm
 {
     MMAssertMarkdownEqualsHTML(@"*foo*", @"<p><em>foo</em></p>");
+    MMAssertMarkdownEqualsHTML(@"_foo_", @"<p><em>foo</em></p>");
 }
 
 - (void) testEmAcrossNewline
 {
     MMAssertMarkdownEqualsHTML(@"*Foo\nbar*", @"<p><em>Foo\nbar</em></p>");
+    MMAssertMarkdownEqualsHTML(@"_Foo\nbar_", @"<p><em>Foo\nbar</em></p>");
+}
+
+- (void) testEmInTheMiddleOfAWord
+{
+    MMAssertMarkdownEqualsHTML(@"un*frigging*believable", @"<p>un<em>frigging</em>believable</p>");
+    MMAssertMarkdownEqualsHTML(@"un_frigging_believable", @"<p>un<em>frigging</em>believable</p>");
 }
 
 - (void) testStrong
 {
     MMAssertMarkdownEqualsHTML(@"**foo**", @"<p><strong>foo</strong></p>");
+    MMAssertMarkdownEqualsHTML(@"__foo__", @"<p><strong>foo</strong></p>");
 }
 
 - (void) testStrongAcrossNewline
 {
     MMAssertMarkdownEqualsHTML(@"**Foo\nbar**", @"<p><strong>Foo\nbar</strong></p>");
+    MMAssertMarkdownEqualsHTML(@"__Foo\nbar__", @"<p><strong>Foo\nbar</strong></p>");
+}
+
+- (void) testStrongInTheMiddleOfAWord
+{
+    MMAssertMarkdownEqualsHTML(@"un**frigging**believable", @"<p>un<strong>frigging</strong>believable</p>");
+    MMAssertMarkdownEqualsHTML(@"un__frigging__believable", @"<p>un<strong>frigging</strong>believable</p>");
 }
 
 - (void) testStrongEm
 {
     MMAssertMarkdownEqualsHTML(@"***foo***", @"<p><strong><em>foo</em></strong></p>");
+    MMAssertMarkdownEqualsHTML(@"___foo___", @"<p><strong><em>foo</em></strong></p>");
+    MMAssertMarkdownEqualsHTML(@"__*foo*__", @"<p><strong><em>foo</em></strong></p>");
+    MMAssertMarkdownEqualsHTML(@"**_foo_**", @"<p><strong><em>foo</em></strong></p>");
 }
+
+- (void) testStrongEmInTheMiddleOfAWord
+{
+    MMAssertMarkdownEqualsHTML(@"un***frigging***believable", @"<p>un<strong><em>frigging</em></strong>believable</p>");
+    MMAssertMarkdownEqualsHTML(@"un___frigging___believable", @"<p>un<strong><em>frigging</em></strong>believable</p>");
+    MMAssertMarkdownEqualsHTML(@"un__*frigging*__believable", @"<p>un<strong><em>frigging</em></strong>believable</p>");
+    MMAssertMarkdownEqualsHTML(@"un**_frigging_**believable", @"<p>un<strong><em>frigging</em></strong>believable</p>");
+}
+
+
+//==================================================================================================
+#pragma mark -
+#pragma mark Line Break Tests
+//==================================================================================================
+
+#if RUN_KNOWN_FAILURES
+- (void) testBasicLineBreak
+{
+    MMAssertMarkdownEqualsHTML(@"A line  \nwith a break  ", @"<p>A line <br />\nwith a break  </p>");
+}
+#endif
 
 
 @end

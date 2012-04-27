@@ -28,6 +28,8 @@
 
 #import "MMMarkdown.h"
 
+#define RUN_KNOWN_FAILURES 0
+
 #define MMAssertMarkdownEqualsHTML(markdown, html) \
     do { \
         @try {\
