@@ -140,6 +140,13 @@
     MMAssertMarkdownEqualsHTML(@"[foo]()", @"<p><a href=\"\">foo</a></p>");
 }
 
+#if RUN_KNOWN_FAILURES
+- (void) testInlineLinkWithNewlineInText
+{
+    MMAssertMarkdownEqualsHTML(@"[A\nlink](/foo)", @"<p><a href=\"/foo\">A\nlink</a></p>");
+}
+#endif
+
 - (void) testNotAnInlineLink_loneBracket
 {
     MMAssertMarkdownEqualsHTML(@"An empty [ by itself", @"<p>An empty [ by itself</p>");
@@ -247,6 +254,45 @@
                           "\n"
                           "[apple]: http://apple.com (Apple Inc)";
     NSString *html = @"<p><a href=\"http://apple.com\" title=\"Apple Inc\">Apple</a>.</p>";
+    MMAssertMarkdownEqualsHTML(markdown, html);
+}
+#endif
+
+#if RUN_KNOWN_FAILURES
+- (void) testReferenceLinkWithNewlineInText
+{
+    NSString *markdown = @"[A\n"
+                          "link][1]\n"
+                          "\n"
+                          "[1]: /foo";
+    NSString *html = @"<p><a href=\"/foo\">A\n"
+                      "link</a></p>";
+    MMAssertMarkdownEqualsHTML(markdown, html);
+}
+#endif
+
+#if RUN_KNOWN_FAILURES
+- (void) testReferenceLinkWithImplicitIDAndNewlineInText
+{
+    NSString *markdown = @"[A\n"
+                          "link][]\n"
+                          "\n"
+                          "[a link]: /foo";
+    NSString *html = @"<p><a href=\"/foo\">A\n"
+                      "link</a></p>";
+    MMAssertMarkdownEqualsHTML(markdown, html);
+}
+#endif
+
+#if RUN_KNOWN_FAILURES
+- (void) testReferenceLinkWithNewlineInID
+{
+    NSString *markdown = @"[A link][foo\n"
+                          "bar]\n"
+                          "\n"
+                          "[foo bar]: /foo";
+    NSString *html = @"<p><a href=\"/foo\">A\n"
+                      "link</a></p>";
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 #endif
