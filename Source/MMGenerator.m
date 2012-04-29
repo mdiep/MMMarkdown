@@ -76,10 +76,10 @@ static NSString * __HTMLStartTagForElement(MMElement *anElement)
         case MMElementTypeCodeSpan:
             return @"<code>";
         case MMElementTypeLink:
-            if (anElement.stringValue != nil)
+            if (anElement.title != nil)
             {
                 return [NSString stringWithFormat:@"<a title=\"%@\" href=\"%@\">",
-                        __HTMLEscapedString(anElement.stringValue), __HTMLEscapedString(anElement.href)];
+                        __HTMLEscapedString(anElement.title), __HTMLEscapedString(anElement.href)];
             }
             return [NSString stringWithFormat:@"<a href=\"%@\">", __HTMLEscapedString(anElement.href)];
         case MMElementTypeEntity:

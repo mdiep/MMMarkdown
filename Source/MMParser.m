@@ -947,7 +947,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     
     if (titleRange.location != NSNotFound)
     {
-        element.stringValue = [scanner.string substringWithRange:titleRange];
+        element.title = [scanner.string substringWithRange:titleRange];
     }
     
     return element;
@@ -1044,8 +1044,8 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         }
         // otherwise, set the href and title
         {
-            link.href        = definition.href;
-            link.stringValue = definition.stringValue;
+            link.href  = definition.href;
+            link.title = definition.title;
         }
     }
 }

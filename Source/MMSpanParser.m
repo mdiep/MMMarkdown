@@ -576,7 +576,7 @@
         }
         else if (character == ')')
         {
-                level -= 1;
+            level -= 1;
         }
         else if ([[NSCharacterSet whitespaceCharacterSet] characterIsMember:character])
         {
@@ -638,7 +638,7 @@
     if (titleLocation != NSNotFound)
     {
         NSRange titleRange = NSMakeRange(titleLocation, titleEnd-titleLocation);
-        element.stringValue = [scanner.string substringWithRange:titleRange];
+        element.title = [scanner.string substringWithRange:titleRange];
     }
     
     self.parseLinks = NO;

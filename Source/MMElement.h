@@ -55,6 +55,7 @@ typedef enum
 @property (assign, nonatomic) unichar        character;
 @property (assign, nonatomic) NSUInteger     level;
 @property (copy,   nonatomic) NSString      *href;
+@property (copy,   nonatomic) NSString      *title;
 @property (copy,   nonatomic) NSString      *identifier;
 @property (copy,   nonatomic) NSString      *stringValue;
 
