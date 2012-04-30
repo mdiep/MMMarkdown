@@ -767,7 +767,6 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         
         [element addInnerRange:scanner.currentRange];
         
-        afterBlankLine = NO;
         [scanner advanceToNextLine];
     }
     
