@@ -119,26 +119,28 @@
 #pragma mark Private Methods
 //==================================================================================================
 
-- (NSArray *) _parseRange:(NSRange)aRange ofString:(NSString *)aString
+- (NSArray *) _parseLines:(NSArray *)lines ofString:(NSString *)aString
 {
     // Save the state
-    MMScanner      *scanner      = self.scanner;
-    NSMutableArray *elements     = self.elements;
-    NSMutableArray *openElements = self.openElements;
+    MMScanner      *oldScanner      = self.scanner;
+    NSMutableArray *oldElements     = self.elements;
+    NSMutableArray *oldOpenElements = self.openElements;
     
-    NSArray *lineRanges = [NSArray arrayWithObject:[NSValue valueWithRange:aRange]];
-    self.scanner      = [MMScanner scannerWithString:aString lineRanges:lineRanges];
-    self.elements     = [NSMutableArray new];
-    self.openElements = [NSMutableArray new];
+    MMScanner *newScanner = [MMScanner scannerWithString:aString lineRanges:lines];
+    NSArray   *result     = [self parseSpansWithScanner:newScanner];
     
-    [self _parseNextLine];
-    
-    NSArray *result = self.elements;
     // Restore the state
-    self.scanner      = scanner;
-    self.elements     = elements;
-    self.openElements = openElements;
+    self.scanner      = oldScanner;
+    self.elements     = oldElements;
+    self.openElements = oldOpenElements;
+    
     return result;
+}
+
+- (NSArray *) _parseRange:(NSRange)aRange ofString:(NSString *)aString
+{
+    NSArray *lineRanges = [NSArray arrayWithObject:[NSValue valueWithRange:aRange]];
+    return [self _parseLines:lineRanges ofString:aString];
 }
 
 - (void) _parseNextLine
@@ -540,28 +542,81 @@
     return element;
 }
 
+- (NSArray *) _parseLinkTextBody
+{
+    MMScanner      *scanner = self.scanner;
+    NSMutableArray *ranges  = [NSMutableArray new];
+    NSCharacterSet *boringChars;
+    NSUInteger      level;
+    
+    if ([scanner nextCharacter] != '[')
+        return nil;
+    [scanner advance];
+    
+    boringChars = [[NSCharacterSet characterSetWithCharactersInString:@"[]\\"] invertedSet];
+    level       = 1;
+    NSRange textRange = scanner.currentRange;
+    while (level > 0)
+    {
+        if ([scanner atEndOfString])
+            return nil;
+        
+        if ([scanner atEndOfLine])
+        {
+            [ranges addObject:[NSValue valueWithRange:textRange]];
+            [scanner advanceToNextLine];
+            textRange = scanner.currentRange;
+        }
+        
+        [scanner skipCharactersFromSet:boringChars];
+        
+        unichar character = [scanner nextCharacter];
+        if (character == '[')
+        {
+            level += 1;
+        }
+        else if (character == ']')
+        {
+            level -= 1;
+        }
+        else if (character == '\\')
+        {
+            [scanner advance];
+        }
+        
+        textRange.length = scanner.location - textRange.location;
+        [scanner advance];
+    }
+    
+    [ranges addObject:[NSValue valueWithRange:textRange]];
+    
+    return ranges;
+}
+
 - (MMElement *) _startInlineLink
 {
-    MMScanner  *scanner  = self.scanner;
-    NSUInteger  startLoc = scanner.location;
-    NSUInteger  length;
+    MMScanner      *scanner  = self.scanner;
+    NSCharacterSet *boringChars;
+    NSUInteger      startLoc = scanner.location;
+    NSUInteger      level;
+    
+    MMElement *element = [MMElement new];
+    element.type  = MMElementTypeLink;
     
     // Find the []
-    length = [scanner skipNestedBracketsWithDelimiter:'['];
-    if (length == 0)
+    element.innerRanges = [self _parseLinkTextBody];
+    if (!element.innerRanges.count)
         return nil;
-    
-    NSRange textRange = NSMakeRange(startLoc+1, length-2);
     
     // Find the ()
     if ([scanner nextCharacter] != '(')
         return nil;
     [scanner advance];
     
-    NSCharacterSet *boringChars = [[NSCharacterSet characterSetWithCharactersInString:@"() \t"] invertedSet];
     NSUInteger      urlLocation = scanner.location;
     NSUInteger      urlEnd      = urlLocation;
-    NSUInteger      level       = 1;
+    boringChars = [[NSCharacterSet characterSetWithCharactersInString:@"() \t"] invertedSet];
+    level       = 1;
     while (level > 0)
     {
         [scanner skipCharactersFromSet:boringChars];
@@ -630,8 +685,6 @@
         href = [href substringWithRange:NSMakeRange(1, href.length-2)];
     }
     
-    MMElement *element = [MMElement new];
-    element.type  = MMElementTypeLink;
     element.range = NSMakeRange(startLoc, scanner.location-startLoc);
     element.href  = href;
     
@@ -642,11 +695,7 @@
     }
     
     self.parseLinks = NO;
-    NSArray *innerElements = [self _parseRange:textRange ofString:scanner.string];
-    for (MMElement *inner in innerElements)
-    {
-        [element addChild:inner];
-    }
+    element.children = [self _parseLines:element.innerRanges ofString:scanner.string];
     self.parseLinks = YES;
     
     return element;
@@ -658,12 +707,13 @@
     NSUInteger  startLoc = scanner.location;
     NSUInteger  length;
     
-    // Find the []
-    length = [scanner skipNestedBracketsWithDelimiter:'['];
-    if (length == 0)
-        return nil;
+    MMElement *element = [MMElement new];
+    element.type  = MMElementTypeLink;
     
-    NSRange textRange = NSMakeRange(startLoc+1, length-2);
+    // Find the []
+    element.innerRanges = [self _parseLinkTextBody];
+    if (!element.innerRanges.count)
+        return nil;
     
     // Skip optional whitespace
     if ([scanner nextCharacter] == ' ')
@@ -679,21 +729,28 @@
     if (length == 0)
         return nil;
     
-    NSRange idRange = NSMakeRange(nameLocation+1, length-2);
-    if (idRange.length == 0)
-        idRange = textRange;
+    NSRange   idRange  = NSMakeRange(nameLocation+1, length-2);
+    NSString *idString = nil;
+    if (idRange.length > 0)
+    {
+        idString = [scanner.string substringWithRange:idRange];
+    }
+    else
+    {
+        NSMutableString *string = [NSMutableString new];
+        for (NSValue *value in element.innerRanges)
+        {
+            NSRange range = [value rangeValue];
+            [string appendString:[scanner.string substringWithRange:range]];
+        }
+        idString = string;
+    }
     
-    MMElement *element = [MMElement new];
-    element.type  = MMElementTypeLink;
     element.range = NSMakeRange(startLoc, scanner.location-startLoc);
-    element.identifier = [scanner.string substringWithRange:idRange];
+    element.identifier = idString;
     
     self.parseLinks = NO;
-    NSArray *innerElements = [self _parseRange:textRange ofString:scanner.string];
-    for (MMElement *inner in innerElements)
-    {
-        [element addChild:inner];
-    }
+    element.children = [self _parseLines:element.innerRanges ofString:scanner.string];
     self.parseLinks = YES;
     
     return element;

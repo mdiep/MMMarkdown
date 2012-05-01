@@ -140,12 +140,10 @@
     MMAssertMarkdownEqualsHTML(@"[foo]()", @"<p><a href=\"\">foo</a></p>");
 }
 
-#if RUN_KNOWN_FAILURES
 - (void) testInlineLinkWithNewlineInText
 {
     MMAssertMarkdownEqualsHTML(@"[A\nlink](/foo)", @"<p><a href=\"/foo\">A\nlink</a></p>");
 }
-#endif
 
 - (void) testNotAnInlineLink_loneBracket
 {
@@ -258,7 +256,6 @@
 }
 #endif
 
-#if RUN_KNOWN_FAILURES
 - (void) testReferenceLinkWithNewlineInText
 {
     NSString *markdown = @"[A\n"
@@ -269,7 +266,6 @@
                       "link</a></p>";
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
-#endif
 
 #if RUN_KNOWN_FAILURES
 - (void) testReferenceLinkWithImplicitIDAndNewlineInText
