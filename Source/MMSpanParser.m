@@ -147,7 +147,7 @@
 {
     MMScanner *scanner = self.scanner;
     
-    NSCharacterSet *specialChars = [NSCharacterSet characterSetWithCharactersInString:@"\\`*_<&["];
+    NSCharacterSet *specialChars = [NSCharacterSet characterSetWithCharactersInString:@"\\`*_<&[!"];
     NSCharacterSet *boringChars  = [specialChars invertedSet];
     
     NSUInteger textLocation = scanner.location;
@@ -694,10 +694,6 @@
         element.title = [scanner.string substringWithRange:titleRange];
     }
     
-    self.parseLinks = NO;
-    element.children = [self _parseLines:element.innerRanges ofString:scanner.string];
-    self.parseLinks = YES;
-    
     return element;
 }
 
@@ -749,9 +745,71 @@
     element.range = NSMakeRange(startLoc, scanner.location-startLoc);
     element.identifier = idString;
     
-    self.parseLinks = NO;
-    element.children = [self _parseLines:element.innerRanges ofString:scanner.string];
-    self.parseLinks = YES;
+    return element;
+}
+
+- (MMElement *) _startLink
+{
+    MMScanner *scanner = self.scanner;
+    MMElement *element;
+    
+    element = [self _startInlineLink];
+    
+    if (element == nil)
+    {
+        // Assume that this method will already be wrapped in a transaction
+        [scanner commitTransaction:NO];
+        [scanner beginTransaction];
+        element = [self _startReferenceLink];
+    }
+    
+    if (element != nil)
+    {
+        self.parseLinks = NO;
+        element.children = [self _parseLines:element.innerRanges ofString:scanner.string];
+        self.parseLinks = YES;
+    }
+    
+    return element;
+}
+
+- (MMElement *) _startImage
+{
+    MMScanner *scanner = self.scanner;
+    MMElement *element;
+    
+    // An image starts with a !, but then is a link
+    if ([scanner nextCharacter] != '!')
+        return nil;
+    [scanner advance];
+    
+    // Add a transaction to protect the ! that was scanned
+    [scanner beginTransaction];
+    
+    element = [self _startInlineLink];
+    
+    if (element == nil)
+    {
+        // Assume that this method will already be wrapped in a transaction
+        [scanner commitTransaction:NO];
+        [scanner beginTransaction];
+        element = [self _startReferenceLink];
+    }
+    
+    [scanner commitTransaction:YES];
+    
+    if (element != nil)
+    {
+        element.type = MMElementTypeImage;
+        
+        NSMutableString *altText = [NSMutableString new];
+        for (NSValue *value in element.innerRanges)
+        {
+            NSRange range = [value rangeValue];
+            [altText appendString:[scanner.string substringWithRange:range]];
+        }
+        element.stringValue = altText;
+    }
     
     return element;
 }
@@ -840,13 +898,13 @@
             return element;
         
         [scanner beginTransaction];
-        element = [self _startInlineLink];
+        element = [self _startImage];
         [scanner commitTransaction:element != nil];
         if (element)
             return element;
         
         [scanner beginTransaction];
-        element = [self _startReferenceLink];
+        element = [self _startLink];
         [scanner commitTransaction:element != nil];
         if (element)
             return element;

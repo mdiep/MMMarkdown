@@ -75,6 +75,17 @@ static NSString * __HTMLStartTagForElement(MMElement *anElement)
             return @"<em>";
         case MMElementTypeCodeSpan:
             return @"<code>";
+        case MMElementTypeImage:
+            if (anElement.title != nil)
+            {
+                return [NSString stringWithFormat:@"<img src=\"%@\" alt=\"%@\" title=\"%@\" />",
+                        __HTMLEscapedString(anElement.href),
+                        __HTMLEscapedString(anElement.stringValue),
+                        __HTMLEscapedString(anElement.title)];
+            }
+            return [NSString stringWithFormat:@"<img src=\"%@\" alt=\"%@\" />",
+                    __HTMLEscapedString(anElement.href),
+                    __HTMLEscapedString(anElement.stringValue)];
         case MMElementTypeLink:
             if (anElement.title != nil)
             {

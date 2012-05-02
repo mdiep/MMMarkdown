@@ -41,6 +41,7 @@ typedef enum
     MMElementTypeStrong,
     MMElementTypeEm,
     MMElementTypeCodeSpan,
+    MMElementTypeImage,
     MMElementTypeLink,
     MMElementTypeDefinition,
     MMElementTypeEntity

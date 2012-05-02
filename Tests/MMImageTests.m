@@ -37,20 +37,16 @@
 #pragma mark Inline Image Tests
 //==================================================================================================
 
-#if RUN_KNOWN_FAILURES
 - (void) testBasicInlineImage
 {
     MMAssertMarkdownEqualsHTML(@"![Alt text](/image.jpg)", @"<p><img src=\"/image.jpg\" alt=\"Alt text\" /></p>");
 }
-#endif
 
-#if RUN_KNOWN_FAILURES
 - (void) testInlineImageWithTitle
 {
     MMAssertMarkdownEqualsHTML(@"![Alt text](/image.jpg \"Title Here\")",
                                @"<p><img src=\"/image.jpg\" alt=\"Alt text\" title=\"Title Here\" /></p>");
 }
-#endif
 
 
 //==================================================================================================
@@ -58,29 +54,23 @@
 #pragma mark Reference Image Tests
 //==================================================================================================
 
-#if RUN_KNOWN_FAILURES
 - (void) testBasicReferenceImage
 {
     MMAssertMarkdownEqualsHTML(@"![Description][1]\n\n[1]: /image.jpg",
                                @"<p><img src=\"/image.jpg\" alt=\"Description\" /></p>");
 }
-#endif
 
-#if RUN_KNOWN_FAILURES
 - (void) testReferenceImageWithImplicitName
 {
     MMAssertMarkdownEqualsHTML(@"![Description][]\n\n[description]: /image.jpg",
                                @"<p><img src=\"/image.jpg\" alt=\"Description\" /></p>");
 }
-#endif
 
-#if RUN_KNOWN_FAILURES
 - (void) testReferenceImageWithTitle
 {
     MMAssertMarkdownEqualsHTML(@"![Description][1]\n\n[1]: /image.jpg \"A Title\"",
                                @"<p><img src=\"/image.jpg\" alt=\"Description\" title=\"A Title\" /></p>");
 }
-#endif
 
 
 @end

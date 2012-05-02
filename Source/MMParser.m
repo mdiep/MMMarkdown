@@ -1016,6 +1016,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
             case MMElementTypeDefinition:
                 [definitions setObject:element forKey:[element.identifier lowercaseString]];
                 break;
+            case MMElementTypeImage:
             case MMElementTypeLink:
                 if (element.identifier && !element.href)
                 {

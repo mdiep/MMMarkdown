@@ -56,6 +56,8 @@ static NSString * __MMStringFromElementType(MMElementType type)
             return @"em";
         case MMElementTypeCodeSpan:
             return @"code";
+        case MMElementTypeImage:
+            return @"image";
         case MMElementTypeLink:
             return @"link";
         case MMElementTypeEntity:
