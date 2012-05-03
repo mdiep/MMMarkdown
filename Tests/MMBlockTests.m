@@ -43,13 +43,11 @@
                                @"<blockquote>\n  <p>A quotation.</p>\n</blockquote>");
 }
 
-#if RUN_KNOWN_FAILURES
 - (void) testBlockquoteWithAngleOnOnlyTheFirstLine
 {
     MMAssertMarkdownEqualsHTML(@"> A quotation\nthat spans 2 lines.",
                                @"<blockquote>\n  <p>A quotation\nthat spans 2 lines.</p>\n</blockquote>");
 }
-#endif
 
 - (void) testBlockquoteWithMultipleParagraphs
 {

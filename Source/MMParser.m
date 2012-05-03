@@ -438,20 +438,25 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     
     // Parse each remaining line
     NSCharacterSet *whitespaceSet = [NSCharacterSet whitespaceCharacterSet];
-    while (![scanner atEndOfLine])
+    while (![scanner atEndOfString])
     {
         [scanner beginTransaction];
         [scanner skipCharactersFromSet:whitespaceSet];
         
-        // It's a continuation of the blockquote if there's a >
-        if ([scanner nextCharacter] != '>')
+        // It's a continuation of the blockquote unless it's a blank line
+        if ([scanner atEndOfLine])
         {
             [scanner commitTransaction:NO];
             break;
         }
         
-        [scanner advance]; // skip the >
-        [scanner skipCharactersFromSet:whitespaceSet max:1];
+        // If there's a >, then skip it and an optional space
+        if ([scanner nextCharacter] == '>')
+        {
+            [scanner advance];
+            [scanner skipCharactersFromSet:whitespaceSet max:1];
+        }
+        
         [element addInnerRange:scanner.currentRange];
         
         [scanner commitTransaction:YES];
