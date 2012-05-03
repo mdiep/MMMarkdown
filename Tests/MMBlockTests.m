@@ -189,12 +189,10 @@
     MMAssertMarkdownEqualsHTML(@"## A # Header! #####", @"<h2>A # Header!</h2>");
 }
 
-#if RUN_KNOWN_FAILURES
 - (void) testPrefixedHeaderImmediatelyFollowingParagraph
 {
     MMAssertMarkdownEqualsHTML(@"A\n# Example", @"<p>A</p>\n<h1>Example</h1>");
 }
-#endif
 
 
 //==================================================================================================

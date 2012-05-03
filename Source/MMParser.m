@@ -985,9 +985,17 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         }
         [scanner commitTransaction:NO];
         
+        MMElement *header;
         // Check for an underlined header
         [scanner beginTransaction];
-        MMElement *header = [self _parseUnderlinedHeaderWithScanner:scanner];
+        header = [self _parseUnderlinedHeaderWithScanner:scanner];
+        [scanner commitTransaction:NO];
+        if (header)
+            break;
+        
+        // Also check for a prefixed header
+        [scanner beginTransaction];
+        header = [self _parsePrefixHeaderWithScanner:scanner];
         [scanner commitTransaction:NO];
         if (header)
             break;
