@@ -50,6 +50,8 @@ static NSString * __MMStringFromElementType(MMElementType type)
             return @"hr";
         case MMElementTypeHTML:
             return @"html";
+        case MMElementTypeLineBreak:
+            return @"br";
         case MMElementTypeStrong:
             return @"strong";
         case MMElementTypeEm:

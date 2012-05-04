@@ -203,17 +203,58 @@
         [scanner advance];
     }
     
-    // Add the final text
-    [self _addTextFromLocation:textLocation toLocation:scanner.location];
-    
-    // Add a newline -- unless this is the last line
-    if (![scanner atEndOfString])
+    // If at the end of the string, just add any remaining text
+    if ([scanner atEndOfString])
     {
+        [self _addTextFromLocation:textLocation toLocation:scanner.location];
+    }
+    // Otherwise, also add (possibly) a line break and a newline
+    else
+    {
+        MMElement *topElement = self.openElements.lastObject;
+        NSString  *string     = scanner.string;
+        
+        // Check for a line break
+        BOOL       addLineBreak = NO;
+        NSUInteger textEnd      = scanner.location;
+        NSUInteger location     = scanner.location - 1;
+        while (location >= textLocation)
+        {
+            unichar character = [string characterAtIndex:location];
+            if (character != ' ')
+                break;
+            location--;
+        }
+        
+        NSUInteger numOfSpaces = (scanner.location - 1) - location;
+        if (numOfSpaces >= 2)
+        {
+            // Subtract 1 to leave a single space before the line break
+            textEnd -= (numOfSpaces - 1);
+            addLineBreak = YES;
+        }
+        
+        // Add the final text
+        [self _addTextFromLocation:textLocation toLocation:textEnd];
+        
+        // Add a line break?
+        if (addLineBreak)
+        {
+            MMElement *lineBreak = [MMElement new];
+            lineBreak.type  = MMElementTypeLineBreak;
+            lineBreak.range = NSMakeRange(scanner.location, 0);
+            
+            if (topElement)
+                [topElement addChild:lineBreak];
+            else
+                [self.elements addObject:lineBreak];
+        }
+        
+        // Add a newline
         MMElement *element = [MMElement new];
         element.type  = MMElementTypeNone;
         element.range = NSMakeRange(0, 0);
         
-        MMElement *topElement = self.openElements.lastObject;
         if (topElement)
             [topElement addChild:element];
         else

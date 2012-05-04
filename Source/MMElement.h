@@ -38,6 +38,7 @@ typedef enum
     MMElementTypeCodeBlock,
     MMElementTypeHorizontalRule,
     MMElementTypeHTML,
+    MMElementTypeLineBreak,
     MMElementTypeStrong,
     MMElementTypeEm,
     MMElementTypeCodeSpan,

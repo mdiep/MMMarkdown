@@ -67,6 +67,8 @@ static NSString * __HTMLStartTagForElement(MMElement *anElement)
             return @"<blockquote>\n";
         case MMElementTypeCodeBlock:
             return @"<pre><code>";
+        case MMElementTypeLineBreak:
+            return @"<br />";
         case MMElementTypeHorizontalRule:
             return @"\n<hr />\n";
         case MMElementTypeStrong:

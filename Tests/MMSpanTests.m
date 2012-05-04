@@ -150,12 +150,10 @@
 #pragma mark Line Break Tests
 //==================================================================================================
 
-#if RUN_KNOWN_FAILURES
 - (void) testBasicLineBreak
 {
     MMAssertMarkdownEqualsHTML(@"A line  \nwith a break  ", @"<p>A line <br />\nwith a break  </p>");
 }
-#endif
 
 
 @end
