@@ -44,6 +44,7 @@ typedef enum
     MMElementTypeCodeSpan,
     MMElementTypeImage,
     MMElementTypeLink,
+    MMElementTypeMailTo,
     MMElementTypeDefinition,
     MMElementTypeEntity
 } MMElementType;

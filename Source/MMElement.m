@@ -62,6 +62,8 @@ static NSString * __MMStringFromElementType(MMElementType type)
             return @"image";
         case MMElementTypeLink:
             return @"link";
+        case MMElementTypeMailTo:
+            return @"mailto";
         case MMElementTypeEntity:
             return @"entity";
         case MMElementTypeDefinition:

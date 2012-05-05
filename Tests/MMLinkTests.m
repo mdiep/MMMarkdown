@@ -60,7 +60,6 @@
     STAssertEqualObjects(generated, expected, @"HTML didn't match expected value");
 }
 
-#if RUN_KNOWN_FAILURES
 - (void) testAutomaticEmailLink
 {
     // The Markdown documentation says that automatic email links like this should have "randomized
@@ -71,11 +70,10 @@
     NSString *markdown  = @"<address@example.com>";
     NSString *generated = [MMMarkdown HTMLStringWithMarkdown:markdown error:nil];
     NSString *unescaped = (__bridge_transfer NSString *)CFXMLCreateStringByUnescapingEntities(NULL, (__bridge CFStringRef)generated, NULL);
-    NSString *expected  = @"<p><a href=\"mailto:address@example.com\">address@example.com</a></p>";
-    STAssertTrue([expected isEqualToString:unescaped], @"Unescaped output doesn't match expected");
+    NSString *expected  = @"<p><a href=\"mailto:address@example.com\">address@example.com</a></p>\n";
+    STAssertEqualObjects(unescaped, expected, @"Unescaped output doesn't match expected");
     STAssertFalse([expected isEqualToString:generated], @"Generated output should be escaped");
 }
-#endif
 
 
 //==================================================================================================

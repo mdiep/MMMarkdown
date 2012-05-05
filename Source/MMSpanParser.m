@@ -477,6 +477,45 @@
     return element;
 }
 
+- (MMElement *) _startAutomaticEmailLink
+{
+    MMScanner  *scanner  = self.scanner;
+    NSUInteger  startLoc = scanner.location;
+    
+    // Leading <
+    if ([scanner nextCharacter] != '<')
+        return nil;
+    [scanner advance];
+    
+    NSUInteger textLocation = scanner.location;
+    
+    // Find the trailing >
+    [scanner skipCharactersFromSet:[[NSCharacterSet characterSetWithCharactersInString:@">"] invertedSet]];
+    if ([scanner atEndOfLine])
+        return nil;
+    [scanner advance];
+    
+    NSRange   linkRange = NSMakeRange(textLocation, (scanner.location-1)-textLocation);
+    NSString *linkText  = [scanner.string substringWithRange:linkRange];
+    
+    // Make sure it looks like a link
+    NSRegularExpression *regex;
+    NSRange matchRange;
+    regex      = [NSRegularExpression regularExpressionWithPattern:@"^[-.\\w]+@[-a-z0-9][-.a-z0-9]*\\.[a-z]+$"
+                                                           options:NSRegularExpressionCaseInsensitive
+                                                             error:nil];
+    matchRange = [regex rangeOfFirstMatchInString:linkText options:0 range:NSMakeRange(0, linkText.length)];
+    if (matchRange.location == NSNotFound)
+        return nil;
+    
+    MMElement *element = [MMElement new];
+    element.type  = MMElementTypeMailTo;
+    element.range = NSMakeRange(startLoc, scanner.location-startLoc);
+    element.href  = linkText;
+    
+    return element;
+}
+
 - (MMElement *) _startCodeSpan
 {
     MMScanner  *scanner  = self.scanner;
@@ -938,6 +977,12 @@
     {
         [scanner beginTransaction];
         element = [self _startAutomaticLink];
+        [scanner commitTransaction:element != nil];
+        if (element)
+            return element;
+        
+        [scanner beginTransaction];
+        element = [self _startAutomaticEmailLink];
         [scanner commitTransaction:element != nil];
         if (element)
             return element;
