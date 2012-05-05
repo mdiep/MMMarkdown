@@ -68,4 +68,7 @@
 
 @interface MMTestCase : SenTestCase
 
+- (NSString *) stringWithContentsOfFile:(NSString *)aString inDirectory:(NSString *)aDirectory;
+- (void) runTestWithName:(NSString *)aName inDirectory:(NSString *)aDirectory;
+
 @end

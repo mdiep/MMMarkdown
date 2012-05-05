@@ -23,12 +23,16 @@
 // THE SOFTWARE.
 //
 
-#import "MMMarkdownTests.h"
+#import "MMTestCase.h"
 
 
 #import "MMMarkdown.h"
 
-@implementation MMMarkdownTests
+@interface MMPHPMarkdownTests : MMTestCase
+
+@end
+
+@implementation MMPHPMarkdownTests
 
 //==================================================================================================
 #pragma mark -
@@ -37,7 +41,7 @@
 
 - (void) runTestWithName:(NSString *)aName
 {
-    [self runTestWithName:aName inDirectory:@"MarkdownTest_1.0"];
+    [self runTestWithName:aName inDirectory:@"php-markdown"];
 }
 
 
@@ -46,39 +50,45 @@
 #pragma mark Test Cases
 //==================================================================================================
 
-- (void) testAmpsAndAngleEncoding
-{
-    [self runTestWithName:@"Amps and angle encoding"];
-}
-
-- (void) testAutoLinks
-{
-    [self runTestWithName:@"Auto links"];
-}
-
 - (void) testBackslashEscapes
 {
     [self runTestWithName:@"Backslash escapes"];
 }
 
-- (void) testBlockquotesWithCodeBlocks
+#if RUN_KNOWN_FAILURES
+- (void) testCodeBlockInAListItem
 {
-    [self runTestWithName:@"Blockquotes with code blocks"];
+    [self runTestWithName:@"Code block in a list item"];
+}
+#endif
+
+- (void) testCodeSpans
+{
+    [self runTestWithName:@"Code Spans"];
 }
 
-- (void) testHardWrappedParagraphsWithListLikeLines
+#if RUN_KNOWN_FAILURES
+- (void) testEmailAutoLinks
 {
-    [self runTestWithName:@"Hard-wrapped paragraphs with list-like lines"];
+    [self runTestWithName:@"Email auto links"];
+}
+#endif
+
+#if RUN_KNOWN_FAILURES
+- (void) testEmphasis
+{
+    [self runTestWithName:@"Emphasis"];
+}
+#endif
+
+- (void) testHeaders
+{
+    [self runTestWithName:@"Headers"];
 }
 
-- (void) testHorizontalRules
+- (void) testImagesUntitled
 {
-    [self runTestWithName:@"Horizontal rules"];
-}
-
-- (void) testInlineHTMLAdvanced
-{
-    [self runTestWithName:@"Inline HTML (Advanced)"];
+    [self runTestWithName:@"Images (Untitled)"];
 }
 
 - (void) testInlineHTMLSimple
@@ -86,60 +96,62 @@
     [self runTestWithName:@"Inline HTML (Simple)"];
 }
 
+#if RUN_KNOWN_FAILURES
+- (void) testInlineHTMLSpan
+{
+    [self runTestWithName:@"Inline HTML (Span)"];
+}
+#endif
+
 - (void) testInlineHTMLComments
 {
     [self runTestWithName:@"Inline HTML comments"];
 }
 
+#if RUN_KNOWN_FAILURES
+- (void) testInsAndDel
+{
+    [self runTestWithName:@"Ins & del"];
+}
+#endif
+
+#if RUN_KNOWN_FAILURES
 - (void) testLinksInlineStyle
 {
     [self runTestWithName:@"Links, inline style"];
 }
+#endif
 
-- (void) testLinksReferenceStyle
+- (void) testMD5Hashes
 {
-    [self runTestWithName:@"Links, reference style"];
+    [self runTestWithName:@"MD5 Hashes"];
 }
 
-- (void) testLiteralQuotesInTitles
+- (void) testNesting
 {
-    [self runTestWithName:@"Literal quotes in titles"];
+    [self runTestWithName:@"Nesting"];
 }
 
-- (void) testMarkdownDocumentationBasics
+#if RUN_KNOWN_FAILURES
+- (void) testParensInURL
 {
-    [self runTestWithName:@"Markdown Documentation - Basics"];
+    [self runTestWithName:@"Parens in URL"];
 }
+#endif
 
-- (void) testMarkdownDocumentationSyntax
+#if RUN_KNOWN_FAILURES
+- (void) testPHPSpecificBugs
 {
-    [self runTestWithName:@"Markdown Documentation - Syntax"];
+    [self runTestWithName:@"PHP-Specific Bugs"];
 }
+#endif
 
-- (void) testNestedBlockquotes
+#if RUN_KNOWN_FAILURES
+- (void) testTightBlocks
 {
-    [self runTestWithName:@"Nested blockquotes"];
+    [self runTestWithName:@"Tight blocks"];
 }
-
-- (void) testOrderedAndUnorderedLists
-{
-    [self runTestWithName:@"Ordered and unordered lists"];
-}
-
-- (void) testStrongAndEmTogether
-{
-    [self runTestWithName:@"Strong and em together"];
-}
-
-- (void) testTabs
-{
-    [self runTestWithName:@"Tabs"];
-}
-
-- (void) testTidyness
-{
-    [self runTestWithName:@"Tidyness"];
-}
+#endif
 
 
 @end
