@@ -234,7 +234,6 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-#if RUN_KNOWN_FAILURES
 - (void) testReferenceLinkWithTitleInSingleQuotes
 {
     NSString *markdown = @"[Apple][].\n"
@@ -243,9 +242,7 @@
     NSString *html = @"<p><a href=\"http://apple.com\" title=\"Apple Inc\">Apple</a>.</p>";
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
-#endif
 
-#if RUN_KNOWN_FAILURES
 - (void) testReferenceLinkWithTitleInParentheses
 {
     NSString *markdown = @"[Apple][].\n"
@@ -254,7 +251,6 @@
     NSString *html = @"<p><a href=\"http://apple.com\" title=\"Apple Inc\">Apple</a>.</p>";
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
-#endif
 
 - (void) testReferenceLinkWithNewlineInText
 {

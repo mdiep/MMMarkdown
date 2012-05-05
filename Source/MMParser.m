@@ -931,12 +931,14 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     
     // check for a title
     NSRange titleRange = NSMakeRange(NSNotFound, 0);
-    if ([scanner nextCharacter] == '"')
+    unichar nextChar  = [scanner nextCharacter];
+    if (nextChar == '"' || nextChar == '\'' || nextChar == '(')
     {
         [scanner advance];
+        unichar endChar = (nextChar == '(') ? ')' : nextChar;
         NSUInteger titleLocation = scanner.location;
         NSUInteger titleLength   = [scanner skipToLastCharacterOfLine];
-        if ([scanner nextCharacter] == '"')
+        if ([scanner nextCharacter] == endChar)
         {
             [scanner advance];
             titleRange = NSMakeRange(titleLocation, titleLength);
