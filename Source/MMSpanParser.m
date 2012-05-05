@@ -610,7 +610,10 @@
         
         if ([scanner atEndOfLine])
         {
-            [ranges addObject:[NSValue valueWithRange:textRange]];
+            if (textRange.length > 0)
+            {
+                [ranges addObject:[NSValue valueWithRange:textRange]];
+            }
             [scanner advanceToNextLine];
             textRange = scanner.currentRange;
         }
@@ -635,7 +638,10 @@
         [scanner advance];
     }
     
-    [ranges addObject:[NSValue valueWithRange:textRange]];
+    if (textRange.length > 0)
+    {
+        [ranges addObject:[NSValue valueWithRange:textRange]];
+    }
     
     return ranges;
 }
@@ -748,10 +754,9 @@
 {
     MMScanner  *scanner  = self.scanner;
     NSUInteger  startLoc = scanner.location;
-    NSUInteger  length;
     
     MMElement *element = [MMElement new];
-    element.type  = MMElementTypeLink;
+    element.type = MMElementTypeLink;
     
     // Find the []
     element.innerRanges = [self _parseLinkTextBody];
@@ -766,28 +771,21 @@
         [scanner advanceToNextLine];
     
     // Look for the second []
-    NSUInteger nameLocation;
-    nameLocation = scanner.location;
-    length       = [scanner skipNestedBracketsWithDelimiter:'['];
-    if (length == 0)
-        return nil;
-    
-    NSRange   idRange  = NSMakeRange(nameLocation+1, length-2);
-    NSString *idString = nil;
-    if (idRange.length > 0)
+    NSArray *idRanges = [self _parseLinkTextBody];
+    if (!idRanges.count)
     {
-        idString = [scanner.string substringWithRange:idRange];
+        idRanges = element.innerRanges;
     }
-    else
+
+    NSMutableString *idString = [NSMutableString new];
+    for (NSValue *value in idRanges)
     {
-        NSMutableString *string = [NSMutableString new];
-        for (NSValue *value in element.innerRanges)
-        {
-            NSRange range = [value rangeValue];
-            [string appendString:[scanner.string substringWithRange:range]];
-        }
-        idString = string;
+        NSRange range = [value rangeValue];
+        [idString appendString:[scanner.string substringWithRange:range]];
+        [idString appendString:@" "]; // newlines are replaced by spaces for the id
     }
+    // Delete the last space
+    [idString deleteCharactersInRange:NSMakeRange(idString.length-1, 1)];
     
     element.range = NSMakeRange(startLoc, scanner.location-startLoc);
     element.identifier = idString;

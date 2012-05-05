@@ -263,7 +263,6 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-#if RUN_KNOWN_FAILURES
 - (void) testReferenceLinkWithImplicitIDAndNewlineInText
 {
     NSString *markdown = @"[A\n"
@@ -274,20 +273,16 @@
                       "link</a></p>";
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
-#endif
 
-#if RUN_KNOWN_FAILURES
 - (void) testReferenceLinkWithNewlineInID
 {
     NSString *markdown = @"[A link][foo\n"
                           "bar]\n"
                           "\n"
                           "[foo bar]: /foo";
-    NSString *html = @"<p><a href=\"/foo\">A\n"
-                      "link</a></p>";
+    NSString *html = @"<p><a href=\"/foo\">A link</a></p>";
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
-#endif
 
 - (void) testReferenceLinkWithNoReference
 {
