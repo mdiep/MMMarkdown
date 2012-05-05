@@ -51,12 +51,14 @@
                                @"<p><a href=\"http://example.com/?a=1&amp;b=1\">http://example.com/?a=1&amp;b=1</a></p>");
 }
 
-#if RUN_KNOWN_FAILURES
 - (void) testNotAnActualAutomaticLink
 {
-    MMAssertMarkdownEqualsHTML(@"A <i> test with no HTML.", @"<p>A <i> test with no HTML.</p>");
+    // Use a string comparison for this test because the output is not valid XML
+    NSString *markdown  = @"A <i> test with no HTML.";
+    NSString *generated = [MMMarkdown HTMLStringWithMarkdown:markdown error:nil];
+    NSString *expected  = @"<p>A <i> test with no HTML.</p>\n";
+    STAssertEqualObjects(generated, expected, @"HTML didn't match expected value");
 }
-#endif
 
 #if RUN_KNOWN_FAILURES
 - (void) testAutomaticEmailLink

@@ -431,6 +431,12 @@
     NSString *linkText  = [scanner.string substringWithRange:linkRange];
     
     // Make sure it looks like a link
+    NSRegularExpression *regex;
+    NSRange matchRange;
+    regex      = [NSRegularExpression regularExpressionWithPattern:@"^(\\w+)://" options:0 error:nil];
+    matchRange = [regex rangeOfFirstMatchInString:linkText options:0 range:NSMakeRange(0, linkText.length)];
+    if (matchRange.location == NSNotFound)
+        return nil;
     NSURL *url = [NSURL URLWithString:linkText];
     if (!url)
         return nil;

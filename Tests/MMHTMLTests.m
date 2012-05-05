@@ -37,12 +37,10 @@
 #pragma mark Inline HTML Tests
 //==================================================================================================
 
-#if RUN_KNOWN_FAILURES
 - (void) testInlineHTML
 {
     MMAssertMarkdownEqualsHTML(@"A <i>test</i> with HTML.", @"<p>A <i>test</i> with HTML.</p>");
 }
-#endif
 
 
 //==================================================================================================
