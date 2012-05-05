@@ -1005,6 +1005,16 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         }
         [scanner commitTransaction:NO];
         
+        // Check for a blockquote
+        [scanner beginTransaction];
+        [scanner skipCharactersFromSet:whitespaceSet];
+        if ([scanner nextCharacter] == '>')
+        {
+            [scanner commitTransaction:YES];
+            break;
+        }
+        [scanner commitTransaction:NO];
+        
         MMElement *header;
         // Check for an underlined header
         [scanner beginTransaction];

@@ -146,12 +146,10 @@
 }
 #endif
 
-#if RUN_KNOWN_FAILURES
 - (void) testTightBlocks
 {
     [self runTestWithName:@"Tight blocks"];
 }
-#endif
 
 
 @end

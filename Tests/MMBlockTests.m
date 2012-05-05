@@ -248,5 +248,15 @@
     MMAssertMarkdownEqualsHTML(@"A\n \nB", @"<p>A</p><p>B</p>");
 }
 
+- (void) testParapgraphImmediatelyFollowedByBlockquote
+{
+    NSString *html = @"<p>A</p>\n"
+                      "\n"
+                      "<blockquote>\n"
+                      "<p>B</p>\n"
+                      "</blockquote>";
+    MMAssertMarkdownEqualsHTML(@"A\n> B", html);
+}
+
 
 @end
