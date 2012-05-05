@@ -894,6 +894,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
 {
     NSUInteger location;
     NSUInteger length;
+    NSCharacterSet *whitespaceSet = [NSCharacterSet whitespaceCharacterSet];
     
     [scanner skipIndentationUpTo:3];
     
@@ -911,11 +912,11 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     [scanner advance];
     
     // skip any whitespace
-    [scanner skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet]];
+    [scanner skipCharactersFromSet:whitespaceSet];
     
     // find the url
     location = scanner.location;
-    [scanner skipCharactersFromSet:[[NSCharacterSet whitespaceCharacterSet] invertedSet]];
+    [scanner skipCharactersFromSet:[whitespaceSet invertedSet]];
     
     NSRange   urlRange  = NSMakeRange(location, scanner.location-location);
     NSString *urlString = [scanner.string substringWithRange:urlRange];
@@ -927,7 +928,15 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     }
     
     // skip trailing whitespace
-    [scanner skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet]];
+    [scanner skipCharactersFromSet:whitespaceSet];
+    
+    // If at the end of the line, then try to find the title on the next line
+    [scanner beginTransaction];
+    if ([scanner atEndOfLine])
+    {
+        [scanner advanceToNextLine];
+        [scanner skipCharactersFromSet:whitespaceSet];
+    }
     
     // check for a title
     NSRange titleRange = NSMakeRange(NSNotFound, 0);
@@ -945,8 +954,10 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         }
     }
     
+    [scanner commitTransaction:titleRange.location != NSNotFound];
+    
     // skip trailing whitespace
-    [scanner skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet]];
+    [scanner skipCharactersFromSet:whitespaceSet];
     
     // make sure we're at the end of the line
     if (![scanner atEndOfLine])
