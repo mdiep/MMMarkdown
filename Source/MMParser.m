@@ -917,7 +917,14 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     location = scanner.location;
     [scanner skipCharactersFromSet:[[NSCharacterSet whitespaceCharacterSet] invertedSet]];
     
-    NSRange urlRange = NSMakeRange(location, scanner.location-location);
+    NSRange   urlRange  = NSMakeRange(location, scanner.location-location);
+    NSString *urlString = [scanner.string substringWithRange:urlRange];
+    
+    // Check if the URL is surrounded by angle brackets
+    if ([urlString hasPrefix:@"<"] && [urlString hasSuffix:@">"])
+    {
+        urlString = [urlString substringWithRange:NSMakeRange(1, urlString.length-2)];
+    }
     
     // skip trailing whitespace
     [scanner skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet]];
@@ -947,7 +954,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     element.type  = MMElementTypeDefinition;
     element.range = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
     element.identifier = [scanner.string substringWithRange:idRange];
-    element.href       = [scanner.string substringWithRange:urlRange];
+    element.href       = urlString;
     
     if (titleRange.location != NSNotFound)
     {
