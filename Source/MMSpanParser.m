@@ -562,7 +562,7 @@
     // Make sure it looks like a link
     NSRegularExpression *regex;
     NSRange matchRange;
-    regex      = [NSRegularExpression regularExpressionWithPattern:@"^[-.\\w]+@[-a-z0-9][-.a-z0-9]*\\.[a-z]+$"
+    regex      = [NSRegularExpression regularExpressionWithPattern:@"^[-._0-9\\p{L}]+@[-\\p{L}0-9][-.\\p{L}0-9]*\\.\\p{L}+$"
                                                            options:NSRegularExpressionCaseInsensitive
                                                              error:nil];
     matchRange = [regex rangeOfFirstMatchInString:linkText options:0 range:NSMakeRange(0, linkText.length)];

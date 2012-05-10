@@ -75,6 +75,21 @@
     STAssertFalse([expected isEqualToString:generated], @"Generated output should be escaped");
 }
 
+- (void) testAutomaticEmailLink_withAnInternationalDomain
+{
+    // The Markdown documentation says that automatic email links like this should have "randomized
+    // decimal and hex entity-encoding to help obscure your address from address-harvesting
+    // spambots". So test this the hard way: (1) unescape the output to test against the expected
+    // value and (2) make sure that the output doesn't match the expected value if it hasn't been
+    // unescaped.
+    NSString *markdown  = @"<hélp@tūdaliņ.làv>";
+    NSString *generated = [MMMarkdown HTMLStringWithMarkdown:markdown error:nil];
+    NSString *unescaped = (__bridge_transfer NSString *)CFXMLCreateStringByUnescapingEntities(NULL, (__bridge CFStringRef)generated, NULL);
+    NSString *expected  = @"<p><a href=\"mailto:hélp@tūdaliņ.làv\">hélp@tūdaliņ.làv</a></p>\n";
+    STAssertEqualObjects(unescaped, expected, @"Unescaped output doesn't match expected");
+    STAssertFalse([expected isEqualToString:generated], @"Generated output should be escaped");
+}
+
 
 //==================================================================================================
 #pragma mark -

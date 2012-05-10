@@ -65,12 +65,10 @@
     [self runTestWithName:@"Code Spans"];
 }
 
-#if RUN_KNOWN_FAILURES
 - (void) testEmailAutoLinks
 {
     [self runTestWithName:@"Email auto links"];
 }
-#endif
 
 #if 0
 /*
