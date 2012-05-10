@@ -83,7 +83,6 @@ static NSString * __MMStringFromElementType(MMElementType type)
 @synthesize type        = _type;
 @synthesize innerRanges = _innerRanges;
 
-@synthesize character   = _character;
 @synthesize level       = _level;
 @synthesize href        = _href;
 @synthesize title       = _title;

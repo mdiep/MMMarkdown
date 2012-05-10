@@ -30,17 +30,14 @@
 #import "MMScanner.h"
 
 @interface MMSpanParser ()
-@property (strong, nonatomic) MMScanner      *scanner;
 @property (strong, nonatomic) NSMutableArray *elements;
 @property (strong, nonatomic) NSMutableArray *openElements;
 
 @property (assign, nonatomic) BOOL parseLinks;
-- (NSArray *) _parseRange:(NSRange)aRange ofString:(NSString *)aString;
 @end
 
 @implementation MMSpanParser
 
-@synthesize scanner      = _scanner;
 @synthesize elements     = _elements;
 @synthesize openElements = _openElements;
 
@@ -69,48 +66,9 @@
 #pragma mark Public Methods
 //==================================================================================================
 
-- (NSArray *) parseSpansWithScanner:(MMScanner *)aScanner
+- (NSArray *) parseSpansWithScanner:(MMScanner *)scanner
 {
-    self.scanner      = aScanner;
-    self.elements     = [NSMutableArray array];
-    self.openElements = [NSMutableArray array];
-    
-    MMScanner *scanner = self.scanner;
-    
-    while (1)
-    {
-        while (![scanner atEndOfString])
-        {
-            [self _parseNextLine];
-            [scanner advanceToNextLine];
-        }
-        
-        // Backtrack if there are any open elements
-        if (self.openElements.count)
-        {
-            // Remove the open elements
-            MMElement *bottomElement = [self.openElements objectAtIndex:0];
-            [self.elements removeObjectIdenticalTo:bottomElement];
-            [self.openElements removeAllObjects];
-            
-            // Reset the location of the scanner
-            self.scanner.location = bottomElement.range.location + 1;
-            
-            // Add a text element for the skipped character
-            MMElement *text = [MMElement new];
-            text.type  = MMElementTypeNone;
-            text.range = NSMakeRange(bottomElement.range.location, 1);
-            [self.elements addObject:text];
-        }
-        else
-            break;
-    }
-    
-    NSArray *elements = self.elements;
-    self.scanner      = nil;
-    self.elements     = nil;
-    self.openElements = nil;
-    return elements;
+    return [self _parseWithScanner:scanner untilTestPasses:^{ return [scanner atEndOfString]; }];
 }
 
 
@@ -119,421 +77,254 @@
 #pragma mark Private Methods
 //==================================================================================================
 
-- (NSArray *) _parseLines:(NSArray *)lines ofString:(NSString *)aString
+- (MMElement *) _parseNextElementWithScanner:(MMScanner *)scanner
 {
-    // Save the state
-    MMScanner      *oldScanner      = self.scanner;
-    NSMutableArray *oldElements     = self.elements;
-    NSMutableArray *oldOpenElements = self.openElements;
+    // 1) Check for a text segment
     
-    MMScanner *newScanner = [MMScanner scannerWithString:aString lineRanges:lines];
-    NSArray   *result     = [self parseSpansWithScanner:newScanner];
-    
-    // Restore the state
-    self.scanner      = oldScanner;
-    self.elements     = oldElements;
-    self.openElements = oldOpenElements;
-    
-    return result;
-}
-
-- (NSArray *) _parseRange:(NSRange)aRange ofString:(NSString *)aString
-{
-    NSArray *lineRanges = [NSArray arrayWithObject:[NSValue valueWithRange:aRange]];
-    return [self _parseLines:lineRanges ofString:aString];
-}
-
-- (void) _parseNextLine
-{
-    MMScanner *scanner = self.scanner;
-    
-    NSCharacterSet *specialChars = [NSCharacterSet characterSetWithCharactersInString:@"\\`*_<&[!"];
+    NSCharacterSet *specialChars = [NSCharacterSet characterSetWithCharactersInString:@"\\`*_<&[! "];
     NSCharacterSet *boringChars  = [specialChars invertedSet];
-    
-    NSUInteger textLocation = scanner.location;
-    while (![scanner atEndOfLine])
+    NSUInteger skipped = [scanner skipCharactersFromSet:boringChars];
+    if (skipped > 0)
     {
-        // Skip boring characters
-        [scanner skipCharactersFromSet:boringChars];
-        
-        // Check for a backslash
-        if ([scanner nextCharacter] == '\\')
-        {
-            [self _addTextFromLocation:textLocation toLocation:scanner.location];
-            [scanner advance]; // skip over the backslash
-            textLocation = scanner.location;
-            [scanner advance]; // skip over the escaped character
-            continue;
-        }
-        
-        // Try to end open elements
-        NSUInteger  endLocation    = scanner.location;
-        MMElement  *elementToClose = [self _checkOpenElements];
-        if (elementToClose)
-        {
-            [self _addTextFromLocation:textLocation toLocation:endLocation];
-            [self _closeElement:elementToClose];
-            textLocation = scanner.location;
-            continue;
-        }
-        
-        // Try to start new elements
-        NSUInteger  startLocation = scanner.location;
-        MMElement  *elementToAdd  = [self _startNewElement];
-        if (elementToAdd)
-        {
-            [self _addTextFromLocation:textLocation toLocation:startLocation];
-            [self _addElement:elementToAdd];
-            textLocation = scanner.location;
-            continue;
-        }
-        
-        // Add any escaped entites
-        MMElement *newEntity = [self _newEscapedEntity];
-        if (newEntity)
-        {
-            [self _addTextFromLocation:textLocation toLocation:newEntity.range.location];
-            [self _addElement:newEntity];
-            [self _closeElement:newEntity];
-            textLocation = scanner.location;
-            continue;
-        }
-        
-        // Otherwise, advance
-        [scanner advance];
+        MMElement *text = [MMElement new];
+        text.type  = MMElementTypeNone;
+        text.range = NSMakeRange(scanner.location-skipped, skipped);
+        return text;
     }
     
-    // If at the end of the string, just add any remaining text
-    if ([scanner atEndOfString])
+    // 2) Check for a newline
+    if ([scanner atEndOfLine])
     {
-        [self _addTextFromLocation:textLocation toLocation:scanner.location];
-    }
-    // Otherwise, also add (possibly) a line break and a newline
-    else
-    {
-        MMElement *topElement = self.openElements.lastObject;
-        NSString  *string     = scanner.string;
-        
-        // Check for a line break
-        BOOL       addLineBreak = NO;
-        NSUInteger textEnd      = scanner.location;
-        NSUInteger location     = scanner.location - 1;
-        while (location >= textLocation)
-        {
-            unichar character = [string characterAtIndex:location];
-            if (character != ' ')
-                break;
-            location--;
-        }
-        
-        NSUInteger numOfSpaces = (scanner.location - 1) - location;
-        if (numOfSpaces >= 2)
-        {
-            // Subtract 1 to leave a single space before the line break
-            textEnd -= (numOfSpaces - 1);
-            addLineBreak = YES;
-        }
-        
-        // Add the final text
-        [self _addTextFromLocation:textLocation toLocation:textEnd];
-        
-        // Add a line break?
-        if (addLineBreak)
-        {
-            MMElement *lineBreak = [MMElement new];
-            lineBreak.type  = MMElementTypeLineBreak;
-            lineBreak.range = NSMakeRange(scanner.location, 0);
-            
-            if (topElement)
-                [topElement addChild:lineBreak];
-            else
-                [self.elements addObject:lineBreak];
-        }
+        // TODO: Add a line break?
         
         // Add a newline
-        MMElement *element = [MMElement new];
-        element.type  = MMElementTypeNone;
-        element.range = NSMakeRange(0, 0);
+        MMElement *newline = [MMElement new];
+        newline.type  = MMElementTypeNone;
+        newline.range = NSMakeRange(0, 0);
         
-        if (topElement)
-            [topElement addChild:element];
-        else
-            [self.elements addObject:element];
-    }
-}
-
-- (void) _addTextFromLocation:(NSUInteger)startLocation toLocation:(NSUInteger)endLocation
-{
-    [self _addTextFromLocation:startLocation toLocation:endLocation toElement:self.openElements.lastObject];
-}
-
-- (void) _addTextFromLocation:(NSUInteger)startLocation toLocation:(NSUInteger)endLocation toElement:(MMElement *)toElement
-{
-    // Don't add empty text
-    if (startLocation == endLocation)
-        return;
-    
-    MMElement *element = [MMElement new];
-    element.type  = MMElementTypeNone;
-    element.range = NSMakeRange(startLocation, endLocation-startLocation);
-    
-    if (toElement)
-        [toElement addChild:element];
-    else
-        [self.elements addObject:element];
-}
-
-- (void) _closeElement:(MMElement *)anElement
-{
-    // Get rid of any elements that aren't closed.
-    NSMutableArray *openElements = self.openElements;
-    MMElement *element = [openElements lastObject];
-    while (element && element != anElement)
-    {
-        if (element.parent)
-            [element.parent removeChild:element];
-        else
-            [self.elements removeObjectIdenticalTo:element];
+        [scanner advanceToNextLine];
         
-        [openElements removeLastObject];
-        element = [openElements lastObject];
+        return newline;
     }
     
-    // Remove the actual element
-    [openElements removeLastObject];
-}
-
-- (BOOL) _canCloseStrong:(MMElement *)anElement
-{
-    MMScanner *scanner = self.scanner;
+    // 3) Check for a span element
     
-    // Can't be at the beginning of the line
-    if ([scanner atBeginningOfLine])
-        return NO;
-    
-    // Must follow the end of a word
-    NSCharacterSet *wordSet = [[NSCharacterSet whitespaceCharacterSet] invertedSet];
-    if (![wordSet characterIsMember:[scanner previousCharacter]])
-        return NO;
-    
-    // Must have 2 *s or _s
-    for (NSUInteger idx=0; idx<2; idx++)
+    MMElement *span = [self _parseSpanWithScanner:scanner];
+    if (span)
     {
-        if ([scanner nextCharacter] != anElement.character)
-            return NO;
-        [scanner advance];
+        return span;
     }
     
-    return YES;
-}
-
-- (BOOL) _canCloseEm:(MMElement *)anElement
-{
-    MMScanner *scanner = self.scanner;
+    // 4) Check for an entity
     
-    // Can't be at the beginning of the line
-    if ([scanner atBeginningOfLine])
-        return NO;
+    MMElement *entity = [self _parseEntityWithScanner:scanner];
+    if (entity)
+    {
+        return entity;
+    }
     
-    // Must follow the end of a word
-    NSCharacterSet *wordSet = [[NSCharacterSet whitespaceCharacterSet] invertedSet];
-    if (![wordSet characterIsMember:[scanner previousCharacter]])
-        return NO;
+    // 5) Check for a backslash
+    if ([scanner nextCharacter] == '\\')
+    {
+        [scanner advance]; // skip over the backslash
+        // Then fall through to (6) below.
+    }
     
-    // Must have a * or _
-    if ([scanner nextCharacter] != anElement.character)
-        return NO;
+    // 6) Otherwise, return the character
+    MMElement *character = [MMElement new];
+    character.type = MMElementTypeNone;
+    character.range = NSMakeRange(scanner.location, 1);
+    
     [scanner advance];
     
-    return YES;
+    return character;
 }
 
-- (BOOL) _canCloseCodeSpan:(MMElement *)anElement
+- (NSArray *) _parseWithScanner:(MMScanner *)scanner untilTestPasses:(BOOL (^)())test
 {
-    MMScanner *scanner = self.scanner;
+    NSMutableArray *result = [NSMutableArray array];
     
-    for (NSUInteger idx=0; idx<anElement.level; idx++)
+    while (![scanner atEndOfString])
     {
-        if ([scanner nextCharacter] != '`')
-            return NO;
-        [scanner advance];
+        MMElement *element = [self _parseNextElementWithScanner:scanner];
+        if (element)
+        {
+            [result addObject:element];
+        }
+        
+        // Check for the end character
+        [scanner beginTransaction];
+        if (test())
+        {
+            [scanner commitTransaction:YES];
+            return result;
+        }
+        [scanner commitTransaction:NO];
     }
     
-    return YES;
+    return nil;
 }
-
-- (BOOL) _canCloseElement:(MMElement *)anElement
+       
+- (MMElement *) _parseSpanWithScanner:(MMScanner *)scanner
 {
-    switch (anElement.type)
-    {
-        case MMElementTypeStrong:
-            return [self _canCloseStrong:anElement];
-        case MMElementTypeEm:
-            return [self _canCloseEm:anElement];
-        case MMElementTypeCodeSpan:
-            return [self _canCloseCodeSpan:anElement];
-        default:
-            return YES;
-    }
-}
-
-- (MMElement *) _checkOpenElements
-{
-    MMScanner *scanner = self.scanner;
+    MMElement *element;
     
-    for (MMElement *element in [self.openElements reverseObjectEnumerator])
+    [scanner beginTransaction];
+    element = [self _parseStrongWithScanner:scanner];
+    [scanner commitTransaction:element != nil];
+    if (element)
+        return element;
+    
+    [scanner beginTransaction];
+    element = [self _parseEmWithScanner:scanner];
+    [scanner commitTransaction:element != nil];
+    if (element)
+        return element;
+    
+    [scanner beginTransaction];
+    element = [self _parseCodeSpanWithScanner:scanner];
+    [scanner commitTransaction:element != nil];
+    if (element)
+        return element;
+    
+    [scanner beginTransaction];
+    element = [self _parseLineBreakWithScanner:scanner];
+    [scanner commitTransaction:element != nil];
+    if (element)
+        return element;
+    
+    if (self.parseLinks)
     {
         [scanner beginTransaction];
-        BOOL canClose = [self _canCloseElement:element];
-        [scanner commitTransaction:canClose];
-        if (canClose)
+        element = [self _parseAutomaticLinkWithScanner:scanner];
+        [scanner commitTransaction:element != nil];
+        if (element)
+            return element;
+        
+        [scanner beginTransaction];
+        element = [self _parseAutomaticEmailLinkWithScanner:scanner];
+        [scanner commitTransaction:element != nil];
+        if (element)
+            return element;
+        
+        [scanner beginTransaction];
+        element = [self _parseImageWithScanner:scanner];
+        [scanner commitTransaction:element != nil];
+        if (element)
+            return element;
+        
+        [scanner beginTransaction];
+        element = [self _parseLinkWithScanner:scanner];
+        [scanner commitTransaction:element != nil];
+        if (element)
             return element;
     }
     
     return nil;
 }
 
-- (void) _addElement:(MMElement *)anElement
+- (MMElement *) _parseStrongWithScanner:(MMScanner *)scanner
 {
-    // Add the element to the structure
-    MMElement *topElement = self.openElements.lastObject;
-    if (topElement)
-        [topElement addChild:anElement];
-    else
-        [self.elements addObject:anElement];
+    // Must have 2 *s or _s
+    unichar character = [scanner nextCharacter];
+    if (!(character == '*' || character == '_'))
+        return nil;
     
-    // Add it to the open elements
-    if (anElement.range.length == 0)
+    for (NSUInteger idx=0; idx<2; idx++)
     {
-        [self.openElements addObject:anElement];
+        if ([scanner nextCharacter] != character)
+            return nil;
+        [scanner advance];
     }
-}
-
-- (MMElement *) _startAutomaticLink
-{
-    MMScanner  *scanner  = self.scanner;
-    NSUInteger  startLoc = scanner.location;
     
-    // Leading <
-    if ([scanner nextCharacter] != '<')
-        return nil;
-    [scanner advance];
-    
-    NSUInteger textLocation = scanner.location;
-    
-    // Find the trailing >
-    [scanner skipCharactersFromSet:[[NSCharacterSet characterSetWithCharactersInString:@">"] invertedSet]];
-    if ([scanner atEndOfLine])
-        return nil;
-    [scanner advance];
-    
-    NSRange   linkRange = NSMakeRange(textLocation, (scanner.location-1)-textLocation);
-    NSString *linkText  = [scanner.string substringWithRange:linkRange];
-    
-    // Make sure it looks like a link
-    NSRegularExpression *regex;
-    NSRange matchRange;
-    regex      = [NSRegularExpression regularExpressionWithPattern:@"^(\\w+)://" options:0 error:nil];
-    matchRange = [regex rangeOfFirstMatchInString:linkText options:0 range:NSMakeRange(0, linkText.length)];
-    if (matchRange.location == NSNotFound)
-        return nil;
-    NSURL *url = [NSURL URLWithString:linkText];
-    if (!url)
-        return nil;
-    
-    MMElement *element = [MMElement new];
-    element.type  = MMElementTypeLink;
-    element.range = NSMakeRange(startLoc, scanner.location-startLoc);
-    element.href  = linkText;
-    
-    // Do the text the hard way to take care of ampersands
-    NSRange textRange = NSMakeRange(textLocation, NSMaxRange(linkRange)-textLocation);
-    NSCharacterSet *ampersands = [NSCharacterSet characterSetWithCharactersInString:@"&"];
-    while (textRange.length > 0)
-    {
-        NSRange result = [scanner.string rangeOfCharacterFromSet:ampersands
-                                                         options:0
-                                                           range:textRange];
+    NSCharacterSet  *whitespaceSet = [NSCharacterSet whitespaceCharacterSet];
+    NSArray         *children      = [self _parseWithScanner:scanner untilTestPasses:^{
+        // Can't be at the beginning of the line
+        if ([scanner atBeginningOfLine])
+            return NO;
         
-        if (result.location != NSNotFound)
+        // Must follow the end of a word
+        if ([whitespaceSet characterIsMember:[scanner previousCharacter]])
+            return NO;
+        
+        // Must have 2 *s or _s
+        for (NSUInteger idx=0; idx<2; idx++)
         {
-            [self _addTextFromLocation:textRange.location toLocation:result.location toElement:element];
-            
-            MMElement *ampersand = [MMElement new];
-            ampersand.type  = MMElementTypeEntity;
-            ampersand.range = NSMakeRange(textRange.location, 1);
-            ampersand.stringValue = @"&amp;";
-            [element addChild:ampersand];
-            
-            textRange = NSMakeRange(result.location+1, NSMaxRange(textRange)-(result.location+1));
+            if ([scanner nextCharacter] != character)
+                return NO;
+            [scanner advance];
         }
-        else
-        {
-            [self _addTextFromLocation:textRange.location toLocation:NSMaxRange(textRange) toElement:element];
-            break;
-        }
-    }
+        
+        return YES;
+    }];
     
-    return element;
-}
-
-- (MMElement *) _startAutomaticEmailLink
-{
-    MMScanner  *scanner  = self.scanner;
-    NSUInteger  startLoc = scanner.location;
-    
-    // Leading <
-    if ([scanner nextCharacter] != '<')
-        return nil;
-    [scanner advance];
-    
-    NSUInteger textLocation = scanner.location;
-    
-    // Find the trailing >
-    [scanner skipCharactersFromSet:[[NSCharacterSet characterSetWithCharactersInString:@">"] invertedSet]];
-    if ([scanner atEndOfLine])
-        return nil;
-    [scanner advance];
-    
-    NSRange   linkRange = NSMakeRange(textLocation, (scanner.location-1)-textLocation);
-    NSString *linkText  = [scanner.string substringWithRange:linkRange];
-    
-    // Make sure it looks like a link
-    NSRegularExpression *regex;
-    NSRange matchRange;
-    regex      = [NSRegularExpression regularExpressionWithPattern:@"^[-.\\w]+@[-a-z0-9][-.a-z0-9]*\\.[a-z]+$"
-                                                           options:NSRegularExpressionCaseInsensitive
-                                                             error:nil];
-    matchRange = [regex rangeOfFirstMatchInString:linkText options:0 range:NSMakeRange(0, linkText.length)];
-    if (matchRange.location == NSNotFound)
+    if (!children)
         return nil;
     
     MMElement *element = [MMElement new];
-    element.type  = MMElementTypeMailTo;
-    element.range = NSMakeRange(startLoc, scanner.location-startLoc);
-    element.href  = linkText;
+    element.type     = MMElementTypeStrong;
+    element.range    = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
+    element.children = children;
     
     return element;
 }
 
-- (MMElement *) _startCodeSpan
+- (MMElement *) _parseEmWithScanner:(MMScanner *)scanner
 {
-    MMScanner  *scanner  = self.scanner;
-    NSUInteger  startLoc = scanner.location;
+    // Must have 1 * or _
+    unichar character = [scanner nextCharacter];
+    if (!(character == '*' || character == '_'))
+        return nil;
+    [scanner advance];
     
+    // Can't be at the end of a line or before a space
+    if ([[NSCharacterSet whitespaceAndNewlineCharacterSet] characterIsMember:[scanner nextCharacter]])
+        return nil;
+    
+    NSCharacterSet  *whitespaceSet = [NSCharacterSet whitespaceCharacterSet];
+    NSArray         *children      = [self _parseWithScanner:scanner untilTestPasses:^{
+        // Can't be at the beginning of the line
+        if ([scanner atBeginningOfLine])
+            return NO;
+        
+        // Must follow the end of a word
+        if ([whitespaceSet characterIsMember:[scanner previousCharacter]])
+            return NO;
+        
+        // Must have a * or _
+        if ([scanner nextCharacter] != character)
+            return NO;
+        [scanner advance];
+        
+        return YES;
+    }];
+    
+    if (!children)
+        return nil;
+    
+    MMElement *element = [MMElement new];
+    element.type      = MMElementTypeEm;
+    element.range     = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
+    element.children  = children;
+    
+    return element;
+    
+}
+
+- (MMElement *) _parseCodeSpanWithScanner:(MMScanner *)scanner
+{
     if ([scanner nextCharacter] != '`')
         return nil;
     [scanner advance];
     
     MMElement *element = [MMElement new];
-    element.type  = MMElementTypeCodeSpan;
-    element.range = NSMakeRange(startLoc, 0);
-    element.level = 1;
+    element.type = MMElementTypeCodeSpan;
     
     // Check for a 2nd `
+    NSUInteger level = 1;
     if ([scanner nextCharacter] == '`')
     {
-        element.level = 2;
+        level = 2;
         [scanner advance];
     }
     
@@ -549,13 +340,19 @@
         [scanner skipCharactersFromSet:boringChars];
         
         // Add the code as text
-        [self _addTextFromLocation:textLocation toLocation:scanner.location toElement:element];
+        if (textLocation != scanner.location)
+        {
+            MMElement *text = [MMElement new];
+            text.type  = MMElementTypeNone;
+            text.range = NSMakeRange(textLocation, scanner.location-textLocation);
+            [element addChild:text];
+        }
         
         unichar nextChar = [scanner nextCharacter];
         // Did we find the closing `?
         if (nextChar == '`')
         {
-            if (element.level == 2)
+            if (level == 2)
             {
                 // set the location for if this isn't the 2nd backtick--because if it is,
                 // the location doesn't matter
@@ -610,6 +407,14 @@
         textLocation = scanner.location;
     }
     
+    // Make sure there are closing `s
+    for (NSUInteger idx=0; idx<level; idx++)
+    {
+        if ([scanner nextCharacter] != '`')
+            return nil;
+        [scanner advance];
+    }
+    
     // remove trailing whitespace
     if (element.children.count > 0)
     {
@@ -625,12 +430,155 @@
         }
     }
     
+    element.range = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
+    
     return element;
 }
 
-- (NSArray *) _parseLinkTextBody
+- (MMElement *) _parseLineBreakWithScanner:(MMScanner *)scanner
 {
-    MMScanner      *scanner = self.scanner;
+    // A line break is made up of 2 spaces. Since 1 is left on the line, match it against the
+    // previous character instead of the next one.
+    if ([scanner previousCharacter] != ' ')
+        return nil;
+    if ([scanner nextCharacter] != ' ')
+        return nil;
+    
+    [scanner advance];
+    while ([scanner nextCharacter] == ' ')
+    {
+        [scanner advance];
+    }
+    
+    if (![scanner atEndOfLine])
+        return nil;
+    
+    // Don't ever add a line break to the last line
+    if ([scanner atEndOfString])
+        return nil;
+    
+    MMElement *element = [MMElement new];
+    element.type  = MMElementTypeLineBreak;
+    element.range = NSMakeRange(scanner.location, scanner.location-scanner.startLocation);
+    
+    return element;
+}
+
+- (MMElement *) _parseAutomaticLinkWithScanner:(MMScanner *)scanner
+{
+    // Leading <
+    if ([scanner nextCharacter] != '<')
+        return nil;
+    [scanner advance];
+    
+    NSUInteger textLocation = scanner.location;
+    
+    // Find the trailing >
+    [scanner skipCharactersFromSet:[[NSCharacterSet characterSetWithCharactersInString:@">"] invertedSet]];
+    if ([scanner atEndOfLine])
+        return nil;
+    [scanner advance];
+    
+    NSRange   linkRange = NSMakeRange(textLocation, (scanner.location-1)-textLocation);
+    NSString *linkText  = [scanner.string substringWithRange:linkRange];
+    
+    // Make sure it looks like a link
+    NSRegularExpression *regex;
+    NSRange matchRange;
+    regex      = [NSRegularExpression regularExpressionWithPattern:@"^(\\w+)://" options:0 error:nil];
+    matchRange = [regex rangeOfFirstMatchInString:linkText options:0 range:NSMakeRange(0, linkText.length)];
+    if (matchRange.location == NSNotFound)
+        return nil;
+    NSURL *url = [NSURL URLWithString:linkText];
+    if (!url)
+        return nil;
+    
+    MMElement *element = [MMElement new];
+    element.type  = MMElementTypeLink;
+    element.range = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
+    element.href  = linkText;
+    
+    // Do the text the hard way to take care of ampersands
+    NSRange textRange = NSMakeRange(textLocation, NSMaxRange(linkRange)-textLocation);
+    NSCharacterSet *ampersands = [NSCharacterSet characterSetWithCharactersInString:@"&"];
+    while (textRange.length > 0)
+    {
+        NSRange result = [scanner.string rangeOfCharacterFromSet:ampersands
+                                                         options:0
+                                                           range:textRange];
+        
+        if (result.location != NSNotFound)
+        {
+            if (textRange.location != result.location)
+            {
+                MMElement *text = [MMElement new];
+                text.type  = MMElementTypeNone;
+                text.range = NSMakeRange(textRange.location, result.location-textRange.location);
+                [element addChild:text];
+            }
+            
+            MMElement *ampersand = [MMElement new];
+            ampersand.type  = MMElementTypeEntity;
+            ampersand.range = NSMakeRange(textRange.location, 1);
+            ampersand.stringValue = @"&amp;";
+            [element addChild:ampersand];
+            
+            textRange = NSMakeRange(result.location+1, NSMaxRange(textRange)-(result.location+1));
+        }
+        else
+        {
+            if (textRange.length > 0)
+            {
+                MMElement *text = [MMElement new];
+                text.type  = MMElementTypeNone;
+                text.range = textRange;
+                [element addChild:text];
+            }
+            break;
+        }
+    }
+    
+    return element;
+}
+
+- (MMElement *) _parseAutomaticEmailLinkWithScanner:(MMScanner *)scanner
+{
+    // Leading <
+    if ([scanner nextCharacter] != '<')
+        return nil;
+    [scanner advance];
+    
+    NSUInteger textLocation = scanner.location;
+    
+    // Find the trailing >
+    [scanner skipCharactersFromSet:[[NSCharacterSet characterSetWithCharactersInString:@">"] invertedSet]];
+    if ([scanner atEndOfLine])
+        return nil;
+    [scanner advance];
+    
+    NSRange   linkRange = NSMakeRange(textLocation, (scanner.location-1)-textLocation);
+    NSString *linkText  = [scanner.string substringWithRange:linkRange];
+    
+    // Make sure it looks like a link
+    NSRegularExpression *regex;
+    NSRange matchRange;
+    regex      = [NSRegularExpression regularExpressionWithPattern:@"^[-.\\w]+@[-a-z0-9][-.a-z0-9]*\\.[a-z]+$"
+                                                           options:NSRegularExpressionCaseInsensitive
+                                                             error:nil];
+    matchRange = [regex rangeOfFirstMatchInString:linkText options:0 range:NSMakeRange(0, linkText.length)];
+    if (matchRange.location == NSNotFound)
+        return nil;
+    
+    MMElement *element = [MMElement new];
+    element.type  = MMElementTypeMailTo;
+    element.range = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
+    element.href  = linkText;
+    
+    return element;
+}
+
+- (NSArray *) _parseLinkTextBodyWithScanner:(MMScanner *)scanner
+{
     NSMutableArray *ranges  = [NSMutableArray new];
     NSCharacterSet *boringChars;
     NSUInteger      level;
@@ -685,18 +633,16 @@
     return ranges;
 }
 
-- (MMElement *) _startInlineLink
+- (MMElement *) _parseInlineLinkWithScanner:(MMScanner *)scanner
 {
-    MMScanner      *scanner  = self.scanner;
     NSCharacterSet *boringChars;
-    NSUInteger      startLoc = scanner.location;
     NSUInteger      level;
     
     MMElement *element = [MMElement new];
     element.type  = MMElementTypeLink;
     
     // Find the []
-    element.innerRanges = [self _parseLinkTextBody];
+    element.innerRanges = [self _parseLinkTextBodyWithScanner:scanner];
     if (!element.innerRanges.count)
         return nil;
     
@@ -777,7 +723,7 @@
         href = [href substringWithRange:NSMakeRange(1, href.length-2)];
     }
     
-    element.range = NSMakeRange(startLoc, scanner.location-startLoc);
+    element.range = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
     element.href  = href;
     
     if (titleLocation != NSNotFound)
@@ -789,16 +735,13 @@
     return element;
 }
 
-- (MMElement *) _startReferenceLink
+- (MMElement *) _parseReferenceLinkWithScanner:(MMScanner *)scanner
 {
-    MMScanner  *scanner  = self.scanner;
-    NSUInteger  startLoc = scanner.location;
-    
     MMElement *element = [MMElement new];
     element.type = MMElementTypeLink;
     
     // Find the []
-    element.innerRanges = [self _parseLinkTextBody];
+    element.innerRanges = [self _parseLinkTextBodyWithScanner:scanner];
     if (!element.innerRanges.count)
         return nil;
     
@@ -810,7 +753,7 @@
         [scanner advanceToNextLine];
     
     // Look for the second []
-    NSArray *idRanges = [self _parseLinkTextBody];
+    NSArray *idRanges = [self _parseLinkTextBodyWithScanner:scanner];
     if (!idRanges.count)
     {
         idRanges = element.innerRanges;
@@ -826,40 +769,39 @@
     // Delete the last space
     [idString deleteCharactersInRange:NSMakeRange(idString.length-1, 1)];
     
-    element.range = NSMakeRange(startLoc, scanner.location-startLoc);
+    element.range = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
     element.identifier = idString;
     
     return element;
 }
 
-- (MMElement *) _startLink
+- (MMElement *) _parseLinkWithScanner:(MMScanner *)scanner
 {
-    MMScanner *scanner = self.scanner;
     MMElement *element;
     
-    element = [self _startInlineLink];
+    element = [self _parseInlineLinkWithScanner:scanner];
     
     if (element == nil)
     {
         // Assume that this method will already be wrapped in a transaction
         [scanner commitTransaction:NO];
         [scanner beginTransaction];
-        element = [self _startReferenceLink];
+        element = [self _parseReferenceLinkWithScanner:scanner];
     }
     
     if (element != nil)
     {
         self.parseLinks = NO;
-        element.children = [self _parseLines:element.innerRanges ofString:scanner.string];
+        MMScanner *innerScanner = [MMScanner scannerWithString:scanner.string lineRanges:element.innerRanges];
+        element.children = [self _parseWithScanner:innerScanner untilTestPasses:^{ return [innerScanner atEndOfString]; }];
         self.parseLinks = YES;
     }
     
     return element;
 }
 
-- (MMElement *) _startImage
+- (MMElement *) _parseImageWithScanner:(MMScanner *)scanner
 {
-    MMScanner *scanner = self.scanner;
     MMElement *element;
     
     // An image starts with a !, but then is a link
@@ -870,14 +812,14 @@
     // Add a transaction to protect the ! that was scanned
     [scanner beginTransaction];
     
-    element = [self _startInlineLink];
+    element = [self _parseInlineLinkWithScanner:scanner];
     
     if (element == nil)
     {
         // Assume that this method will already be wrapped in a transaction
         [scanner commitTransaction:NO];
         [scanner beginTransaction];
-        element = [self _startReferenceLink];
+        element = [self _parseReferenceLinkWithScanner:scanner];
     }
     
     [scanner commitTransaction:YES];
@@ -898,115 +840,8 @@
     return element;
 }
 
-- (MMElement *) _startStrong
+- (MMElement *) _parseAmpersandWithScanner:(MMScanner *)scanner
 {
-    MMScanner  *scanner  = self.scanner;
-    NSUInteger  startLoc = scanner.location;
-    
-    // Must have 2 *s or _s
-    unichar character = [scanner nextCharacter];
-    if (!(character == '*' || character == '_'))
-        return nil;
-    
-    for (NSUInteger idx=0; idx<2; idx++)
-    {
-        if ([scanner nextCharacter] != character)
-            return nil;
-        [scanner advance];
-    }
-    
-    // Can't be at the end of a line or before a space
-    if ([[NSCharacterSet whitespaceAndNewlineCharacterSet] characterIsMember:[scanner nextCharacter]])
-        return nil;
-    
-    MMElement *element = [MMElement new];
-    element.type      = MMElementTypeStrong;
-    element.range     = NSMakeRange(startLoc, 0);
-    element.character = character;
-    
-    return element;
-}
-
-- (MMElement *) _startEm
-{
-    MMScanner  *scanner  = self.scanner;
-    NSUInteger  startLoc = scanner.location;
-    
-    // Must have 1 * or _
-    unichar character = [scanner nextCharacter];
-    if (!(character == '*' || character == '_'))
-        return nil;
-    [scanner advance];
-    
-    // Can't be at the end of a line or before a space
-    if ([[NSCharacterSet whitespaceAndNewlineCharacterSet] characterIsMember:[scanner nextCharacter]])
-        return nil;
-    
-    MMElement *element = [MMElement new];
-    element.type      = MMElementTypeEm;
-    element.range     = NSMakeRange(startLoc, 0);
-    element.character = character;
-    
-    return element;
-}
-
-- (MMElement *) _startNewElement
-{
-    MMScanner *scanner = self.scanner;
-    MMElement *element;
-    
-    [scanner beginTransaction];
-    element = [self _startStrong];
-    [scanner commitTransaction:element != nil];
-    if (element)
-        return element;
-    
-    [scanner beginTransaction];
-    element = [self _startEm];
-    [scanner commitTransaction:element != nil];
-    if (element)
-        return element;
-    
-    [scanner beginTransaction];
-    element = [self _startCodeSpan];
-    [scanner commitTransaction:element != nil];
-    if (element)
-        return element;
-    
-    if (self.parseLinks)
-    {
-        [scanner beginTransaction];
-        element = [self _startAutomaticLink];
-        [scanner commitTransaction:element != nil];
-        if (element)
-            return element;
-        
-        [scanner beginTransaction];
-        element = [self _startAutomaticEmailLink];
-        [scanner commitTransaction:element != nil];
-        if (element)
-            return element;
-        
-        [scanner beginTransaction];
-        element = [self _startImage];
-        [scanner commitTransaction:element != nil];
-        if (element)
-            return element;
-        
-        [scanner beginTransaction];
-        element = [self _startLink];
-        [scanner commitTransaction:element != nil];
-        if (element)
-            return element;
-    }
-    
-    return nil;
-}
-
-- (MMElement *) _escapeAmpersand
-{
-    MMScanner *scanner = self.scanner;
-    
     if ([scanner nextCharacter] != '&')
         return nil;
     [scanner advance];
@@ -1032,10 +867,8 @@
     return element;
 }
 
-- (MMElement *) _escapeLeftAngleBracket
+- (MMElement *) _parseLeftAngleBracketWithScanner:(MMScanner *)scanner
 {
-    MMScanner *scanner = self.scanner;
-    
     if ([scanner nextCharacter] != '<')
         return nil;
     [scanner advance];
@@ -1055,19 +888,18 @@
     return element;
 }
 
-- (MMElement *) _newEscapedEntity
+- (MMElement *) _parseEntityWithScanner:(MMScanner *)scanner
 {
-    MMScanner *scanner = self.scanner;
     MMElement *element;
     
     [scanner beginTransaction];
-    element = [self _escapeAmpersand];
+    element = [self _parseAmpersandWithScanner:scanner];
     [scanner commitTransaction:element != nil];
     if (element)
         return element;
     
     [scanner beginTransaction];
-    element = [self _escapeLeftAngleBracket];
+    element = [self _parseLeftAngleBracketWithScanner:scanner];
     [scanner commitTransaction:element != nil];
     if (element)
         return element;

@@ -55,7 +55,6 @@ typedef enum
 @property (assign, nonatomic) MMElementType  type;
 @property (copy,   nonatomic) NSArray       *innerRanges;
 
-@property (assign, nonatomic) unichar        character;
 @property (assign, nonatomic) NSUInteger     level;
 @property (copy,   nonatomic) NSString      *href;
 @property (copy,   nonatomic) NSString      *title;

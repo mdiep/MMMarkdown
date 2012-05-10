@@ -144,6 +144,11 @@
     MMAssertMarkdownEqualsHTML(@"un**_frigging_**believable", @"<p>un<strong><em>frigging</em></strong>believable</p>");
 }
 
+- (void) testStrongInsideEm
+{
+    MMAssertMarkdownEqualsHTML(@"***test** test*", @"<p><em><strong>test</strong> test</em></p>");
+}
+
 
 //==================================================================================================
 #pragma mark -
