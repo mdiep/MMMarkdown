@@ -55,12 +55,10 @@
     [self runTestWithName:@"Backslash escapes"];
 }
 
-#if RUN_KNOWN_FAILURES
 - (void) testCodeBlockInAListItem
 {
     [self runTestWithName:@"Code block in a list item"];
 }
-#endif
 
 - (void) testCodeSpans
 {

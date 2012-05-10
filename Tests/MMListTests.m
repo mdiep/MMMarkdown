@@ -95,6 +95,37 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
+- (void) testList_multipleParagraphs_blockquote
+{
+    NSString *markdown = @"* Item\n"
+                          "\n"
+                          "    > Blockquote";
+    NSString *html = @"<ul>\n"
+                      "<li><p>Item</p>\n"
+                      "\n"
+                      "<blockquote>\n"
+                      "<p>Blockquote</p>\n"
+                      "</blockquote></li>\n"
+                      "</ul>";
+    
+    MMAssertMarkdownEqualsHTML(markdown, html);
+}
+
+- (void) testList_multipleParagraphs_codeBlock
+{
+    NSString *markdown = @"* Item\n"
+                          "\n"
+                          "        Code";
+    NSString *html = @"<ul>\n"
+                      "<li><p>Item</p>\n"
+                      "\n"
+                      "<pre><code>Code\n"
+                      "</code></pre></li>\n"
+                      "</ul>";
+    
+    MMAssertMarkdownEqualsHTML(markdown, html);
+}
+
 - (void) testList_hangingIndents
 {
     NSString *markdown = @"*   Lorem ipsum dolor sit amet, consectetuer adipiscing elit.\n"

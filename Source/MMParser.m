@@ -858,17 +858,25 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         if (!isBeforeBlankLine && !isAfterBlankLine)
         {
             // check if it has multiple consecutive paragraphs
-            BOOL hasConsecutivePs = NO;
-            BOOL isAfterP = NO;
+            BOOL shouldHavePs = NO;
+            BOOL isAfterPType = NO;
             for (MMElement *child in item.children)
             {
-                BOOL isP = child.type == MMElementTypeParagraph;
-                if (isP && isAfterP)
-                    hasConsecutivePs = YES;
-                isAfterP = isP;
+                // This is somewhat deceptively named, but I couldn't come up with anything better.
+                // Having any 2 elements in a row that are one of these types is enough to add
+                // paragraphs to the list item.
+                BOOL isPType = child.type == MMElementTypeParagraph
+                            || child.type == MMElementTypeBlockquote
+                            || child.type == MMElementTypeCodeBlock;
+                if (isPType && isAfterPType)
+                {
+                    shouldHavePs = YES;
+                    break;
+                }
+                isAfterPType = isPType;
             }
             
-            if (!hasConsecutivePs)
+            if (!shouldHavePs)
             {
                 NSMutableArray *newChildren = [NSMutableArray new];
                 for (MMElement *child in item.children)
