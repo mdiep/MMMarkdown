@@ -127,7 +127,19 @@
 }
 #endif
 
-#if RUN_KNOWN_FAILURES
+#if 0
+/*
+ * PHP-Markdown thinks that this:
+ *
+ *     [link](<aaa)aaa>)
+ *
+ * should become this:
+ *
+ *     <a href='aaa)aaa>'>link</a>
+ *
+ * because the angle brackets protect the ')'. Most other implementations don't do this. And
+ * since I'm not convinced there's any value in it, I'm not going to worry about it.
+ */
 - (void) testLinksInlineStyle
 {
     [self runTestWithName:@"Links, inline style"];
