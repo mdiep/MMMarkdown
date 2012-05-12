@@ -163,12 +163,10 @@
 }
 #endif
 
-#if RUN_KNOWN_FAILURES
 - (void) testPHPSpecificBugs
 {
     [self runTestWithName:@"PHP-Specific Bugs"];
 }
-#endif
 
 - (void) testTightBlocks
 {

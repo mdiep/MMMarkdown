@@ -126,7 +126,22 @@
     // 5) Check for a backslash
     if ([scanner nextCharacter] == '\\')
     {
+        // If the next character isn't one that can be escaped, then let the backslash pass through
+        // unchanged. Otherwise, skip the backslash and return the escaped character.
+        
+        [scanner beginTransaction];
         [scanner advance]; // skip over the backslash
+        
+        NSCharacterSet *escapedChars = [NSCharacterSet characterSetWithCharactersInString:@"\\`*_{}[]()#+-.!>"];
+        if ([escapedChars characterIsMember:[scanner nextCharacter]])
+        {
+            [scanner commitTransaction:YES];
+        }
+        else
+        {
+            [scanner commitTransaction:NO];
+        }
+        
         // Then fall through to (6) below.
     }
     

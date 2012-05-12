@@ -46,6 +46,15 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
+- (void) testNotBackslashEscapes
+{
+    // These may look like backslash escapes, but markdown doesn't recognize them. Treat them as
+    // normal sequences of characters.
+    NSString *markdown = @"\\\" \\e \\g";
+    NSString *html     = @"<p>\\\" \\e \\g</p>";
+    MMAssertMarkdownEqualsHTML(markdown, html);
+}
+
 
 //==================================================================================================
 #pragma mark -
