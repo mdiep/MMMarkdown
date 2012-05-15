@@ -34,6 +34,75 @@
 
 //==================================================================================================
 #pragma mark -
+#pragma mark Blockquote Tests
+//==================================================================================================
+
+- (void) testBasicBlockquote
+{
+    MMAssertMarkdownEqualsHTML(@"> A quotation.",
+                               @"<blockquote>\n  <p>A quotation.</p>\n</blockquote>");
+}
+
+- (void) testBlockquoteWithAngleOnOnlyTheFirstLine
+{
+    MMAssertMarkdownEqualsHTML(@"> A quotation\nthat spans 2 lines.",
+                               @"<blockquote>\n  <p>A quotation\nthat spans 2 lines.</p>\n</blockquote>");
+}
+
+- (void) testBlockquoteWithMultipleParagraphs
+{
+    MMAssertMarkdownEqualsHTML(@"> A quotation.\n>\n> A long one.",
+                               @"<blockquote>\n  <p>A quotation.</p>\n\n<p>A long one.</p>\n</blockquote>");
+}
+
+- (void) testBlockquoteWithOtherElements
+{
+    NSString *markdown = @"> # A Header\n"
+                          "> \n"
+                          "> 1. First\n"
+                          "> 2. Second\n"
+                          "> \n"
+                          "> Some code:\n"
+                          "> \n"
+                          ">     return 1";
+    NSString *html = @"<blockquote>\n"
+                      "  <h1>A Header</h1>\n"
+                      "\n"
+                      "<ol>\n"
+                      "<li>First</li>\n"
+                      "<li>Second</li>\n"
+                      "</ol>\n"
+                      "\n"
+                      "<p>Some code:</p>\n"
+                      "\n"
+                      "<pre><code>return 1\n"
+                      "</code></pre>\n"
+                      "</blockquote>";
+    MMAssertMarkdownEqualsHTML(markdown, html);
+}
+
+- (void) testNestedBlockquote
+{
+    NSString *markdown = @"> A quotation.\n"
+                          "> \n"
+                          "> > Inner\n"
+                          "> \n"
+                          "> A long one.\n";
+    NSString *html = @"<blockquote>\n"
+                      "<p>A quotation.</p>\n"
+                      "\n"
+                      "<blockquote>\n"
+                      "<p>Inner</p>\n"
+                      "</blockquote>\n"
+                      "\n"
+                      "<p>A long one.</p>\n"
+                      "</blockquote>";
+    MMAssertMarkdownEqualsHTML(markdown, html);
+}
+
+
+//==================================================================================================
+#pragma mark -
 #pragma mark Code Block Tests
 //==================================================================================================
 
@@ -120,6 +189,11 @@
     MMAssertMarkdownEqualsHTML(@"## A # Header! #####", @"<h2>A # Header!</h2>");
 }
 
+- (void) testPrefixedHeaderImmediatelyFollowingParagraph
+{
+    MMAssertMarkdownEqualsHTML(@"A\n# Example", @"<p>A</p>\n<h1>Example</h1>");
+}
+
 
 //==================================================================================================
 #pragma mark -
@@ -172,6 +246,16 @@
 - (void) testParagraphs_blankLineHasSpaces
 {
     MMAssertMarkdownEqualsHTML(@"A\n \nB", @"<p>A</p><p>B</p>");
+}
+
+- (void) testParapgraphImmediatelyFollowedByBlockquote
+{
+    NSString *html = @"<p>A</p>\n"
+                      "\n"
+                      "<blockquote>\n"
+                      "<p>B</p>\n"
+                      "</blockquote>";
+    MMAssertMarkdownEqualsHTML(@"A\n> B", html);
 }
 
 

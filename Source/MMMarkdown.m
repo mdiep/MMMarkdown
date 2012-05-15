@@ -38,6 +38,9 @@
 
 + (NSString *) HTMLStringWithMarkdown:(NSString *)string error:(__autoreleasing NSError **)error
 {
+    if (string == nil)
+        return nil;
+    
     MMParser    *parser    = [MMParser new];
     MMGenerator *generator = [MMGenerator new];
     

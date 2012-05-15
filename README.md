@@ -37,13 +37,13 @@ MMMarkdown is available under the [MIT License][].
 [MIT License]: http://opensource.org/licenses/mit-license.php
 
 ## Roadmap
-### 0.2 - Correctness
-The emphasis in this release will be on expanding the test suite and fixing bugs. While the initial release passed all of the tests in Gruber's test suite, those tests don't provide much coverage.
+### 0.3 - Full HTML Support
+Because Markdown can contain raw HTML, correctly parsing Markdown requires an HTML parser; otherwise, the HTML may not be passed through correctly. This release will add an HTML parser.
 
-### 0.3 - Performance
+### 0.4 - Performance
 This release will focus on the overall performance of MMMarkdown. It should be fast and require little memory.
 
-### 0.4 - Configurability
+### 0.5 - Configurability
 Having ensured the correctness and performance of MMMarkdown, this release will expand the options accepted by the parser. Plans include a strict mode, which will complain about any parsing errors, and a mode that supports [MultiMarkdown][].
 
 [MultiMarkdown]: http://fletcherpenney.net/multimarkdown/

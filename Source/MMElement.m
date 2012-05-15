@@ -50,14 +50,20 @@ static NSString * __MMStringFromElementType(MMElementType type)
             return @"hr";
         case MMElementTypeHTML:
             return @"html";
+        case MMElementTypeLineBreak:
+            return @"br";
         case MMElementTypeStrong:
             return @"strong";
         case MMElementTypeEm:
             return @"em";
         case MMElementTypeCodeSpan:
             return @"code";
+        case MMElementTypeImage:
+            return @"image";
         case MMElementTypeLink:
             return @"link";
+        case MMElementTypeMailTo:
+            return @"mailto";
         case MMElementTypeEntity:
             return @"entity";
         case MMElementTypeDefinition:
@@ -77,9 +83,9 @@ static NSString * __MMStringFromElementType(MMElementType type)
 @synthesize type        = _type;
 @synthesize innerRanges = _innerRanges;
 
-@synthesize character   = _character;
 @synthesize level       = _level;
 @synthesize href        = _href;
+@synthesize title       = _title;
 @synthesize identifier  = _identifier;
 @synthesize stringValue = _stringValue;
 

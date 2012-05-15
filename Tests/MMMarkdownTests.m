@@ -35,21 +35,9 @@
 #pragma mark Helpers
 //==================================================================================================
 
-- (NSString *) stringWithContentsOfFile:(NSString *)aString
-{
-    NSBundle *bundle  = [NSBundle bundleForClass:[self class]];
-    NSURL    *fileURL = [bundle URLForResource:aString withExtension:nil];
-    NSData   *data    = [NSData dataWithContentsOfURL:fileURL];
-    NSString *string  = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    return string;
-}
-
 - (void) runTestWithName:(NSString *)aName
 {
-    NSString *input  = [self stringWithContentsOfFile:[NSString stringWithFormat:@"%@.text", aName]];
-    NSString *html   = [self stringWithContentsOfFile:[NSString stringWithFormat:@"%@.html", aName]];
-    
-    MMAssertMarkdownEqualsHTML(input, html);
+    [self runTestWithName:aName inDirectory:@"MarkdownTest_1.0"];
 }
 
 

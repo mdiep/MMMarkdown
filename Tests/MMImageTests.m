@@ -1,5 +1,5 @@
 //
-//  MMEscapingTests.m
+//  MMImageTests.m
 //  MMMarkdown
 //
 //  Copyright (c) 2012 Matt Diephouse.
@@ -26,61 +26,50 @@
 #import "MMTestCase.h"
 
 
-@interface MMEscapingTests : MMTestCase
+@interface MMImageTests : MMTestCase
 
-@end
+@end 
 
-@implementation MMEscapingTests
+@implementation MMImageTests
 
 //==================================================================================================
 #pragma mark -
-#pragma mark Backslash Escape Tests
+#pragma mark Inline Image Tests
 //==================================================================================================
 
-- (void) testBackslashEscapes
+- (void) testBasicInlineImage
 {
-    // double-escape everything
-    NSString *markdown = @"\\\\ \\` \\* \\_ \\{ \\} \\[ \\] \\( \\) \\> \\# \\. \\! \\+ \\-";
-    NSString *html = @"<p>\\ ` * _ { } [ ] ( ) > # . ! + -</p>";
-    
-    MMAssertMarkdownEqualsHTML(markdown, html);
+    MMAssertMarkdownEqualsHTML(@"![Alt text](/image.jpg)", @"<p><img src=\"/image.jpg\" alt=\"Alt text\" /></p>");
 }
 
-- (void) testNotBackslashEscapes
+- (void) testInlineImageWithTitle
 {
-    // These may look like backslash escapes, but markdown doesn't recognize them. Treat them as
-    // normal sequences of characters.
-    NSString *markdown = @"\\\" \\e \\g";
-    NSString *html     = @"<p>\\\" \\e \\g</p>";
-    MMAssertMarkdownEqualsHTML(markdown, html);
-}
-
-- (void) testEscapedParensInInlineLink
-{
-    MMAssertMarkdownEqualsHTML(@"[link](/url\\))",  @"<p><a href=\"/url)\">link</a></p>");
-    MMAssertMarkdownEqualsHTML(@"[link](/url\\())", @"<p><a href=\"/url(\">link</a>)</p>");
+    MMAssertMarkdownEqualsHTML(@"![Alt text](/image.jpg \"Title Here\")",
+                               @"<p><img src=\"/image.jpg\" alt=\"Alt text\" title=\"Title Here\" /></p>");
 }
 
 
 //==================================================================================================
 #pragma mark -
-#pragma mark Encoded Entity Tests
+#pragma mark Reference Image Tests
 //==================================================================================================
 
-- (void) testEncodeAmpersand
+- (void) testBasicReferenceImage
 {
-    MMAssertMarkdownEqualsHTML(@"A & B", @"<p>A &amp; B</p>");
+    MMAssertMarkdownEqualsHTML(@"![Description][1]\n\n[1]: /image.jpg",
+                               @"<p><img src=\"/image.jpg\" alt=\"Description\" /></p>");
 }
 
-- (void) testEncodeLeftAngleBracket
+- (void) testReferenceImageWithImplicitName
 {
-    MMAssertMarkdownEqualsHTML(@"2 << 0 < 2 << 1", @"<p>2 &lt;&lt; 0 &lt; 2 &lt;&lt; 1</p>");
+    MMAssertMarkdownEqualsHTML(@"![Description][]\n\n[description]: /image.jpg",
+                               @"<p><img src=\"/image.jpg\" alt=\"Description\" /></p>");
 }
 
-- (void) testHTMLEntityReferences
+- (void) testReferenceImageWithTitle
 {
-    MMAssertMarkdownEqualsHTML(@"A &amp; B", @"<p>A &amp; B</p>");
-    MMAssertMarkdownEqualsHTML(@"A &#38; B", @"<p>A &#38; B</p>");
+    MMAssertMarkdownEqualsHTML(@"![Description][1]\n\n[1]: /image.jpg \"A Title\"",
+                               @"<p><img src=\"/image.jpg\" alt=\"Description\" title=\"A Title\" /></p>");
 }
 
 

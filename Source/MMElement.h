@@ -38,10 +38,13 @@ typedef enum
     MMElementTypeCodeBlock,
     MMElementTypeHorizontalRule,
     MMElementTypeHTML,
+    MMElementTypeLineBreak,
     MMElementTypeStrong,
     MMElementTypeEm,
     MMElementTypeCodeSpan,
+    MMElementTypeImage,
     MMElementTypeLink,
+    MMElementTypeMailTo,
     MMElementTypeDefinition,
     MMElementTypeEntity
 } MMElementType;
@@ -52,9 +55,9 @@ typedef enum
 @property (assign, nonatomic) MMElementType  type;
 @property (copy,   nonatomic) NSArray       *innerRanges;
 
-@property (assign, nonatomic) unichar        character;
 @property (assign, nonatomic) NSUInteger     level;
 @property (copy,   nonatomic) NSString      *href;
+@property (copy,   nonatomic) NSString      *title;
 @property (copy,   nonatomic) NSString      *identifier;
 @property (copy,   nonatomic) NSString      *stringValue;
 

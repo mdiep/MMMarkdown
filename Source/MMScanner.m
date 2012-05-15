@@ -201,25 +201,28 @@ static NSString *__delimitersForCharacter(unichar character)
     else
     {
         self.rangeIndex += 1;
-        self.location = self.currentLineRange.location;
+        self.currentRange = self.currentLineRange;
     }
-    
 }
 
 - (NSUInteger) skipCharactersFromSet:(NSCharacterSet *)aSet
 {
-    NSRange lineRange   = self.currentLineRange;
-    NSRange searchRange = NSMakeRange(self.location, NSMaxRange(lineRange)-self.location);
-    
+    NSRange searchRange = self.currentRange;
     NSRange range = [self.string rangeOfCharacterFromSet:[aSet invertedSet]
                                                  options:0
                                                    range:searchRange];
     
     NSUInteger current = self.location;
+    
     if (range.location == NSNotFound)
-        self.location = NSMaxRange(searchRange);
+    {
+        self.currentRange = NSMakeRange(NSMaxRange(self.currentRange), 0);
+    }
     else
-        self.location = range.location;
+    {
+        self.currentRange = NSMakeRange(range.location, NSMaxRange(self.currentRange)-range.location);
+    }
+    
     return self.location - current;
 }
 

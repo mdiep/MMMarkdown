@@ -28,6 +28,8 @@
 
 #import "MMMarkdown.h"
 
+#define RUN_KNOWN_FAILURES 0
+
 #define MMAssertMarkdownEqualsHTML(markdown, html) \
     do { \
         @try {\
@@ -65,5 +67,8 @@
     } while(0)
 
 @interface MMTestCase : SenTestCase
+
+- (NSString *) stringWithContentsOfFile:(NSString *)aString inDirectory:(NSString *)aDirectory;
+- (void) runTestWithName:(NSString *)aName inDirectory:(NSString *)aDirectory;
 
 @end

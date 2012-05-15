@@ -1,5 +1,5 @@
 //
-//  MMSpanParser.h
+//  MMErrorTests.m
 //  MMMarkdown
 //
 //  Copyright (c) 2012 Matt Diephouse.
@@ -23,13 +23,23 @@
 // THE SOFTWARE.
 //
 
-#import <Foundation/Foundation.h>
+#import "MMTestCase.h"
 
 
-@class MMScanner;
+@interface MMErrorTests : MMTestCase
 
-@interface MMSpanParser : NSObject
+@end 
 
-- (NSArray *) parseSpansWithScanner:(MMScanner *)scanner;
+@implementation MMErrorTests
+
+//==================================================================================================
+#pragma mark -
+#pragma mark Tests
+//==================================================================================================
+
+- (void) testNilInput
+{
+    STAssertNil([MMMarkdown HTMLStringWithMarkdown:nil error:nil], @"nil input should give nil output");
+}
 
 @end

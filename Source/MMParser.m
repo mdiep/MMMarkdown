@@ -438,20 +438,25 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     
     // Parse each remaining line
     NSCharacterSet *whitespaceSet = [NSCharacterSet whitespaceCharacterSet];
-    while (![scanner atEndOfLine])
+    while (![scanner atEndOfString])
     {
         [scanner beginTransaction];
         [scanner skipCharactersFromSet:whitespaceSet];
         
-        // It's a continuation of the blockquote if there's a >
-        if ([scanner nextCharacter] != '>')
+        // It's a continuation of the blockquote unless it's a blank line
+        if ([scanner atEndOfLine])
         {
             [scanner commitTransaction:NO];
             break;
         }
         
-        [scanner advance]; // skip the >
-        [scanner skipCharactersFromSet:whitespaceSet max:1];
+        // If there's a >, then skip it and an optional space
+        if ([scanner nextCharacter] == '>')
+        {
+            [scanner advance];
+            [scanner skipCharactersFromSet:whitespaceSet max:1];
+        }
+        
         [element addInnerRange:scanner.currentRange];
         
         [scanner commitTransaction:YES];
@@ -767,7 +772,6 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         
         [element addInnerRange:scanner.currentRange];
         
-        afterBlankLine = NO;
         [scanner advanceToNextLine];
     }
     
@@ -854,17 +858,25 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         if (!isBeforeBlankLine && !isAfterBlankLine)
         {
             // check if it has multiple consecutive paragraphs
-            BOOL hasConsecutivePs = NO;
-            BOOL isAfterP = NO;
+            BOOL shouldHavePs = NO;
+            BOOL isAfterPType = NO;
             for (MMElement *child in item.children)
             {
-                BOOL isP = child.type == MMElementTypeParagraph;
-                if (isP && isAfterP)
-                    hasConsecutivePs = YES;
-                isAfterP = isP;
+                // This is somewhat deceptively named, but I couldn't come up with anything better.
+                // Having any 2 elements in a row that are one of these types is enough to add
+                // paragraphs to the list item.
+                BOOL isPType = child.type == MMElementTypeParagraph
+                            || child.type == MMElementTypeBlockquote
+                            || child.type == MMElementTypeCodeBlock;
+                if (isPType && isAfterPType)
+                {
+                    shouldHavePs = YES;
+                    break;
+                }
+                isAfterPType = isPType;
             }
             
-            if (!hasConsecutivePs)
+            if (!shouldHavePs)
             {
                 NSMutableArray *newChildren = [NSMutableArray new];
                 for (MMElement *child in item.children)
@@ -890,6 +902,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
 {
     NSUInteger location;
     NSUInteger length;
+    NSCharacterSet *whitespaceSet = [NSCharacterSet whitespaceCharacterSet];
     
     [scanner skipIndentationUpTo:3];
     
@@ -907,33 +920,52 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     [scanner advance];
     
     // skip any whitespace
-    [scanner skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet]];
+    [scanner skipCharactersFromSet:whitespaceSet];
     
     // find the url
     location = scanner.location;
-    [scanner skipCharactersFromSet:[[NSCharacterSet whitespaceCharacterSet] invertedSet]];
+    [scanner skipCharactersFromSet:[whitespaceSet invertedSet]];
     
-    NSRange urlRange = NSMakeRange(location, scanner.location-location);
+    NSRange   urlRange  = NSMakeRange(location, scanner.location-location);
+    NSString *urlString = [scanner.string substringWithRange:urlRange];
+    
+    // Check if the URL is surrounded by angle brackets
+    if ([urlString hasPrefix:@"<"] && [urlString hasSuffix:@">"])
+    {
+        urlString = [urlString substringWithRange:NSMakeRange(1, urlString.length-2)];
+    }
     
     // skip trailing whitespace
-    [scanner skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet]];
+    [scanner skipCharactersFromSet:whitespaceSet];
+    
+    // If at the end of the line, then try to find the title on the next line
+    [scanner beginTransaction];
+    if ([scanner atEndOfLine])
+    {
+        [scanner advanceToNextLine];
+        [scanner skipCharactersFromSet:whitespaceSet];
+    }
     
     // check for a title
     NSRange titleRange = NSMakeRange(NSNotFound, 0);
-    if ([scanner nextCharacter] == '"')
+    unichar nextChar  = [scanner nextCharacter];
+    if (nextChar == '"' || nextChar == '\'' || nextChar == '(')
     {
         [scanner advance];
+        unichar endChar = (nextChar == '(') ? ')' : nextChar;
         NSUInteger titleLocation = scanner.location;
         NSUInteger titleLength   = [scanner skipToLastCharacterOfLine];
-        if ([scanner nextCharacter] == '"')
+        if ([scanner nextCharacter] == endChar)
         {
             [scanner advance];
             titleRange = NSMakeRange(titleLocation, titleLength);
         }
     }
     
+    [scanner commitTransaction:titleRange.location != NSNotFound];
+    
     // skip trailing whitespace
-    [scanner skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet]];
+    [scanner skipCharactersFromSet:whitespaceSet];
     
     // make sure we're at the end of the line
     if (![scanner atEndOfLine])
@@ -943,11 +975,11 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     element.type  = MMElementTypeDefinition;
     element.range = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
     element.identifier = [scanner.string substringWithRange:idRange];
-    element.href       = [scanner.string substringWithRange:urlRange];
+    element.href       = urlString;
     
     if (titleRange.location != NSNotFound)
     {
-        element.stringValue = [scanner.string substringWithRange:titleRange];
+        element.title = [scanner.string substringWithRange:titleRange];
     }
     
     return element;
@@ -981,9 +1013,27 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         }
         [scanner commitTransaction:NO];
         
+        // Check for a blockquote
+        [scanner beginTransaction];
+        [scanner skipCharactersFromSet:whitespaceSet];
+        if ([scanner nextCharacter] == '>')
+        {
+            [scanner commitTransaction:YES];
+            break;
+        }
+        [scanner commitTransaction:NO];
+        
+        MMElement *header;
         // Check for an underlined header
         [scanner beginTransaction];
-        MMElement *header = [self _parseUnderlinedHeaderWithScanner:scanner];
+        header = [self _parseUnderlinedHeaderWithScanner:scanner];
+        [scanner commitTransaction:NO];
+        if (header)
+            break;
+        
+        // Also check for a prefixed header
+        [scanner beginTransaction];
+        header = [self _parsePrefixHeaderWithScanner:scanner];
         [scanner commitTransaction:NO];
         if (header)
             break;
@@ -1017,6 +1067,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
             case MMElementTypeDefinition:
                 [definitions setObject:element forKey:[element.identifier lowercaseString]];
                 break;
+            case MMElementTypeImage:
             case MMElementTypeLink:
                 if (element.identifier && !element.href)
                 {
@@ -1044,8 +1095,8 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         }
         // otherwise, set the href and title
         {
-            link.href        = definition.href;
-            link.stringValue = definition.stringValue;
+            link.href  = definition.href;
+            link.title = definition.title;
         }
     }
 }
