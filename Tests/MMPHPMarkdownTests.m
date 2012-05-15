@@ -156,12 +156,10 @@
     [self runTestWithName:@"Nesting"];
 }
 
-#if RUN_KNOWN_FAILURES
 - (void) testParensInURL
 {
     [self runTestWithName:@"Parens in URL"];
 }
-#endif
 
 - (void) testPHPSpecificBugs
 {

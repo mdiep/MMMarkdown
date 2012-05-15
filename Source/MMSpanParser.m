@@ -29,6 +29,8 @@
 #import "MMElement.h"
 #import "MMScanner.h"
 
+static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
+
 @interface MMSpanParser ()
 @property (strong, nonatomic) NSMutableArray *elements;
 @property (strong, nonatomic) NSMutableArray *openElements;
@@ -132,7 +134,7 @@
         [scanner beginTransaction];
         [scanner advance]; // skip over the backslash
         
-        NSCharacterSet *escapedChars = [NSCharacterSet characterSetWithCharactersInString:@"\\`*_{}[]()#+-.!>"];
+        NSCharacterSet *escapedChars = [NSCharacterSet characterSetWithCharactersInString:ESCAPABLE_CHARS];
         if ([escapedChars characterIsMember:[scanner nextCharacter]])
         {
             [scanner commitTransaction:YES];
@@ -668,7 +670,7 @@
     
     NSUInteger      urlLocation = scanner.location;
     NSUInteger      urlEnd      = urlLocation;
-    boringChars = [[NSCharacterSet characterSetWithCharactersInString:@"() \t"] invertedSet];
+    boringChars = [[NSCharacterSet characterSetWithCharactersInString:@"()\\ \t"] invertedSet];
     level       = 1;
     while (level > 0)
     {
@@ -685,6 +687,11 @@
         else if (character == ')')
         {
             level -= 1;
+        }
+        else if (character == '\\')
+        {
+            [scanner advance]; // skip over the backslash
+            // skip over the next character below
         }
         else if ([[NSCharacterSet whitespaceCharacterSet] characterIsMember:character])
         {
@@ -739,7 +746,7 @@
     }
     
     element.range = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
-    element.href  = href;
+    element.href  = [self _stringWithBackslashEscapesRemoved:href];
     
     if (titleLocation != NSNotFound)
     {
@@ -920,6 +927,34 @@
         return element;
     
     return nil;
+}
+
+- (NSString *) _stringWithBackslashEscapesRemoved:(NSString *)string
+{
+    NSMutableString *result = [string mutableCopy];
+    
+    NSCharacterSet *escapableChars = [NSCharacterSet characterSetWithCharactersInString:ESCAPABLE_CHARS];
+    
+    NSRange searchRange = NSMakeRange(0, result.length);
+    while (searchRange.length > 0)
+    {
+        NSRange range = [result rangeOfString:@"\\" options:0 range:searchRange];
+        
+        if (range.location == NSNotFound || NSMaxRange(range) == NSMaxRange(searchRange))
+            break;
+        
+        // If it is escapable, than remove the backslash
+        unichar nextChar = [result characterAtIndex:range.location + 1];
+        if ([escapableChars characterIsMember:nextChar])
+        {
+            [result replaceCharactersInRange:range withString:@""];
+        }
+        
+        searchRange.location = range.location + 1;
+        searchRange.length   = result.length - searchRange.location;
+    }
+    
+    return result;
 }
 
 

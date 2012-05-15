@@ -55,6 +55,12 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
+- (void) testEscapedParensInInlineLink
+{
+    MMAssertMarkdownEqualsHTML(@"[link](/url\\))",  @"<p><a href=\"/url)\">link</a></p>");
+    MMAssertMarkdownEqualsHTML(@"[link](/url\\())", @"<p><a href=\"/url(\">link</a>)</p>");
+}
+
 
 //==================================================================================================
 #pragma mark -
