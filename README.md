@@ -37,9 +37,6 @@ MMMarkdown is available under the [MIT License][].
 [MIT License]: http://opensource.org/licenses/mit-license.php
 
 ## Roadmap
-### 0.2 - Correctness
-The emphasis in this release will be on expanding the test suite and fixing bugs. While the initial release passed all of the tests in Gruber's test suite, those tests don't provide much coverage.
-
 ### 0.3 - Full HTML Support
 Because Markdown can contain raw HTML, correctly parsing Markdown requires an HTML parser; otherwise, the HTML may not be passed through correctly. This release will add an HTML parser.
 
