@@ -44,7 +44,7 @@ static NSString *__delimitersForCharacter(unichar character)
             return @"{}";
         default:
             [NSException raise:@"Invalid delimiter character"
-                        format:@"Character '%C' is not a valid delimiter", character, nil];
+                        format:@"Character '%C' is not a valid delimiter", character];
             return '\0';
     }
 }

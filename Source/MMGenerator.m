@@ -83,7 +83,7 @@ static NSString * __HTMLStartTagForElement(MMElement *anElement)
     switch (anElement.type)
     {
         case MMElementTypeHeader:
-            return [NSString stringWithFormat:@"<h%u>", anElement.level];
+            return [NSString stringWithFormat:@"<h%u>", (unsigned int)anElement.level];
         case MMElementTypeParagraph:
             return @"<p>";
         case MMElementTypeBulletedList:
@@ -140,7 +140,7 @@ static NSString * __HTMLEndTagForElement(MMElement *anElement)
     switch (anElement.type)
     {
         case MMElementTypeHeader:
-            return [NSString stringWithFormat:@"</h%u>\n", anElement.level];
+            return [NSString stringWithFormat:@"</h%u>\n", (unsigned int)anElement.level];
         case MMElementTypeParagraph:
             return @"</p>\n";
         case MMElementTypeBulletedList:
