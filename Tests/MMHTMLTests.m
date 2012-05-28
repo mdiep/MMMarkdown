@@ -42,13 +42,59 @@
     MMAssertMarkdownEqualsHTML(@"A <i>test</i> with HTML.", @"<p>A <i>test</i> with HTML.</p>");
 }
 
+#if RUN_KNOWN_FAILURES
+- (void) testInlineHTMLWithSpansInAttribute
+{
+    MMAssertMarkdownEqualsHTML(@"<a href=\"#\" title=\"*blah*\">foo</a>",
+                               @"<p><a href=\"#\" title=\"*blah*\">foo</a></p>");
+}
+#endif
+
+#if RUN_KNOWN_FAILURES
+- (void) testInlineHTMLWithSpansInUnquotedAttribute
+{
+    MMAssertMarkdownEqualsHTML(@"<a href=\"#\" title=\"*blah*\">foo</a>",
+                               @"<p><a href=\"#\" title=\"*blah*\">foo</a></p>");
+}
+#endif
+
+#if RUN_KNOWN_FAILURES
+- (void) testInlineHTMLThatSpansANewlineWithSpansInAttribute
+{
+    MMAssertMarkdownEqualsHTML(@"<a href=\"#\"\n   title=\"*blah*\">foo</a>",
+                               @"<p><a href=\"#\"\n   title=\"*blah*\">foo</a></p>");
+}
+#endif
+
+- (void) testInlineHTMLWithAngleInAttribute
+{
+    MMAssertMarkdownEqualsHTML(@"<a href=\"#\" title=\">\">foo</a>",
+                               @"<p><a href=\"#\" title=\">\">foo</a></p>");
+}
+
+#if RUN_KNOWN_FAILURES
+- (void) testInlineHTMLWithInsTag
+{
+    // <ins> can be both block- and span-level
+    MMAssertMarkdownEqualsHTML(@"<ins>Some text.</ins>", @"<p><ins>Some text.</ins></p>");
+}
+#endif
+
+#if RUN_KNOWN_FAILURES
+- (void) testInlineHTMLWithDelTag
+{
+    // <del> can be both block- and span-level
+    MMAssertMarkdownEqualsHTML(@"<del>Some text.</del>", @"<p><del>Some text.</del></p>");
+}
+#endif
+
 
 //==================================================================================================
 #pragma mark -
 #pragma mark Block HTML Tests
 //==================================================================================================
 
-- (void) testHTML_basic
+- (void) testBlockHTML_basic
 {
     NSString *markdown = @"A paragraph.\n"
                           "\n"
@@ -67,7 +113,7 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-- (void) testHTML_withSingleQuotedAttribute
+- (void) testBlockHTML_withSingleQuotedAttribute
 {
     NSString *markdown = @"A paragraph.\n"
                           "\n"
@@ -86,7 +132,7 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-- (void) testHTML_withDoubleQuotedAttribute
+- (void) testBlockHTML_withDoubleQuotedAttribute
 {
     NSString *markdown = @"A paragraph.\n"
                           "\n"
@@ -104,6 +150,36 @@
                       "<p>Another paragraph.</p>";
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
+
+- (void) testBlockHTMLWithInsTag
+{
+    MMAssertMarkdownEqualsHTML(@"<ins>\nSome text.\n</ins>", @"<ins>\nSome text.\n</ins>");
+}
+
+- (void) testBlockHTMLWithDelTag
+{
+    MMAssertMarkdownEqualsHTML(@"<del>\nSome text.\n</del>", @"<del>\nSome text.\n</del>");
+}
+
+- (void) testBlockHTMLOnASingleLine
+{
+    MMAssertMarkdownEqualsHTML(@"<div>A test.</div>", @"<div>A test.</div>");
+}
+
+#if RUN_KNOWN_FAILURES
+- (void) testBlockHTMLBlankLineBetweenCloseTags
+{
+    // Primitive HTML handling might end the HTML block after the first div, since it's a close tag
+    // followed by a blank line. But the block should extend to the end of the opening div.
+    NSString *html = @"<div>\n"
+                      "<div>\n"
+                      "A\n"
+                      "</div>\n"
+                      "\n"
+                      "</div>\n";
+    MMAssertMarkdownEqualsHTML(html, html);
+}
+#endif
 
 
 @end
