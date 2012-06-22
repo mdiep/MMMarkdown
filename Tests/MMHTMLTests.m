@@ -42,13 +42,11 @@
     MMAssertMarkdownEqualsHTML(@"A <i>test</i> with HTML.", @"<p>A <i>test</i> with HTML.</p>");
 }
 
-#if RUN_KNOWN_FAILURES
 - (void) testInlineHTMLWithSpansInAttribute
 {
     MMAssertMarkdownEqualsHTML(@"<a href=\"#\" title=\"*blah*\">foo</a>",
                                @"<p><a href=\"#\" title=\"*blah*\">foo</a></p>");
 }
-#endif
 
 #if RUN_KNOWN_FAILURES
 - (void) testInlineHTMLWithSpansInUnquotedAttribute
@@ -57,6 +55,12 @@
                                @"<p><a href=\"#\" title=\"*blah*\">foo</a></p>");
 }
 #endif
+
+- (void) testInlineHTMLWithSpansAndValuelessAttribute
+{
+    MMAssertMarkdownEqualsHTML(@"<input type=\"checkbox\" name=\"*foo*\" checked />",
+                               @"<p><input type=\"checkbox\" name=\"*foo*\" checked /></p>");
+}
 
 #if RUN_KNOWN_FAILURES
 - (void) testInlineHTMLThatSpansANewlineWithSpansInAttribute
@@ -180,6 +184,13 @@
     MMAssertMarkdownEqualsHTML(html, html);
 }
 #endif
+
+- (void) testBlockHTMLCommentWithSpans
+{
+    // An SGML comment starts and ends with "--", so you can't have an odd number of dashes before
+    // the closing angle bracket.
+    MMAssertMarkdownEqualsHTML(@"<!------> *hello*-->", @"<!------> *hello*-->");
+}
 
 
 @end

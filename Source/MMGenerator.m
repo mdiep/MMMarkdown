@@ -237,6 +237,10 @@ static NSString * __HTMLEndTagForElement(MMElement *anElement)
                 [theHTML appendString:[markdown substringWithRange:child.range]];
             }
         }
+        else if (child.type == MMElementTypeHTML)
+        {
+            [theHTML appendString:[aDocument.markdown substringWithRange:child.range]];
+        }
         else
         {
             [self _generateHTMLForElement:child

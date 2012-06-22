@@ -108,12 +108,10 @@
     [self runTestWithName:@"Inline HTML (Simple)"];
 }
 
-#if RUN_KNOWN_FAILURES
 - (void) testInlineHTMLSpan
 {
     [self runTestWithName:@"Inline HTML (Span)"];
 }
-#endif
 
 - (void) testInlineHTMLComments
 {

@@ -10,6 +10,10 @@
 		BE1DB5D51514184000B26092 /* MMSpanTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BE1DB5D41514184000B26092 /* MMSpanTests.m */; };
 		BE1DB5DA15143F4200B26092 /* MMBlockTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BE1DB5D915143F4200B26092 /* MMBlockTests.m */; };
 		BE1DB5DD1515033000B26092 /* MMLinkTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BE1DB5DC1515032F00B26092 /* MMLinkTests.m */; };
+		BE6CA530158179670083887C /* MMHTMLParser.h in Headers */ = {isa = PBXBuildFile; fileRef = BE6CA52E158179670083887C /* MMHTMLParser.h */; };
+		BE6CA531158179670083887C /* MMHTMLParser.h in Headers */ = {isa = PBXBuildFile; fileRef = BE6CA52E158179670083887C /* MMHTMLParser.h */; };
+		BE6CA532158179670083887C /* MMHTMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = BE6CA52F158179670083887C /* MMHTMLParser.m */; };
+		BE6CA533158179670083887C /* MMHTMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = BE6CA52F158179670083887C /* MMHTMLParser.m */; };
 		BE813DE414F893EB00EC9469 /* MMMarkdown.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813DE314F893EB00EC9469 /* MMMarkdown.m */; };
 		BE813DEC14F893EB00EC9469 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE813DEB14F893EB00EC9469 /* SenTestingKit.framework */; };
 		BE813DF014F893EB00EC9469 /* libMMMarkdown-Mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE813DD614F893EB00EC9469 /* libMMMarkdown-Mac.a */; };
@@ -243,6 +247,8 @@
 		BE1DB5D41514184000B26092 /* MMSpanTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMSpanTests.m; sourceTree = "<group>"; };
 		BE1DB5D915143F4200B26092 /* MMBlockTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMBlockTests.m; sourceTree = "<group>"; };
 		BE1DB5DC1515032F00B26092 /* MMLinkTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMLinkTests.m; sourceTree = "<group>"; };
+		BE6CA52E158179670083887C /* MMHTMLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMHTMLParser.h; sourceTree = "<group>"; };
+		BE6CA52F158179670083887C /* MMHTMLParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMHTMLParser.m; sourceTree = "<group>"; };
 		BE813DD614F893EB00EC9469 /* libMMMarkdown-Mac.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libMMMarkdown-Mac.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE813DDE14F893EB00EC9469 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		BE813DE114F893EB00EC9469 /* MMMarkdown-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MMMarkdown-Prefix.pch"; sourceTree = "<group>"; };
@@ -435,6 +441,8 @@
 				BE813E7314F959BC00EC9469 /* MMElement.m */,
 				BE813E8414F9602400EC9469 /* MMGenerator.h */,
 				BE813E8514F9602500EC9469 /* MMGenerator.m */,
+				BE6CA52E158179670083887C /* MMHTMLParser.h */,
+				BE6CA52F158179670083887C /* MMHTMLParser.m */,
 				BE813E7814F95B2A00EC9469 /* MMParser.h */,
 				BE813E7914F95B2A00EC9469 /* MMParser.m */,
 				BE813E9014FACF0C00EC9469 /* MMScanner.h */,
@@ -587,6 +595,7 @@
 				BE813E8C14F9658600EC9469 /* MMDocument_Private.h in Headers */,
 				BE813E9214FACF0D00EC9469 /* MMScanner.h in Headers */,
 				BEF3421C150CEA6D00BFA0E2 /* MMSpanParser.h in Headers */,
+				BE6CA530158179670083887C /* MMHTMLParser.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -601,6 +610,7 @@
 				BE813E8D14F9658600EC9469 /* MMDocument_Private.h in Headers */,
 				BE813E9314FACF0D00EC9469 /* MMScanner.h in Headers */,
 				BEF3421D150CEA6D00BFA0E2 /* MMSpanParser.h in Headers */,
+				BE6CA531158179670083887C /* MMHTMLParser.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -746,6 +756,7 @@
 				BE813E8814F9602500EC9469 /* MMGenerator.m in Sources */,
 				BE813E9414FACF0D00EC9469 /* MMScanner.m in Sources */,
 				BEF3421E150CEA6D00BFA0E2 /* MMSpanParser.m in Sources */,
+				BE6CA532158179670083887C /* MMHTMLParser.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -778,6 +789,7 @@
 				BE813E8914F9602500EC9469 /* MMGenerator.m in Sources */,
 				BE813E9514FACF0D00EC9469 /* MMScanner.m in Sources */,
 				BEF3421F150CEA6D00BFA0E2 /* MMSpanParser.m in Sources */,
+				BE6CA533158179670083887C /* MMHTMLParser.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

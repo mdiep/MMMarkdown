@@ -27,11 +27,14 @@
 
 
 #import "MMElement.h"
+#import "MMHTMLParser.h"
 #import "MMScanner.h"
 
 static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 
 @interface MMSpanParser ()
+@property (strong, nonatomic) MMHTMLParser *htmlParser;
+
 @property (strong, nonatomic) NSMutableArray *elements;
 @property (strong, nonatomic) NSMutableArray *openElements;
 
@@ -39,6 +42,8 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 @end
 
 @implementation MMSpanParser
+
+@synthesize htmlParser   = _htmlParser;
 
 @synthesize elements     = _elements;
 @synthesize openElements = _openElements;
@@ -56,6 +61,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     
     if (self)
     {
+        self.htmlParser = [MMHTMLParser new];
         self.parseLinks = YES;
     }
     
@@ -236,6 +242,12 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
         if (element)
             return element;
     }
+    
+    [scanner beginTransaction];
+    element = [self.htmlParser parseTagWithScanner:scanner];
+    [scanner commitTransaction:element != nil];
+    if (element)
+        return element;
     
     return nil;
 }
