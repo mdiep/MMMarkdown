@@ -54,7 +54,7 @@
                                                                            andObject:expected \
                                                                               inFile:[NSString stringWithUTF8String:__FILE__] \
                                                                               atLine:__LINE__ \
-                            withDescription:@"HTML doesn't match expected value"])]; \
+                            withDescription:@"Markdown output doesn't match expected HTML"])]; \
             } \
         }\
         @catch (id anException) {\
@@ -62,7 +62,34 @@
                           exception:anException \
                              inFile:[NSString stringWithUTF8String:__FILE__] \
                              atLine:__LINE__ \
-                    withDescription:@"HTML doesn't match expected value"])]; \
+                    withDescription:@"Markdown output doesn't match expected HTML"])]; \
+        }\
+    } while(0)
+
+#define MMAssertMarkdownEqualsString(markdown, string) \
+    do { \
+        @try {\
+            id a1value = (markdown); \
+            id a2value = (string); \
+            \
+            NSError *error; \
+            NSString *actual   = [MMMarkdown HTMLStringWithMarkdown:a1value error:&error]; \
+            NSString *expected = a2value; \
+            \
+            if ([(id)actual isEqual:(id)expected]) \
+                continue; \
+            [self failWithException:([NSException failureInEqualityBetweenObject:actual \
+                          andObject:expected \
+                             inFile:[NSString stringWithUTF8String:__FILE__] \
+                             atLine:__LINE__ \
+                    withDescription:@"Markdown output doesn't match expected string value"])]; \
+        }\
+        @catch (id anException) {\
+            [self failWithException:([NSException failureInRaise:[NSString stringWithFormat:@"(%s) == (%s)", #markdown, #string] \
+                          exception:anException \
+                             inFile:[NSString stringWithUTF8String:__FILE__] \
+                             atLine:__LINE__ \
+                    withDescription:@"Markdown output doesn't match expected string value"])]; \
         }\
     } while(0)
 

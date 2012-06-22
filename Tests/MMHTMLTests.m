@@ -51,8 +51,8 @@
 #if RUN_KNOWN_FAILURES
 - (void) testInlineHTMLWithSpansInUnquotedAttribute
 {
-    MMAssertMarkdownEqualsHTML(@"<a href=\"#\" title=\"*blah*\">foo</a>",
-                               @"<p><a href=\"#\" title=\"*blah*\">foo</a></p>");
+    MMAssertMarkdownEqualsString(@"<a href=\"#\" title=*blah*>foo</a>",
+                                 @"<p><a href=\"#\" title=*blah*>foo</a></p>");
 }
 #endif
 
