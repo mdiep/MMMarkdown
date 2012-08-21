@@ -160,6 +160,16 @@
     MMAssertMarkdownEqualsHTML(@"[A\nlink](/foo)", @"<p><a href=\"/foo\">A\nlink</a></p>");
 }
 
+- (void) testInlineLinkWithNewlineInText_carriageReturn
+{
+    MMAssertMarkdownEqualsHTML(@"[A\rlink](/foo)", @"<p><a href=\"/foo\">A\nlink</a></p>");
+}
+
+- (void) testInlineLinkWithNewlineInText_carriageReturnLineFeed
+{
+    MMAssertMarkdownEqualsHTML(@"[A\r\nlink](/foo)", @"<p><a href=\"/foo\">A\nlink</a></p>");
+}
+
 - (void) testNotAnInlineLink_loneBracket
 {
     MMAssertMarkdownEqualsHTML(@"An empty [ by itself", @"<p>An empty [ by itself</p>");

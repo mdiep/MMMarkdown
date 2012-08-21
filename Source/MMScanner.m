@@ -372,10 +372,19 @@ static NSString *__delimitersForCharacter(unichar character)
     for (idx=0; idx<aString.length; idx++)
     {
         unichar character = [aString characterAtIndex:idx];
-        if (character == '\n')
+        if (character == '\r' || character == '\n')
         {
             NSRange range = NSMakeRange(location, idx-location);
             [result addObject:[NSValue valueWithRange:range]];
+            
+            // If it's a carriage return, check for a line feed too
+            if (character == '\r')
+            {
+                if (idx + 1 < aString.length && [aString characterAtIndex:idx + 1] == '\n')
+                {
+                    idx += 1;
+                }
+            }
             
             location = idx + 1;
         }
