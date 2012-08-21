@@ -81,6 +81,16 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
+- (void) testList_carriageReturn
+{
+    MMAssertMarkdownEqualsHTML(@"- One\r- Two\r", @"<ul><li>One</li>\n<li>Two</li></ul>");
+}
+
+- (void) testList_carriageReturnLineFeed
+{
+    MMAssertMarkdownEqualsHTML(@"- One\r\n- Two\r", @"<ul><li>One</li>\n<li>Two</li></ul>");
+}
+
 - (void) testList_multipleParagraphs
 {
     NSString *markdown = @"- One\n"

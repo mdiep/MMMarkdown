@@ -145,5 +145,15 @@
     MMAssertMarkdownEqualsHTML(@"A line  \nwith a break  ", @"<p>A line <br />\nwith a break  </p>");
 }
 
+- (void) testBasicLineBreak_carriageReturn
+{
+    MMAssertMarkdownEqualsHTML(@"A line  \rwith a break  ", @"<p>A line <br />\nwith a break  </p>");
+}
+
+- (void) testBasicLineBreak_carriageReturnLineFeed
+{
+    MMAssertMarkdownEqualsHTML(@"A line  \r\nwith a break  ", @"<p>A line <br />\nwith a break  </p>");
+}
+
 
 @end
