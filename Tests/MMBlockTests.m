@@ -119,6 +119,32 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
+- (void) testCodeBlocks_carriageReturn
+{
+    NSString *markdown = @"    Some Code\r"
+                          "\r"
+                          "    More Code\r";
+    NSString *html = @"<pre><code>Some Code\n"
+                      "\n"
+                      "More Code\n"
+                      "</code></pre>";
+    
+    MMAssertMarkdownEqualsHTML(markdown, html);
+}
+
+- (void) testCodeBlocks_carriageReturnLineFeed
+{
+    NSString *markdown = @"    Some Code\r\n"
+                          "\r\n"
+                          "    More Code\r\n";
+    NSString *html = @"<pre><code>Some Code\n"
+                      "\n"
+                      "More Code\n"
+                      "</code></pre>";
+    
+    MMAssertMarkdownEqualsHTML(markdown, html);
+}
+
 - (void) testCodeBlocks_blankLinesInBetween_betweenParagraphs
 {
     NSString *markdown = @"Foo\n"
