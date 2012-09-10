@@ -680,6 +680,8 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     }
     [scanner commitTransaction:YES];
     
+    [scanner skipIndentationUpTo:3]; // Additional optional space
+    
     BOOL foundAnItem = [self _parseListMarkerWithScanner:scanner];
     if (!foundAnItem)
         return nil;

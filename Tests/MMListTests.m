@@ -263,5 +263,10 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
+- (void) testList_withLeadingSpace
+{
+    MMAssertMarkdownEqualsHTML(@" - One\n - Two", @"<ul><li>One</li><li>Two</li></ul>");
+}
+
 
 @end
