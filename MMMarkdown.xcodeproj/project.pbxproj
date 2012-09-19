@@ -695,7 +695,7 @@
 		BE813DCD14F893EB00EC9469 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0430;
+				LastUpgradeCheck = 0450;
 			};
 			buildConfigurationList = BE813DD014F893EB00EC9469 /* Build configuration list for PBXProject "MMMarkdown" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -873,6 +873,7 @@
 		BE813DFD14F893EB00EC9469 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Source/MMMarkdown-Prefix.pch";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -882,6 +883,7 @@
 		BE813DFE14F893EB00EC9469 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Source/MMMarkdown-Prefix.pch";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -891,6 +893,7 @@
 		BE813E0014F893EB00EC9469 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_LIBRARY_DIR)/Frameworks";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Source/MMMarkdown-Prefix.pch";
@@ -903,6 +906,7 @@
 		BE813E0114F893EB00EC9469 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_LIBRARY_DIR)/Frameworks";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Source/MMMarkdown-Prefix.pch";
