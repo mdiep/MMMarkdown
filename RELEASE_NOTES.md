@@ -1,5 +1,8 @@
 # MMMarkdown Release Notes
 
+## 0.2.2
+Updated the iOS static library to include armv7s architecture.
+
 ## 0.2.1
 Bugfix release that fixes 2 issues:
 
