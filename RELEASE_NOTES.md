@@ -1,5 +1,8 @@
 # MMMarkdown Release Notes
 
+## 0.2.3
+Fix the iOS deployment target and static library to support iOS 5.0.
+
 ## 0.2.2
 Updated the iOS static library to include armv7s architecture.
 
