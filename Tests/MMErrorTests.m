@@ -37,6 +37,11 @@
 #pragma mark Tests
 //==================================================================================================
 
+- (void) testEmptyInput
+{
+	STAssertEqualObjects([MMMarkdown HTMLStringWithMarkdown:@"" error:nil], @"", @"empty input should give empty output");
+}
+
 - (void) testNilInput
 {
     STAssertNil([MMMarkdown HTMLStringWithMarkdown:nil error:nil], @"nil input should give nil output");
