@@ -40,6 +40,8 @@
 {
     if (string == nil)
         return nil;
+    if ([string length] == 0)
+        return @"";
     
     MMParser    *parser    = [MMParser new];
     MMGenerator *generator = [MMGenerator new];
