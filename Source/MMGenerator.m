@@ -180,6 +180,14 @@ static NSString * __HTMLEndTagForElement(MMElement *anElement)
 #pragma mark Public Methods
 //==================================================================================================
 
+- (NSString *) css {
+    return  @"<html>"
+            "<head>"
+            "  <meta charset='UTF-8'/>"
+             " <link rel='stylesheet' href='github.css' type='text/css'/>"
+             "</head>";
+}
+
 - (NSString *) generateHTML:(MMDocument *)aDocument
 {
     NSString   *markdown = aDocument.markdown;
@@ -187,6 +195,7 @@ static NSString * __HTMLEndTagForElement(MMElement *anElement)
     NSUInteger  length   = markdown.length;
     
     NSMutableString *HTML = [NSMutableString stringWithCapacity:length * kHTMLDocumentLengthMultiplier];
+    [HTML appendString: [self css]];
     
     for (MMElement *element in aDocument.elements)
     {
