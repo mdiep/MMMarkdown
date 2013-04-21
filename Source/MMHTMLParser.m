@@ -107,6 +107,14 @@
     return YES;
 }
 
+- (BOOL) _parseAttributeValueWithScanner:(MMScanner *)scanner
+{
+    NSMutableCharacterSet *characters = [[NSCharacterSet.whitespaceCharacterSet invertedSet] mutableCopy];
+    [characters removeCharactersInString:@"\"'=><`"];
+    
+    return [scanner skipCharactersFromSet:characters] > 0;
+}
+
 - (void) _parseAttributesWithScanner:(MMScanner *)scanner
 {
     while ([scanner skipWhitespaceAndNewlines] > 0)
@@ -117,14 +125,20 @@
         if (range.length == 0)
             break;
         
+        [scanner skipWhitespace];
+        
         if ([scanner nextCharacter] != '=')
             break;
         [scanner advance];
         
+        [scanner skipWhitespace];
+        
         if ([self _parseStringWithScanner:scanner])
-        {
-            
-        }
+            ;
+        else if ([self _parseAttributeValueWithScanner:scanner])
+            ;
+        else
+            break;
     }
 }
 

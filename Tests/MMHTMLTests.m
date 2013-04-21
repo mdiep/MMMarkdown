@@ -48,21 +48,27 @@
                                @"<p><a href=\"#\" title=\"*blah*\">foo</a></p>");
 }
 
-#if RUN_KNOWN_FAILURES
 - (void) testInlineHTMLWithSpansInUnquotedAttribute
 {
     MMAssertMarkdownEqualsString(@"<a href=\"#\" title=*blah*>foo</a>",
-                                 @"<p><a href=\"#\" title=*blah*>foo</a></p>");
+                                 @"<p><a href=\"#\" title=*blah*>foo</a></p>\n");
 }
-#endif
 
-- (void) testInlineHTMLWithSpansAndValuelessAttribute
+- (void) testInlineHTMLWithEmptyAttribute
 {
     MMAssertMarkdownEqualsHTML(@"<input type=\"checkbox\" name=\"*foo*\" checked />",
                                @"<p><input type=\"checkbox\" name=\"*foo*\" checked /></p>");
+    MMAssertMarkdownEqualsHTML(@"<input type=\"checkbox\" checked name=\"*foo*\"/>",
+                               @"<p><input type=\"checkbox\" checked name=\"*foo*\"/></p>");
 }
 
-- (void) testInlineHTMLThatSpansANewlineWithSpansInAttribute
+- (void) testInlineHTMLWithSpacesInAttribute
+{
+    MMAssertMarkdownEqualsHTML(@"<a href  =  \"#\" title = '*blah*'>foo</a>",
+                               @"<p><a href  =  \"#\" title = '*blah*'>foo</a></p>");
+}
+
+- (void) testInlineHTMLWithNewlineBetweenAttributes
 {
     MMAssertMarkdownEqualsHTML(@"<a href=\"#\"\n   title=\"*blah*\">foo</a>",
                                @"<p><a href=\"#\"\n   title=\"*blah*\">foo</a></p>");
