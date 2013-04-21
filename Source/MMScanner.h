@@ -65,5 +65,6 @@
 - (NSUInteger) skipNestedBracketsWithDelimiter:(unichar)delimiter;
 - (NSUInteger) skipToEndOfLine;
 - (NSUInteger) skipToLastCharacterOfLine;
+- (NSUInteger) skipWhitespaceAndNewlines;
 
 @end

@@ -66,7 +66,7 @@
 
 //==================================================================================================
 #pragma mark -
-#pragma mark Public Methods
+#pragma mark Private Methods
 //==================================================================================================
 
 - (NSRange) _parseNameWithScanner:(MMScanner *)scanner
@@ -109,9 +109,7 @@
 
 - (void) _parseAttributesWithScanner:(MMScanner *)scanner
 {
-    NSCharacterSet *whitespaceSet = [NSCharacterSet whitespaceCharacterSet];
-    
-    while ([scanner skipCharactersFromSet:whitespaceSet] > 0)
+    while ([scanner skipWhitespaceAndNewlines] > 0)
     {
         NSRange range;
         

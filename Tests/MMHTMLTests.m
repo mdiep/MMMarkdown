@@ -62,13 +62,11 @@
                                @"<p><input type=\"checkbox\" name=\"*foo*\" checked /></p>");
 }
 
-#if RUN_KNOWN_FAILURES
 - (void) testInlineHTMLThatSpansANewlineWithSpansInAttribute
 {
     MMAssertMarkdownEqualsHTML(@"<a href=\"#\"\n   title=\"*blah*\">foo</a>",
                                @"<p><a href=\"#\"\n   title=\"*blah*\">foo</a></p>");
 }
-#endif
 
 - (void) testInlineHTMLWithAngleInAttribute
 {

@@ -329,6 +329,31 @@ static NSString *__delimitersForCharacter(unichar character)
     return length;
 }
 
+- (NSUInteger) skipWhitespaceAndNewlines
+{
+    NSCharacterSet *whitespaceSet = [NSCharacterSet whitespaceCharacterSet];
+    NSUInteger      length = 0;
+    
+    while (1)
+    {
+        if ([self atEndOfLine])
+        {
+            [self advanceToNextLine];
+            length++;
+        }
+        else
+        {
+            NSUInteger spaces = [self skipCharactersFromSet:whitespaceSet];
+            if (spaces == 0)
+                break;
+            
+            length += spaces;
+        }
+    }
+    
+    return length;
+}
+
 
 //==================================================================================================
 #pragma mark -
