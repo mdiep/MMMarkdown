@@ -118,7 +118,14 @@
     [self runTestWithName:@"Inline HTML comments"];
 }
 
-#if RUN_KNOWN_FAILURES
+#if 0
+/*
+ * I've disable this test because this behavior isn't standard and is inconsistent. It tests whether
+ * <ins> and <del> are parsed as block tags or inline tags, which determines if their contents are
+ * parsed as Markdown. PHP-Markdown thinks that they should be interpreted differently in different
+ * situations, but it's inconsistent in its treatment and most other implementations don't
+ * differentiate.
+ */
 - (void) testInsAndDel
 {
     [self runTestWithName:@"Ins & del"];

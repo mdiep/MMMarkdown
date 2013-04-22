@@ -80,22 +80,6 @@
                                @"<p><a href=\"#\" title=\">\">foo</a></p>");
 }
 
-#if RUN_KNOWN_FAILURES
-- (void) testInlineHTMLWithInsTag
-{
-    // <ins> can be both block- and span-level
-    MMAssertMarkdownEqualsHTML(@"<ins>Some text.</ins>", @"<p><ins>Some text.</ins></p>");
-}
-#endif
-
-#if RUN_KNOWN_FAILURES
-- (void) testInlineHTMLWithDelTag
-{
-    // <del> can be both block- and span-level
-    MMAssertMarkdownEqualsHTML(@"<del>Some text.</del>", @"<p><del>Some text.</del></p>");
-}
-#endif
-
 
 //==================================================================================================
 #pragma mark -
