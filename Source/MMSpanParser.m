@@ -43,13 +43,6 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 
 @implementation MMSpanParser
 
-@synthesize htmlParser   = _htmlParser;
-
-@synthesize elements     = _elements;
-@synthesize openElements = _openElements;
-
-@synthesize parseLinks = _parseLinks;
-
 //==================================================================================================
 #pragma mark -
 #pragma mark NSObject Methods

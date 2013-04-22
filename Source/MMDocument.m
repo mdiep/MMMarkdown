@@ -36,9 +36,6 @@
     NSMutableArray *_elements;
 }
 
-@synthesize markdown = _markdown;
-@synthesize elements = _elements;
-
 //==================================================================================================
 #pragma mark -
 #pragma mark Public Methods

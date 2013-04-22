@@ -55,8 +55,6 @@ static NSString * __HTMLEntityForCharacter(unichar character)
 
 @implementation MMParser
 
-@synthesize spanParser   = _spanParser;
-
 //==================================================================================================
 #pragma mark -
 #pragma mark NSObject Methods

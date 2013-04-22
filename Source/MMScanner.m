@@ -60,15 +60,6 @@ static NSString *__delimitersForCharacter(unichar character)
 
 @implementation MMScanner
 
-@synthesize string     = _string;
-@synthesize lineRanges = _lineRanges;
-
-@synthesize startLocation = _startLocation;
-@synthesize currentRange  = _currentRange;
-
-@synthesize rangeIndex   = _rangeIndex;
-@synthesize transactions = _transactions;
-
 //==================================================================================================
 #pragma mark -
 #pragma mark Public Methods

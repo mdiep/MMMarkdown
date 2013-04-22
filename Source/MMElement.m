@@ -79,19 +79,6 @@ static NSString * __MMStringFromElementType(MMElementType type)
     NSMutableArray *_children;
 }
 
-@synthesize range       = _range;
-@synthesize type        = _type;
-@synthesize innerRanges = _innerRanges;
-
-@synthesize level       = _level;
-@synthesize href        = _href;
-@synthesize title       = _title;
-@synthesize identifier  = _identifier;
-@synthesize stringValue = _stringValue;
-
-@synthesize parent   = _parent;
-@synthesize children = _children;
-
 //==================================================================================================
 #pragma mark -
 #pragma mark NSObject Methods
