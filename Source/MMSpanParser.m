@@ -244,7 +244,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     }
     
     [scanner beginTransaction];
-    element = [self.htmlParser parseTagWithScanner:scanner];
+    element = [self.htmlParser parseInlineTagWithScanner:scanner];
     [scanner commitTransaction:element != nil];
     if (element)
         return element;

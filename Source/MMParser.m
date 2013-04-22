@@ -29,6 +29,7 @@
 #import "MMDocument.h"
 #import "MMDocument_Private.h"
 #import "MMElement.h"
+#import "MMHTMLParser.h"
 #import "MMScanner.h"
 #import "MMSpanParser.h"
 
@@ -48,7 +49,8 @@ static NSString * __HTMLEntityForCharacter(unichar character)
 }
 
 @interface MMParser ()
-@property (strong, nonatomic) MMSpanParser   *spanParser;
+@property (strong, nonatomic) MMHTMLParser *htmlParser;
+@property (strong, nonatomic) MMSpanParser *spanParser;
 @end
 
 @implementation MMParser
@@ -66,6 +68,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     
     if (self)
     {
+        self.htmlParser = [MMHTMLParser new];
         self.spanParser = [MMSpanParser new];
     }
     
@@ -281,31 +284,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     if (![scanner atBeginningOfLine])
         return nil;
     
-    // which starts with a '<'
-    if ([scanner nextCharacter] != '<')
-        return nil;
-    [scanner advance];
-    
-    NSSet *htmlBlockTags = [NSSet setWithObjects:
-                            @"p", @"div", @"h1", @"h2", @"h3", @"h4", @"h5", @"h6",
-                            @"blockquote", @"pre", @"table", @"dl", @"ol", @"ul",
-                            @"script", @"noscript", @"form", @"fieldset", @"iframe",
-                            @"math", @"ins", @"del", nil];
-    NSString *tagName = [scanner nextWord];
-    if (![htmlBlockTags containsObject:tagName])
-        return nil;
-    
-    // Skip lines until we come across a blank line
-    while (![scanner atEndOfLine])
-    {
-        [scanner advanceToNextLine];
-    }
-    
-    MMElement *element = [MMElement new];
-    element.type  = MMElementTypeHTML;
-    element.range = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
-        
-    return element;
+    return [self.htmlParser parseBlockTagWithScanner:scanner];
 }
 
 - (MMElement *) _parsePrefixHeaderWithScanner:(MMScanner *)scanner

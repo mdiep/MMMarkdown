@@ -36,7 +36,36 @@
 #pragma mark Public Methods
 //==================================================================================================
 
-- (MMElement *) parseTagWithScanner:(MMScanner *)scanner
+- (MMElement *) parseBlockTagWithScanner:(MMScanner *)scanner
+{
+    // which starts with a '<'
+    if ([scanner nextCharacter] != '<')
+        return nil;
+    [scanner advance];
+    
+    NSSet *htmlBlockTags = [NSSet setWithObjects:
+                            @"p", @"div", @"h1", @"h2", @"h3", @"h4", @"h5", @"h6",
+                            @"blockquote", @"pre", @"table", @"dl", @"ol", @"ul",
+                            @"script", @"noscript", @"form", @"fieldset", @"iframe",
+                            @"math", @"ins", @"del", nil];
+    NSString *tagName = [scanner nextWord];
+    if (![htmlBlockTags containsObject:tagName])
+        return nil;
+    
+    // Skip lines until we come across a blank line
+    while (![scanner atEndOfLine])
+    {
+        [scanner advanceToNextLine];
+    }
+    
+    MMElement *element = [MMElement new];
+    element.type  = MMElementTypeHTML;
+    element.range = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
+    
+    return element;
+}
+
+- (MMElement *) parseInlineTagWithScanner:(MMScanner *)scanner
 {
     if ([scanner nextCharacter] != '<')
         return nil;
