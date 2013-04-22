@@ -35,7 +35,7 @@
 #pragma mark Helpers
 //==================================================================================================
 
-- (void) runTestWithName:(NSString *)aName
+- (void)runTestWithName:(NSString *)aName
 {
     [self runTestWithName:aName inDirectory:@"MarkdownTest_1.0"];
 }
@@ -46,97 +46,97 @@
 #pragma mark Test Cases
 //==================================================================================================
 
-- (void) testAmpsAndAngleEncoding
+- (void)testAmpsAndAngleEncoding
 {
     [self runTestWithName:@"Amps and angle encoding"];
 }
 
-- (void) testAutoLinks
+- (void)testAutoLinks
 {
     [self runTestWithName:@"Auto links"];
 }
 
-- (void) testBackslashEscapes
+- (void)testBackslashEscapes
 {
     [self runTestWithName:@"Backslash escapes"];
 }
 
-- (void) testBlockquotesWithCodeBlocks
+- (void)testBlockquotesWithCodeBlocks
 {
     [self runTestWithName:@"Blockquotes with code blocks"];
 }
 
-- (void) testHardWrappedParagraphsWithListLikeLines
+- (void)testHardWrappedParagraphsWithListLikeLines
 {
     [self runTestWithName:@"Hard-wrapped paragraphs with list-like lines"];
 }
 
-- (void) testHorizontalRules
+- (void)testHorizontalRules
 {
     [self runTestWithName:@"Horizontal rules"];
 }
 
-- (void) testInlineHTMLAdvanced
+- (void)testInlineHTMLAdvanced
 {
     [self runTestWithName:@"Inline HTML (Advanced)"];
 }
 
-- (void) testInlineHTMLSimple
+- (void)testInlineHTMLSimple
 {
     [self runTestWithName:@"Inline HTML (Simple)"];
 }
 
-- (void) testInlineHTMLComments
+- (void)testInlineHTMLComments
 {
     [self runTestWithName:@"Inline HTML comments"];
 }
 
-- (void) testLinksInlineStyle
+- (void)testLinksInlineStyle
 {
     [self runTestWithName:@"Links, inline style"];
 }
 
-- (void) testLinksReferenceStyle
+- (void)testLinksReferenceStyle
 {
     [self runTestWithName:@"Links, reference style"];
 }
 
-- (void) testLiteralQuotesInTitles
+- (void)testLiteralQuotesInTitles
 {
     [self runTestWithName:@"Literal quotes in titles"];
 }
 
-- (void) testMarkdownDocumentationBasics
+- (void)testMarkdownDocumentationBasics
 {
     [self runTestWithName:@"Markdown Documentation - Basics"];
 }
 
-- (void) testMarkdownDocumentationSyntax
+- (void)testMarkdownDocumentationSyntax
 {
     [self runTestWithName:@"Markdown Documentation - Syntax"];
 }
 
-- (void) testNestedBlockquotes
+- (void)testNestedBlockquotes
 {
     [self runTestWithName:@"Nested blockquotes"];
 }
 
-- (void) testOrderedAndUnorderedLists
+- (void)testOrderedAndUnorderedLists
 {
     [self runTestWithName:@"Ordered and unordered lists"];
 }
 
-- (void) testStrongAndEmTogether
+- (void)testStrongAndEmTogether
 {
     [self runTestWithName:@"Strong and em together"];
 }
 
-- (void) testTabs
+- (void)testTabs
 {
     [self runTestWithName:@"Tabs"];
 }
 
-- (void) testTidyness
+- (void)testTidyness
 {
     [self runTestWithName:@"Tidyness"];
 }

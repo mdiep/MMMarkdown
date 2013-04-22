@@ -55,7 +55,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 #pragma mark NSObject Methods
 //==================================================================================================
 
-- (id) init
+- (id)init
 {
     self = [super init];
     
@@ -74,7 +74,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 #pragma mark Public Methods
 //==================================================================================================
 
-- (NSArray *) parseSpansWithScanner:(MMScanner *)scanner
+- (NSArray *)parseSpansWithScanner:(MMScanner *)scanner
 {
     return [self _parseWithScanner:scanner untilTestPasses:^{ return [scanner atEndOfString]; }];
 }
@@ -85,7 +85,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 #pragma mark Private Methods
 //==================================================================================================
 
-- (MMElement *) _parseNextElementWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseNextElementWithScanner:(MMScanner *)scanner
 {
     // 1) Check for a text segment
     
@@ -163,7 +163,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     return character;
 }
 
-- (NSArray *) _parseWithScanner:(MMScanner *)scanner untilTestPasses:(BOOL (^)())test
+- (NSArray *)_parseWithScanner:(MMScanner *)scanner untilTestPasses:(BOOL (^)())test
 {
     NSMutableArray *result = [NSMutableArray array];
     
@@ -188,7 +188,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     return nil;
 }
        
-- (MMElement *) _parseSpanWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseSpanWithScanner:(MMScanner *)scanner
 {
     MMElement *element;
     
@@ -252,7 +252,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     return nil;
 }
 
-- (MMElement *) _parseStrongWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseStrongWithScanner:(MMScanner *)scanner
 {
     // Must have 2 *s or _s
     unichar character = [scanner nextCharacter];
@@ -298,7 +298,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     return element;
 }
 
-- (MMElement *) _parseEmWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseEmWithScanner:(MMScanner *)scanner
 {
     // Must have 1 * or _
     unichar character = [scanner nextCharacter];
@@ -340,7 +340,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     
 }
 
-- (MMElement *) _parseCodeSpanWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseCodeSpanWithScanner:(MMScanner *)scanner
 {
     if ([scanner nextCharacter] != '`')
         return nil;
@@ -464,7 +464,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     return element;
 }
 
-- (MMElement *) _parseLineBreakWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseLineBreakWithScanner:(MMScanner *)scanner
 {
     // A line break is made up of 2 spaces. Since 1 is left on the line, match it against the
     // previous character instead of the next one.
@@ -493,7 +493,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     return element;
 }
 
-- (MMElement *) _parseAutomaticLinkWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseAutomaticLinkWithScanner:(MMScanner *)scanner
 {
     // Leading <
     if ([scanner nextCharacter] != '<')
@@ -570,7 +570,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     return element;
 }
 
-- (MMElement *) _parseAutomaticEmailLinkWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseAutomaticEmailLinkWithScanner:(MMScanner *)scanner
 {
     // Leading <
     if ([scanner nextCharacter] != '<')
@@ -606,7 +606,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     return element;
 }
 
-- (NSArray *) _parseLinkTextBodyWithScanner:(MMScanner *)scanner
+- (NSArray *)_parseLinkTextBodyWithScanner:(MMScanner *)scanner
 {
     NSMutableArray *ranges  = [NSMutableArray new];
     NSCharacterSet *boringChars;
@@ -662,7 +662,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     return ranges;
 }
 
-- (MMElement *) _parseInlineLinkWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseInlineLinkWithScanner:(MMScanner *)scanner
 {
     NSCharacterSet *boringChars;
     NSUInteger      level;
@@ -769,7 +769,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     return element;
 }
 
-- (MMElement *) _parseReferenceLinkWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseReferenceLinkWithScanner:(MMScanner *)scanner
 {
     MMElement *element = [MMElement new];
     element.type = MMElementTypeLink;
@@ -809,7 +809,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     return element;
 }
 
-- (MMElement *) _parseLinkWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseLinkWithScanner:(MMScanner *)scanner
 {
     MMElement *element;
     
@@ -834,7 +834,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     return element;
 }
 
-- (MMElement *) _parseImageWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseImageWithScanner:(MMScanner *)scanner
 {
     MMElement *element;
     
@@ -874,7 +874,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     return element;
 }
 
-- (MMElement *) _parseAmpersandWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseAmpersandWithScanner:(MMScanner *)scanner
 {
     if ([scanner nextCharacter] != '&')
         return nil;
@@ -901,7 +901,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     return element;
 }
 
-- (MMElement *) _parseLeftAngleBracketWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseLeftAngleBracketWithScanner:(MMScanner *)scanner
 {
     if ([scanner nextCharacter] != '<')
         return nil;
@@ -922,7 +922,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     return element;
 }
 
-- (MMElement *) _parseEntityWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseEntityWithScanner:(MMScanner *)scanner
 {
     MMElement *element;
     
@@ -941,7 +941,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     return nil;
 }
 
-- (NSString *) _stringWithBackslashEscapesRemoved:(NSString *)string
+- (NSString *)_stringWithBackslashEscapesRemoved:(NSString *)string
 {
     NSMutableString *result = [string mutableCopy];
     

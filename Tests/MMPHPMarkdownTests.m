@@ -39,7 +39,7 @@
 #pragma mark Helpers
 //==================================================================================================
 
-- (void) runTestWithName:(NSString *)aName
+- (void)runTestWithName:(NSString *)aName
 {
     [self runTestWithName:aName inDirectory:@"php-markdown"];
 }
@@ -50,22 +50,22 @@
 #pragma mark Test Cases
 //==================================================================================================
 
-- (void) testBackslashEscapes
+- (void)testBackslashEscapes
 {
     [self runTestWithName:@"Backslash escapes"];
 }
 
-- (void) testCodeBlockInAListItem
+- (void)testCodeBlockInAListItem
 {
     [self runTestWithName:@"Code block in a list item"];
 }
 
-- (void) testCodeSpans
+- (void)testCodeSpans
 {
     [self runTestWithName:@"Code Spans"];
 }
 
-- (void) testEmailAutoLinks
+- (void)testEmailAutoLinks
 {
     [self runTestWithName:@"Email auto links"];
 }
@@ -87,33 +87,33 @@
  *
  * The legitimate failures from this test were added as standalone cases to the MMMarkdown suite.
  */
-- (void) testEmphasis
+- (void)testEmphasis
 {
     [self runTestWithName:@"Emphasis"];
 }
 #endif
 
-- (void) testHeaders
+- (void)testHeaders
 {
     [self runTestWithName:@"Headers"];
 }
 
-- (void) testImagesUntitled
+- (void)testImagesUntitled
 {
     [self runTestWithName:@"Images (Untitled)"];
 }
 
-- (void) testInlineHTMLSimple
+- (void)testInlineHTMLSimple
 {
     [self runTestWithName:@"Inline HTML (Simple)"];
 }
 
-- (void) testInlineHTMLSpan
+- (void)testInlineHTMLSpan
 {
     [self runTestWithName:@"Inline HTML (Span)"];
 }
 
-- (void) testInlineHTMLComments
+- (void)testInlineHTMLComments
 {
     [self runTestWithName:@"Inline HTML comments"];
 }
@@ -126,7 +126,7 @@
  * situations, but it's inconsistent in its treatment and most other implementations don't
  * differentiate.
  */
-- (void) testInsAndDel
+- (void)testInsAndDel
 {
     [self runTestWithName:@"Ins & del"];
 }
@@ -145,33 +145,33 @@
  * because the angle brackets protect the ')'. Most other implementations don't do this. And
  * since I'm not convinced there's any value in it, I'm not going to worry about it.
  */
-- (void) testLinksInlineStyle
+- (void)testLinksInlineStyle
 {
     [self runTestWithName:@"Links, inline style"];
 }
 #endif
 
-- (void) testMD5Hashes
+- (void)testMD5Hashes
 {
     [self runTestWithName:@"MD5 Hashes"];
 }
 
-- (void) testNesting
+- (void)testNesting
 {
     [self runTestWithName:@"Nesting"];
 }
 
-- (void) testParensInURL
+- (void)testParensInURL
 {
     [self runTestWithName:@"Parens in URL"];
 }
 
-- (void) testPHPSpecificBugs
+- (void)testPHPSpecificBugs
 {
     [self runTestWithName:@"PHP-Specific Bugs"];
 }
 
-- (void) testTightBlocks
+- (void)testTightBlocks
 {
     [self runTestWithName:@"Tight blocks"];
 }

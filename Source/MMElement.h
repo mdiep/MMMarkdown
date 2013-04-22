@@ -64,11 +64,11 @@ typedef enum
 @property (assign, nonatomic) MMElement *parent;
 @property (copy,   nonatomic) NSArray   *children;
 
-- (void) addInnerRange:(NSRange)aRange;
-- (void) removeLastInnerRange;
+- (void)addInnerRange:(NSRange)aRange;
+- (void)removeLastInnerRange;
 
-- (void) addChild:(MMElement *)aChild;
-- (void) removeChild:(MMElement *)aChild;
-- (MMElement *) removeLastChild;
+- (void)addChild:(MMElement *)aChild;
+- (void)removeChild:(MMElement *)aChild;
+- (MMElement *)removeLastChild;
 
 @end

@@ -180,7 +180,7 @@ static NSString * __HTMLEndTagForElement(MMElement *anElement)
 #pragma mark Public Methods
 //==================================================================================================
 
-- (NSString *) generateHTML:(MMDocument *)aDocument
+- (NSString *)generateHTML:(MMDocument *)aDocument
 {
     NSString   *markdown = aDocument.markdown;
     NSUInteger  location = 0;
@@ -212,10 +212,10 @@ static NSString * __HTMLEndTagForElement(MMElement *anElement)
 #pragma mark Public Methods
 //==================================================================================================
 
-- (void) _generateHTMLForElement:(MMElement *)anElement
-                      inDocument:(MMDocument *)aDocument
-                            HTML:(NSMutableString *)theHTML
-                        location:(NSUInteger *)aLocation
+- (void)_generateHTMLForElement:(MMElement *)anElement
+                     inDocument:(MMDocument *)aDocument
+                           HTML:(NSMutableString *)theHTML
+                       location:(NSUInteger *)aLocation
 {
     NSString *startTag = __HTMLStartTagForElement(anElement);
     NSString *endTag   = __HTMLEndTagForElement(anElement);

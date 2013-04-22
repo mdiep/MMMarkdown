@@ -37,7 +37,7 @@
 #pragma mark Backslash Escape Tests
 //==================================================================================================
 
-- (void) testBackslashEscapes
+- (void)testBackslashEscapes
 {
     // double-escape everything
     NSString *markdown = @"\\\\ \\` \\* \\_ \\{ \\} \\[ \\] \\( \\) \\> \\# \\. \\! \\+ \\-";
@@ -46,7 +46,7 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-- (void) testNotBackslashEscapes
+- (void)testNotBackslashEscapes
 {
     // These may look like backslash escapes, but markdown doesn't recognize them. Treat them as
     // normal sequences of characters.
@@ -55,7 +55,7 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-- (void) testEscapedParensInInlineLink
+- (void)testEscapedParensInInlineLink
 {
     MMAssertMarkdownEqualsHTML(@"[link](/url\\))",  @"<p><a href=\"/url)\">link</a></p>");
     MMAssertMarkdownEqualsHTML(@"[link](/url\\())", @"<p><a href=\"/url(\">link</a>)</p>");
@@ -67,17 +67,17 @@
 #pragma mark Encoded Entity Tests
 //==================================================================================================
 
-- (void) testEncodeAmpersand
+- (void)testEncodeAmpersand
 {
     MMAssertMarkdownEqualsHTML(@"A & B", @"<p>A &amp; B</p>");
 }
 
-- (void) testEncodeLeftAngleBracket
+- (void)testEncodeLeftAngleBracket
 {
     MMAssertMarkdownEqualsHTML(@"2 << 0 < 2 << 1", @"<p>2 &lt;&lt; 0 &lt; 2 &lt;&lt; 1</p>");
 }
 
-- (void) testHTMLEntityReferences
+- (void)testHTMLEntityReferences
 {
     MMAssertMarkdownEqualsHTML(@"A &amp; B", @"<p>A &amp; B</p>");
     MMAssertMarkdownEqualsHTML(@"A &#38; B", @"<p>A &#38; B</p>");

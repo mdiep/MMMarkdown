@@ -62,7 +62,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
 #pragma mark NSObject Methods
 //==================================================================================================
 
-- (id) init
+- (id)init
 {
     self = [super init];
     
@@ -81,7 +81,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
 #pragma mark Public Methods
 //==================================================================================================
 
-- (MMDocument *) parseMarkdown:(NSString *)markdown error:(__autoreleasing NSError **)error
+- (MMDocument *)parseMarkdown:(NSString *)markdown error:(__autoreleasing NSError **)error
 {
     // It would be better to not replace all the tabs with spaces. But this will do for now.
     markdown = [self _removeTabsFromString:markdown];
@@ -101,7 +101,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
 #pragma mark Private Methods
 //==================================================================================================
 
-- (NSString *) _removeTabsFromString:(NSString *)aString
+- (NSString *)_removeTabsFromString:(NSString *)aString
 {
     NSMutableString *result = [aString mutableCopy];
     
@@ -134,7 +134,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     return result;
 }
 
-- (NSArray *) _parseElementsWithScanner:(MMScanner *)scanner
+- (NSArray *)_parseElementsWithScanner:(MMScanner *)scanner
 {
     NSMutableArray *result = [NSMutableArray new];
     
@@ -159,7 +159,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
 }
 
 
-- (MMElement *) _parseNextElementWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseNextElementWithScanner:(MMScanner *)scanner
 {
     MMElement *element = [self _parseBlockElementWithScanner:scanner];
     
@@ -179,7 +179,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     return element;
 }
 
-- (BOOL) _blockElementCanHaveChildren:(MMElement *)anElement
+- (BOOL)_blockElementCanHaveChildren:(MMElement *)anElement
 {
     switch (anElement.type)
     {
@@ -193,7 +193,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     }
 }
 
-- (NSUInteger) _skipEmptyLinesWithScanner:(MMScanner *)scanner
+- (NSUInteger)_skipEmptyLinesWithScanner:(MMScanner *)scanner
 {
     NSUInteger numOfLinesSkipped = 0;
     
@@ -215,7 +215,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     return numOfLinesSkipped;
 }
 
-- (MMElement *) _parseBlockElementWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseBlockElementWithScanner:(MMScanner *)scanner
 {
     MMElement *element;
     
@@ -278,7 +278,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     return nil;
 }
 
-- (MMElement *) _parseHTMLWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseHTMLWithScanner:(MMScanner *)scanner
 {
     // At the beginning of the line
     if (![scanner atBeginningOfLine])
@@ -287,7 +287,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     return [self.htmlParser parseBlockTagWithScanner:scanner];
 }
 
-- (MMElement *) _parsePrefixHeaderWithScanner:(MMScanner *)scanner
+- (MMElement *)_parsePrefixHeaderWithScanner:(MMScanner *)scanner
 {
     NSUInteger level = 0;
     while ([scanner nextCharacter] == '#' && level < 6)
@@ -335,7 +335,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     return element;
 }
 
-- (MMElement *) _parseUnderlinedHeaderWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseUnderlinedHeaderWithScanner:(MMScanner *)scanner
 {
     [scanner beginTransaction];
     
@@ -394,7 +394,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     return element;
 }
 
-- (MMElement *) _parseBlockquoteWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseBlockquoteWithScanner:(MMScanner *)scanner
 {
     // Skip up to 3 leading spaces
     NSCharacterSet *spaceCharacterSet = [NSCharacterSet characterSetWithCharactersInString:@" "];
@@ -447,7 +447,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     return element;
 }
 
-- (MMElement *) _parseCodeBlockWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseCodeBlockWithScanner:(MMScanner *)scanner
 {
     NSUInteger indentation = [scanner skipIndentationUpTo:4];
     if (indentation != 4)
@@ -562,7 +562,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     return element;
 }
 
-- (MMElement *) _parseHorizontalRuleWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseHorizontalRuleWithScanner:(MMScanner *)scanner
 {
     // skip initial whitescape
     [scanner skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet]];
@@ -607,7 +607,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     return element;
 }
 
-- (BOOL) _parseListMarkerWithScanner:(MMScanner *)scanner
+- (BOOL)_parseListMarkerWithScanner:(MMScanner *)scanner
 {
     // Look for a bullet
     [scanner beginTransaction];
@@ -646,7 +646,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     return NO;
 }
 
-- (MMElement *) _parseListItemWithScanner:(MMScanner *)scanner atIndentationLevel:(NSUInteger)level
+- (MMElement *)_parseListItemWithScanner:(MMScanner *)scanner atIndentationLevel:(NSUInteger)level
 {
     // Make sure there's enough leading space
     [scanner beginTransaction];
@@ -761,7 +761,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     return element;
 }
 
-- (MMElement *) _parseListWithScanner:(MMScanner *)scanner atIndentationLevel:(NSUInteger)level
+- (MMElement *)_parseListWithScanner:(MMScanner *)scanner atIndentationLevel:(NSUInteger)level
 {
     [scanner beginTransaction];
     // Check the amount of leading whitespace
@@ -879,7 +879,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     return element;
 }
 
-- (MMElement *) _parseLinkDefinitionWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseLinkDefinitionWithScanner:(MMScanner *)scanner
 {
     NSUInteger location;
     NSUInteger length;
@@ -966,7 +966,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     return element;
 }
 
-- (MMElement *) _parseParagraphWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseParagraphWithScanner:(MMScanner *)scanner
 {
     NSCharacterSet *spaceCharacterSet = [NSCharacterSet characterSetWithCharactersInString:@" "];
     [scanner skipCharactersFromSet:spaceCharacterSet max:3];
@@ -1028,7 +1028,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     return element;
 }
 
-- (void) _updateLinksFromDefinitionsInDocument:(MMDocument *)document
+- (void)_updateLinksFromDefinitionsInDocument:(MMDocument *)document
 {
     NSMutableArray      *references  = [NSMutableArray new];
     NSMutableDictionary *definitions = [NSMutableDictionary new];

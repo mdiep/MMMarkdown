@@ -36,7 +36,7 @@
 #pragma mark Public Methods
 //==================================================================================================
 
-+ (NSString *) HTMLStringWithMarkdown:(NSString *)string error:(__autoreleasing NSError **)error
++ (NSString *)HTMLStringWithMarkdown:(NSString *)string error:(__autoreleasing NSError **)error
 {
     if (string == nil)
         return nil;

@@ -33,7 +33,7 @@
 #pragma mark Public Methods
 //==================================================================================================
 
-- (NSString *) stringWithContentsOfFile:(NSString *)aString inDirectory:(NSString *)aDirectory
+- (NSString *)stringWithContentsOfFile:(NSString *)aString inDirectory:(NSString *)aDirectory
 {
     NSBundle *bundle  = [NSBundle bundleForClass:[self class]];
     NSURL    *fileURL = [bundle URLForResource:aString withExtension:nil subdirectory:aDirectory];
@@ -42,7 +42,7 @@
     return string;
 }
 
-- (void) runTestWithName:(NSString *)aName inDirectory:(NSString *)aDirectory
+- (void)runTestWithName:(NSString *)aName inDirectory:(NSString *)aDirectory
 {
     NSString *input  = [self stringWithContentsOfFile:[NSString stringWithFormat:@"%@.text", aName] inDirectory:aDirectory];
     NSString *html   = [self stringWithContentsOfFile:[NSString stringWithFormat:@"%@.html", aName] inDirectory:aDirectory];

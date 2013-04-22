@@ -36,7 +36,7 @@
 #pragma mark Public Methods
 //==================================================================================================
 
-- (MMElement *) parseBlockTagWithScanner:(MMScanner *)scanner
+- (MMElement *)parseBlockTagWithScanner:(MMScanner *)scanner
 {
     // which starts with a '<'
     if ([scanner nextCharacter] != '<')
@@ -65,7 +65,7 @@
     return element;
 }
 
-- (MMElement *) parseInlineTagWithScanner:(MMScanner *)scanner
+- (MMElement *)parseInlineTagWithScanner:(MMScanner *)scanner
 {
     if ([scanner nextCharacter] != '<')
         return nil;
@@ -98,7 +98,7 @@
 #pragma mark Private Methods
 //==================================================================================================
 
-- (NSRange) _parseNameWithScanner:(MMScanner *)scanner
+- (NSRange)_parseNameWithScanner:(MMScanner *)scanner
 {
     NSMutableCharacterSet *nameSet = [NSMutableCharacterSet alphanumericCharacterSet];
     [nameSet addCharactersInString:@":"];
@@ -109,7 +109,7 @@
     return result;
 }
 
-- (BOOL) _parseStringWithScanner:(MMScanner *)scanner
+- (BOOL)_parseStringWithScanner:(MMScanner *)scanner
 {
     unichar nextChar = [scanner nextCharacter];
     if (nextChar != '"' && nextChar != '\'')
@@ -136,7 +136,7 @@
     return YES;
 }
 
-- (BOOL) _parseAttributeValueWithScanner:(MMScanner *)scanner
+- (BOOL)_parseAttributeValueWithScanner:(MMScanner *)scanner
 {
     NSMutableCharacterSet *characters = [[NSCharacterSet.whitespaceCharacterSet invertedSet] mutableCopy];
     [characters removeCharactersInString:@"\"'=><`"];
@@ -144,7 +144,7 @@
     return [scanner skipCharactersFromSet:characters] > 0;
 }
 
-- (void) _parseAttributesWithScanner:(MMScanner *)scanner
+- (void)_parseAttributesWithScanner:(MMScanner *)scanner
 {
     while ([scanner skipWhitespaceAndNewlines] > 0)
     {

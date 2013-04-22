@@ -30,6 +30,6 @@
 
 @interface MMSpanParser : NSObject
 
-- (NSArray *) parseSpansWithScanner:(MMScanner *)scanner;
+- (NSArray *)parseSpansWithScanner:(MMScanner *)scanner;
 
 @end

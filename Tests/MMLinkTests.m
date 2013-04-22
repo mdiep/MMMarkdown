@@ -37,7 +37,7 @@
 #pragma mark Automatic Link Tests
 //==================================================================================================
 
-- (void) testBasicAutomaticLink
+- (void)testBasicAutomaticLink
 {
     NSString *markdown = @"<http://daringfireball.net>";
     NSString *html = @"<p><a href='http://daringfireball.net'>http://daringfireball.net</a></p>";
@@ -45,13 +45,13 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-- (void) testAutomaticLinkWithAmpersand
+- (void)testAutomaticLinkWithAmpersand
 {
     MMAssertMarkdownEqualsHTML(@"<http://example.com/?a=1&b=1>",
                                @"<p><a href=\"http://example.com/?a=1&amp;b=1\">http://example.com/?a=1&amp;b=1</a></p>");
 }
 
-- (void) testNotAnActualAutomaticLink
+- (void)testNotAnActualAutomaticLink
 {
     // Use a string comparison for this test because the output is not valid XML
     NSString *markdown  = @"A <i> test with no HTML.";
@@ -60,7 +60,7 @@
     STAssertEqualObjects(generated, expected, @"HTML didn't match expected value");
 }
 
-- (void) testAutomaticEmailLink
+- (void)testAutomaticEmailLink
 {
     // The Markdown documentation says that automatic email links like this should have "randomized
     // decimal and hex entity-encoding to help obscure your address from address-harvesting
@@ -75,7 +75,7 @@
     STAssertFalse([expected isEqualToString:generated], @"Generated output should be escaped");
 }
 
-- (void) testAutomaticEmailLink_withAnInternationalDomain
+- (void)testAutomaticEmailLink_withAnInternationalDomain
 {
     // The Markdown documentation says that automatic email links like this should have "randomized
     // decimal and hex entity-encoding to help obscure your address from address-harvesting
@@ -96,81 +96,81 @@
 #pragma mark Inline Link Tests
 //==================================================================================================
 
-- (void) testBasicInlineLink
+- (void)testBasicInlineLink
 {
     MMAssertMarkdownEqualsHTML(@"[URL](/url/)", @"<p><a href=\"/url/\">URL</a></p>");
 }
 
-- (void) testInlineLinkWithSpans
+- (void)testInlineLinkWithSpans
 {
     MMAssertMarkdownEqualsHTML(@"[***A Title***](/the-url/)", @"<p><a href=\"/the-url/\"><strong><em>A Title</em></strong></a></p>");
 }
 
-- (void) testInlineLinkWithEscapedBracket
+- (void)testInlineLinkWithEscapedBracket
 {
     MMAssertMarkdownEqualsHTML(@"[\\]](/)", @"<p><a href=\"/\">]</a></p>");
 }
 
-- (void) testInlineLinkWithNestedBrackets
+- (void)testInlineLinkWithNestedBrackets
 {
     MMAssertMarkdownEqualsHTML(@"[ A [ title ] ](/foo)", @"<p><a href=\"/foo\"> A [ title ] </a></p>");
 }
 
-- (void) testInlineLinkWithNestedParentheses
+- (void)testInlineLinkWithNestedParentheses
 {
     MMAssertMarkdownEqualsHTML(@"[Apple](http://en.wikipedia.org/wiki/Apple_(disambiguation))",
                                @"<p><a href=\"http://en.wikipedia.org/wiki/Apple_(disambiguation)\">Apple</a></p>");
 }
 
-- (void) testInlineLinkWithURLInAngleBrackets
+- (void)testInlineLinkWithURLInAngleBrackets
 {
     MMAssertMarkdownEqualsHTML(@"[Foo](<bar>)", @"<p><a href=\"bar\">Foo</a></p>");
 }
 
-- (void) testInlineLinkWithTitle
+- (void)testInlineLinkWithTitle
 {
     MMAssertMarkdownEqualsHTML(@"[URL](/url \"title\")",
                                @"<p><a href=\"/url\" title=\"title\">URL</a></p>");
 }
 
-- (void) testInlineLinkWithQuoteInTitle
+- (void)testInlineLinkWithQuoteInTitle
 {
     MMAssertMarkdownEqualsHTML(@"[Foo](/bar \"a \" in the title\")",
                                @"<p><a href=\"/bar\" title=\"a &quot; in the title\">Foo</a></p>");
 }
 
-- (void) testInlineLinkWithAmpersandInTitle
+- (void)testInlineLinkWithAmpersandInTitle
 {
     MMAssertMarkdownEqualsHTML(@"[Foo](bar \"&baz\")", @"<p><a href=\"bar\" title=\"&amp;baz\">Foo</a></p>");
 }
 
-- (void) testInlineLinkWithInlineLinkInside
+- (void)testInlineLinkWithInlineLinkInside
 {
     MMAssertMarkdownEqualsHTML(@"[ [URL](/blah) ](/url)",
                                @"<p><a href=\"/url\"> [URL](/blah) </a></p>");
 }
 
-- (void) testInlineLinkWithNoHref
+- (void)testInlineLinkWithNoHref
 {
     MMAssertMarkdownEqualsHTML(@"[foo]()", @"<p><a href=\"\">foo</a></p>");
 }
 
-- (void) testInlineLinkWithNewlineInText
+- (void)testInlineLinkWithNewlineInText
 {
     MMAssertMarkdownEqualsHTML(@"[A\nlink](/foo)", @"<p><a href=\"/foo\">A\nlink</a></p>");
 }
 
-- (void) testInlineLinkWithNewlineInText_carriageReturn
+- (void)testInlineLinkWithNewlineInText_carriageReturn
 {
     MMAssertMarkdownEqualsHTML(@"[A\rlink](/foo)", @"<p><a href=\"/foo\">A\nlink</a></p>");
 }
 
-- (void) testInlineLinkWithNewlineInText_carriageReturnLineFeed
+- (void)testInlineLinkWithNewlineInText_carriageReturnLineFeed
 {
     MMAssertMarkdownEqualsHTML(@"[A\r\nlink](/foo)", @"<p><a href=\"/foo\">A\nlink</a></p>");
 }
 
-- (void) testNotAnInlineLink_loneBracket
+- (void)testNotAnInlineLink_loneBracket
 {
     MMAssertMarkdownEqualsHTML(@"An empty [ by itself", @"<p>An empty [ by itself</p>");
 }
@@ -181,7 +181,7 @@
 #pragma mark Reference Link Tests
 //==================================================================================================
 
-- (void) testBasicReferenceLink
+- (void)testBasicReferenceLink
 {
     NSString *markdown = @"Foo [bar][1].\n"
                           "\n"
@@ -190,7 +190,7 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-- (void) testReferenceLinkWithOneSpace
+- (void)testReferenceLinkWithOneSpace
 {
     NSString *markdown = @"Foo [bar] [1].\n"
                           "\n"
@@ -199,7 +199,7 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-- (void) testReferenceLinkWithNewline
+- (void)testReferenceLinkWithNewline
 {
     NSString *markdown = @"[Foo]\n"
                           "[bar]\n"
@@ -209,7 +209,7 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-- (void) testReferenceLinkWithDifferentCapitalization
+- (void)testReferenceLinkWithDifferentCapitalization
 {
     NSString *markdown = @"[Foo][BaR]\n"
                           "\n"
@@ -218,7 +218,7 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-- (void) testReferenceLinkWithAngleBrackets
+- (void)testReferenceLinkWithAngleBrackets
 {
     NSString *markdown = @"[Apple][].\n"
                           "\n"
@@ -227,7 +227,7 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-- (void) testReferenceLinkWithTitle
+- (void)testReferenceLinkWithTitle
 {
     NSString *markdown = @"Foo [bar][1].\n"
                           "\n"
@@ -236,7 +236,7 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-- (void) testReferenceLinkWithTitleOnNextLine
+- (void)testReferenceLinkWithTitleOnNextLine
 {
     NSString *markdown = @"[Apple][].\n"
                           "\n"
@@ -246,7 +246,7 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-- (void) testReferenceLinkWithQuoteInTitle
+- (void)testReferenceLinkWithQuoteInTitle
 {
     NSString *markdown = @"[Foo][]\n"
                           "\n"
@@ -255,7 +255,7 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-- (void) testReferenceLinkWithTitleInSingleQuotes
+- (void)testReferenceLinkWithTitleInSingleQuotes
 {
     NSString *markdown = @"[Apple][].\n"
                           "\n"
@@ -264,7 +264,7 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-- (void) testReferenceLinkWithTitleInParentheses
+- (void)testReferenceLinkWithTitleInParentheses
 {
     NSString *markdown = @"[Apple][].\n"
                           "\n"
@@ -273,7 +273,7 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-- (void) testReferenceLinkWithNewlineInText
+- (void)testReferenceLinkWithNewlineInText
 {
     NSString *markdown = @"[A\n"
                           "link][1]\n"
@@ -284,7 +284,7 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-- (void) testReferenceLinkWithImplicitIDAndNewlineInText
+- (void)testReferenceLinkWithImplicitIDAndNewlineInText
 {
     NSString *markdown = @"[A\n"
                           "link][]\n"
@@ -295,7 +295,7 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-- (void) testReferenceLinkWithNewlineInID
+- (void)testReferenceLinkWithNewlineInID
 {
     NSString *markdown = @"[A link][foo\n"
                           "bar]\n"
@@ -305,7 +305,7 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-- (void) testReferenceLinkWithNoReference
+- (void)testReferenceLinkWithNoReference
 {
     MMAssertMarkdownEqualsHTML(@"[Foo][bar]", @"<p>[Foo][bar]</p>");
 }
