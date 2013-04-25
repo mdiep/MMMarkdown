@@ -92,6 +92,22 @@
     MMAssertMarkdownEqualsString(@"<!-- **Test**\n\n -->", @"<!-- **Test**\n\n -->");
 }
 
+#if RUN_KNOWN_FAILURES
+- (void)testHTMLCommentAtEndOfParagraph
+{
+    MMAssertMarkdownEqualsString(@"1 <!-- **A Test**\n\n-->",
+                                 @"<p>1 <!-- **A Test**\n\n--></p>\n");
+}
+#endif
+
+#if RUN_KNOWN_FAILURES
+- (void)testHTMLCommentAtEndOfListItem
+{
+    MMAssertMarkdownEqualsString(@"1. <!-- **A Test**\n\n-->",
+                                 @"<ol>\n<li><!-- **A Test**\n\n--></li>\n</ol>\n");
+}
+#endif
+
 
 //==================================================================================================
 #pragma mark -
