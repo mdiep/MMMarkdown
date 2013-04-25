@@ -154,6 +154,11 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
+- (void)testEmptyList
+{
+    MMAssertMarkdownEqualsHTML(@"1. ", @"<ol><li></li></ol>");
+}
+
 - (void)testNestedLists
 {
     NSString *markdown = @"- One\n"
