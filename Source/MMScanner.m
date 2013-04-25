@@ -121,11 +121,11 @@ static NSString *__delimitersForCharacter(unichar character)
     NSDictionary *transaction = [self.transactions lastObject];
     [self.transactions removeLastObject];
     
+    self.startLocation = [[transaction objectForKey:@"startLocation"] unsignedIntegerValue];
     if (!shouldSave)
     {
         self.rangeIndex    = [[transaction objectForKey:@"rangeIndex"]    unsignedIntegerValue];
         self.location      = [[transaction objectForKey:@"location"]      unsignedIntegerValue];
-        self.startLocation = [[transaction objectForKey:@"startLocation"] unsignedIntegerValue];
     }
 }
 

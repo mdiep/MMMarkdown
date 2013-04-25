@@ -80,6 +80,11 @@
     
     [self _parseAttributesWithScanner:scanner];
     
+    [scanner skipWhitespace];
+    
+    if ([scanner nextCharacter] == '/')
+        [scanner advance];
+    
     if ([scanner nextCharacter] != '>')
         return nil;
     [scanner advance];
@@ -154,20 +159,27 @@
         if (range.length == 0)
             break;
         
+        [scanner beginTransaction];
         [scanner skipWhitespace];
         
-        if ([scanner nextCharacter] != '=')
-            break;
-        [scanner advance];
-        
-        [scanner skipWhitespace];
-        
-        if ([self _parseStringWithScanner:scanner])
-            ;
-        else if ([self _parseAttributeValueWithScanner:scanner])
-            ;
+        if ([scanner nextCharacter] == '=')
+        {
+            [scanner commitTransaction:YES];
+            [scanner advance];
+            
+            [scanner skipWhitespace];
+            
+            if ([self _parseStringWithScanner:scanner])
+                ;
+            else if ([self _parseAttributeValueWithScanner:scanner])
+                ;
+            else
+                break;
+        }
         else
-            break;
+        {
+            [scanner commitTransaction:NO];
+        }
     }
 }
 

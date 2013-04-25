@@ -56,10 +56,10 @@
 
 - (void)testInlineHTMLWithEmptyAttribute
 {
-    MMAssertMarkdownEqualsHTML(@"<input type=\"checkbox\" name=\"*foo*\" checked />",
-                               @"<p><input type=\"checkbox\" name=\"*foo*\" checked /></p>");
-    MMAssertMarkdownEqualsHTML(@"<input type=\"checkbox\" checked name=\"*foo*\"/>",
-                               @"<p><input type=\"checkbox\" checked name=\"*foo*\"/></p>");
+    MMAssertMarkdownEqualsString(@"<input type=\"checkbox\" name=\"*foo*\" checked />",
+                                 @"<p><input type=\"checkbox\" name=\"*foo*\" checked /></p>\n");
+    MMAssertMarkdownEqualsString(@"<input type=\"checkbox\" checked name=\"*foo*\"/>",
+                                 @"<p><input type=\"checkbox\" checked name=\"*foo*\"/></p>\n");
 }
 
 - (void)testInlineHTMLWithSpacesInAttribute
