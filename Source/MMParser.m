@@ -218,6 +218,12 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     MMElement *element;
     
     [scanner beginTransaction];
+    element = [self.htmlParser parseCommentWithScanner:scanner];
+    [scanner commitTransaction:element != nil];
+    if (element)
+        return element;
+    
+    [scanner beginTransaction];
     element = [self _parseHTMLWithScanner:scanner];
     [scanner commitTransaction:element != nil];
     if (element)

@@ -196,6 +196,22 @@ static NSString *__delimitersForCharacter(unichar character)
     }
 }
 
+- (BOOL)matchString:(NSString *)string
+{
+    if (self.currentRange.length < string.length)
+        return NO;
+    
+    NSUInteger location = self.location;
+    for (NSUInteger idx=0; idx<string.length; idx++)
+    {
+        if ([string characterAtIndex:idx] != [self.string characterAtIndex:location+idx])
+            return NO;
+    }
+    
+    self.location += string.length;
+    return YES;
+}
+
 - (NSUInteger)skipCharactersFromSet:(NSCharacterSet *)aSet
 {
     NSRange searchRange = self.currentRange;

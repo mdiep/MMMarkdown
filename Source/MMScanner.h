@@ -59,6 +59,8 @@
 - (void)advance;
 - (void)advanceToNextLine;
 
+- (BOOL)matchString:(NSString *)string;
+
 - (NSUInteger)skipCharactersFromSet:(NSCharacterSet *)aSet;
 - (NSUInteger)skipCharactersFromSet:(NSCharacterSet *)aSet max:(NSUInteger)maxToSkip;
 - (NSUInteger)skipIndentationUpTo:(NSUInteger)maxSpacesToSkip;

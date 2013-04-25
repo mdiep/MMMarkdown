@@ -65,6 +65,34 @@
     return element;
 }
 
+- (MMElement *)parseCommentWithScanner:(MMScanner *)scanner
+{
+    if (![scanner matchString:@"<!--"])
+        return nil;
+    
+    NSCharacterSet *setToSkip = [[NSCharacterSet characterSetWithCharactersInString:@"-"] invertedSet];
+    while (![scanner atEndOfString])
+    {
+        if ([scanner atEndOfLine])
+            [scanner advanceToNextLine];
+        else
+        {
+            [scanner skipCharactersFromSet:setToSkip];
+            if ([scanner matchString:@"-->"])
+            {
+                MMElement *element = [MMElement new];
+                element.type  = MMElementTypeHTML;
+                element.range = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
+                
+                return element;
+            }
+            [scanner advance];
+        }
+    }
+    
+    return nil;
+}
+
 - (MMElement *)parseInlineTagWithScanner:(MMScanner *)scanner
 {
     if ([scanner nextCharacter] != '<')
