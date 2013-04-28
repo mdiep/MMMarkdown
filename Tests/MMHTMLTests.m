@@ -100,6 +100,12 @@
 }
 #endif
 
+- (void)testHTMLCommentInParagraph
+{
+    MMAssertMarkdownEqualsString(@"A <!-- **A Test** --> B",
+                                 @"<p>A <!-- **A Test** --> B</p>\n");
+}
+
 #if RUN_KNOWN_FAILURES
 - (void)testHTMLCommentAtEndOfListItem
 {
@@ -107,6 +113,12 @@
                                  @"<ol>\n<li><!-- **A Test**\n\n--></li>\n</ol>\n");
 }
 #endif
+
+- (void)testHTMLCommentInListItem
+{
+    MMAssertMarkdownEqualsString(@"1. A <!-- **A Test** --> B",
+                                 @"<ol>\n<li>A <!-- **A Test** --> B</li>\n</ol>\n");
+}
 
 
 //==================================================================================================
