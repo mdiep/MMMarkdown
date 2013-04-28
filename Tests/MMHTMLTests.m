@@ -92,13 +92,11 @@
     MMAssertMarkdownEqualsString(@"<!-- **Test**\n\n -->", @"<!-- **Test**\n\n -->");
 }
 
-#if RUN_KNOWN_FAILURES
 - (void)testHTMLCommentAtEndOfParagraph
 {
     MMAssertMarkdownEqualsString(@"1 <!-- **A Test**\n\n-->",
                                  @"<p>1 <!-- **A Test**\n\n--></p>\n");
 }
-#endif
 
 - (void)testHTMLCommentInParagraph
 {

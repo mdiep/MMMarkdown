@@ -981,10 +981,8 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     MMElement *element = [MMElement new];
     element.type  = MMElementTypeParagraph;
     
-    [element addInnerRange:scanner.currentRange];
-    [scanner advanceToNextLine];
-    
     NSCharacterSet *whitespaceSet = [NSCharacterSet whitespaceCharacterSet];
+    NSCharacterSet *nonAngleSet   = [[NSCharacterSet characterSetWithCharactersInString:@"<"] invertedSet];
     while (![scanner atEndOfString])
     {
         // Skip whitespace if it's the only thing on the line
@@ -1023,7 +1021,50 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         if (header)
             break;
         
-        [element addInnerRange:scanner.currentRange];
+        NSRange lineRange = scanner.currentRange;
+        
+        // Check for an HTML comment, which could span blank lines
+        [scanner beginTransaction];
+        NSMutableArray *commentRanges = [NSMutableArray new];
+        // Look for the start of a comment on the current line
+        while (![scanner atEndOfLine])
+        {
+            [scanner skipCharactersFromSet:nonAngleSet];
+            if ([scanner matchString:@"<!--"])
+            {
+                // Look for the end of the comment
+                NSCharacterSet *nonDashSet = [[NSCharacterSet characterSetWithCharactersInString:@"-"] invertedSet];
+                while (![scanner atEndOfString])
+                {
+                    [scanner skipCharactersFromSet:nonDashSet];
+                    
+                    if ([scanner atEndOfLine])
+                    {
+                        [commentRanges addObject:[NSValue valueWithRange:lineRange]];
+                        [scanner advanceToNextLine];
+                        lineRange = scanner.currentRange;
+                        continue;
+                    }
+                    if ([scanner matchString:@"-->"])
+                    {
+                        break;
+                    }
+                    [scanner advance];
+                }
+            }
+            else
+                [scanner advance];
+        }
+        [scanner commitTransaction:commentRanges.count > 0];
+        if (commentRanges.count > 0)
+        {
+            for (NSValue *value in commentRanges)
+            {
+                [element addInnerRange:value.rangeValue];
+            }
+        }
+        
+        [element addInnerRange:lineRange];
         [scanner advanceToNextLine];
     }
     
