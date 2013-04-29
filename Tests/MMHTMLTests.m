@@ -104,13 +104,11 @@
                                  @"<p>A <!-- **A Test** --> B</p>\n");
 }
 
-#if RUN_KNOWN_FAILURES
 - (void)testHTMLCommentAtEndOfListItem
 {
     MMAssertMarkdownEqualsString(@"1. <!-- **A Test**\n\n-->",
                                  @"<ol>\n<li><!-- **A Test**\n\n--></li>\n</ol>\n");
 }
-#endif
 
 - (void)testHTMLCommentInListItem
 {

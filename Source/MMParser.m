@@ -99,6 +99,61 @@ static NSString * __HTMLEntityForCharacter(unichar character)
 #pragma mark Private Methods
 //==================================================================================================
 
+// Add the remainder of the line as an inner range to the element.
+//
+// If the line contains the start of a multi-line HTML comment, then multiple lines will be added
+// to the element.
+- (void)_addTextLineToElement:(MMElement *)element withScanner:(MMScanner *)scanner
+{
+    NSCharacterSet *nonAngleSet = [[NSCharacterSet characterSetWithCharactersInString:@"<"] invertedSet];
+    NSCharacterSet *nonDashSet  = [[NSCharacterSet characterSetWithCharactersInString:@"-"] invertedSet];
+    
+    NSRange lineRange = scanner.currentRange;
+    
+    // Check for an HTML comment, which could span blank lines
+    [scanner beginTransaction];
+    NSMutableArray *commentRanges = [NSMutableArray new];
+    // Look for the start of a comment on the current line
+    while (![scanner atEndOfLine])
+    {
+        [scanner skipCharactersFromSet:nonAngleSet];
+        if ([scanner matchString:@"<!--"])
+        {
+            // Look for the end of the comment
+            while (![scanner atEndOfString])
+            {
+                [scanner skipCharactersFromSet:nonDashSet];
+                
+                if ([scanner atEndOfLine])
+                {
+                    [commentRanges addObject:[NSValue valueWithRange:lineRange]];
+                    [scanner advanceToNextLine];
+                    lineRange = scanner.currentRange;
+                    continue;
+                }
+                if ([scanner matchString:@"-->"])
+                {
+                    break;
+                }
+                [scanner advance];
+            }
+        }
+        else
+            [scanner advance];
+    }
+    [scanner commitTransaction:commentRanges.count > 0];
+    if (commentRanges.count > 0)
+    {
+        for (NSValue *value in commentRanges)
+        {
+            [element addInnerRange:value.rangeValue];
+        }
+    }
+    
+    [element addInnerRange:lineRange];
+    [scanner advanceToNextLine];
+}
+
 - (NSString *)_removeTabsFromString:(NSString *)aString
 {
     NSMutableString *result = [aString mutableCopy];
@@ -674,9 +729,6 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     MMElement *element = [MMElement new];
     element.type = MMElementTypeListItem;
     
-    [element addInnerRange:scanner.currentRange];
-    [scanner advanceToNextLine];
-    
     BOOL afterBlankLine = NO;
     NSCharacterSet *whitespaceSet = [NSCharacterSet whitespaceCharacterSet];
     while (![scanner atEndOfString])
@@ -755,9 +807,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
             [scanner skipCharactersFromSet:whitespaceSet];
         }
         
-        [element addInnerRange:scanner.currentRange];
-        
-        [scanner advanceToNextLine];
+        [self _addTextLineToElement:element withScanner:scanner];
     }
     
     element.range = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
@@ -982,7 +1032,6 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     element.type  = MMElementTypeParagraph;
     
     NSCharacterSet *whitespaceSet = [NSCharacterSet whitespaceCharacterSet];
-    NSCharacterSet *nonAngleSet   = [[NSCharacterSet characterSetWithCharactersInString:@"<"] invertedSet];
     while (![scanner atEndOfString])
     {
         // Skip whitespace if it's the only thing on the line
@@ -1021,51 +1070,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         if (header)
             break;
         
-        NSRange lineRange = scanner.currentRange;
-        
-        // Check for an HTML comment, which could span blank lines
-        [scanner beginTransaction];
-        NSMutableArray *commentRanges = [NSMutableArray new];
-        // Look for the start of a comment on the current line
-        while (![scanner atEndOfLine])
-        {
-            [scanner skipCharactersFromSet:nonAngleSet];
-            if ([scanner matchString:@"<!--"])
-            {
-                // Look for the end of the comment
-                NSCharacterSet *nonDashSet = [[NSCharacterSet characterSetWithCharactersInString:@"-"] invertedSet];
-                while (![scanner atEndOfString])
-                {
-                    [scanner skipCharactersFromSet:nonDashSet];
-                    
-                    if ([scanner atEndOfLine])
-                    {
-                        [commentRanges addObject:[NSValue valueWithRange:lineRange]];
-                        [scanner advanceToNextLine];
-                        lineRange = scanner.currentRange;
-                        continue;
-                    }
-                    if ([scanner matchString:@"-->"])
-                    {
-                        break;
-                    }
-                    [scanner advance];
-                }
-            }
-            else
-                [scanner advance];
-        }
-        [scanner commitTransaction:commentRanges.count > 0];
-        if (commentRanges.count > 0)
-        {
-            for (NSValue *value in commentRanges)
-            {
-                [element addInnerRange:value.rangeValue];
-            }
-        }
-        
-        [element addInnerRange:lineRange];
-        [scanner advanceToNextLine];
+        [self _addTextLineToElement:element withScanner:scanner];
     }
     
     element.range = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
