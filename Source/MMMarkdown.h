@@ -25,6 +25,12 @@
 
 #import <Foundation/Foundation.h>
 
+extern NSString *MMMarkdownErrorDomain;
+
+enum MMMarkdownError {
+    MMMarkdownErrorUnknown = -1,
+    MMMarkdownErrorNoContent = 1
+};
 
 @interface MMMarkdown : NSObject
 

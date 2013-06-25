@@ -29,6 +29,8 @@
 #import "MMParser.h"
 #import "MMGenerator.h"
 
+NSString *MMMarkdownErrorDomain = @"MMMarkdownErrorDomain";
+
 @implementation MMMarkdown
 
 //==================================================================================================
@@ -38,8 +40,12 @@
 
 + (NSString *) HTMLStringWithMarkdown:(NSString *)string error:(__autoreleasing NSError **)error
 {
-    if (string == nil)
+    if (string == nil) {
+        if (error) *error = [NSError errorWithDomain:MMMarkdownErrorDomain code:MMMarkdownErrorNoContent userInfo:nil];
         return nil;
+    } else if ([string length] == 0) {
+        return @"";
+    }
     
     MMParser    *parser    = [MMParser new];
     MMGenerator *generator = [MMGenerator new];
