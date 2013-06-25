@@ -71,6 +71,11 @@
     [self runTestWithName:@"Hard-wrapped paragraphs with list-like lines"];
 }
 
+- (void) testEmptyString
+{
+    [self runTestWithName:@"Empty string"];
+}
+
 - (void) testHorizontalRules
 {
     [self runTestWithName:@"Horizontal rules"];
