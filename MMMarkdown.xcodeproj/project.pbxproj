@@ -934,6 +934,7 @@
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = "MMMarkdown-iOS";
 				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -946,6 +947,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				PRODUCT_NAME = "MMMarkdown-iOS";
 				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};
