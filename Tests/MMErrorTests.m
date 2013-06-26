@@ -44,7 +44,7 @@
 
 - (void)testNilInput
 {
-    STAssertNil([MMMarkdown HTMLStringWithMarkdown:nil error:nil], @"nil input should give nil output");
+    STAssertThrows([MMMarkdown HTMLStringWithMarkdown:nil error:nil], @"nil input should assert");
 }
 
 @end
