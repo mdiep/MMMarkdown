@@ -44,7 +44,11 @@
 
 - (void)testNilInput
 {
+    // Ignore the nonnull diagnostic here because we're explicitly testing the behavior with nil
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
     STAssertThrows([MMMarkdown HTMLStringWithMarkdown:nil error:nil], @"nil input should assert");
+#pragma clang diagnostic pop
 }
 
 @end

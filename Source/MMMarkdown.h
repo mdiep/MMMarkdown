@@ -28,6 +28,6 @@
 
 @interface MMMarkdown : NSObject
 
-+ (NSString *)HTMLStringWithMarkdown:(NSString *)string error:(__autoreleasing NSError **)error;
++ (NSString *)HTMLStringWithMarkdown:(NSString *)string error:(__autoreleasing NSError **)error __attribute__((nonnull(1)));
 
 @end
