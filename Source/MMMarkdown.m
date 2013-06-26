@@ -39,7 +39,12 @@
 + (NSString *)HTMLStringWithMarkdown:(NSString *)string error:(__autoreleasing NSError **)error
 {
     if (string == nil)
-        @throw [NSException exceptionWithName:NSInvalidArgumentException reason:[NSString stringWithFormat:@"[%@ %@]: nil argument for markdown", NSStringFromClass([self class]), NSStringFromSelector(_cmd)] userInfo:nil];
+    {
+        NSString *reason = [NSString stringWithFormat:@"[%@ %@]: nil argument for markdown",
+                            NSStringFromClass([self class]), NSStringFromSelector(_cmd)];
+        @throw [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
+    }
+    
     if ([string length] == 0)
         return @"";
     
