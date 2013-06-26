@@ -15,6 +15,8 @@ Using MMMarkdown is simple. The main API is a single class method:
     NSString *htmlString = [MMMarkdown HTMLStringWithMarkdown:markdown error:&error];
     // Returns @"<h1>Example</h1>\n<p>What a library!</p>"
 
+The markdown string that is passed in must be non-nil.
+
 ## Downloading
 While the development branch (`master`) includes the headers and libraries from the latest release, it is recommended that you use the `release` branch unless you are working on MMMarkdown itself.
 
