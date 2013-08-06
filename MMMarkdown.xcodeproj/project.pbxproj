@@ -49,6 +49,7 @@
 		BE813E981502E78900EC9469 /* MMTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E971502E78700EC9469 /* MMTestCase.m */; };
 		BE813E9B15031B4000EC9469 /* MMListTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E9A15031B4000EC9469 /* MMListTests.m */; };
 		BE813E9E1503C14300EC9469 /* MMEscapingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E9D1503C14200EC9469 /* MMEscapingTests.m */; };
+		BEA3FB6217B1852200E9D18C /* MMMarkdown.h in Headers */ = {isa = PBXBuildFile; fileRef = BE813DE214F893EB00EC9469 /* MMMarkdown.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BEAAEB431549DD1700EF1EA0 /* MMImageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BEAAEB421549DD1700EF1EA0 /* MMImageTests.m */; };
 		BEAAEB62154A4A1D00EF1EA0 /* MMErrorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BEAAEB5E154A49B500EF1EA0 /* MMErrorTests.m */; };
 		BEAAEBE31554E8A400EF1EA0 /* Amps and angle encoding.html in CopyFiles */ = {isa = PBXBuildFile; fileRef = BE813E2414F93D8700EC9469 /* Amps and angle encoding.html */; };
@@ -588,6 +589,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BEA3FB6217B1852200E9D18C /* MMMarkdown.h in Headers */,
 				BE813E7414F959BC00EC9469 /* MMElement.h in Headers */,
 				BE813E7A14F95B2A00EC9469 /* MMParser.h in Headers */,
 				BE813E8014F95FD400EC9469 /* MMDocument.h in Headers */,
@@ -850,6 +852,8 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = YES;
+				PRIVATE_HEADERS_FOLDER_PATH = "$(PRODUCT_NAME)/private/MMMarkdown";
+				PUBLIC_HEADERS_FOLDER_PATH = "$(PRODUCT_NAME)/public/MMMarkdown";
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -874,6 +878,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				PRIVATE_HEADERS_FOLDER_PATH = "$(PRODUCT_NAME)/private/MMMarkdown";
+				PUBLIC_HEADERS_FOLDER_PATH = "$(PRODUCT_NAME)/public/MMMarkdown";
 				SDKROOT = macosx;
 			};
 			name = Release;

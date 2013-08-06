@@ -33,6 +33,14 @@ Adding MMMarkdown to your Mac or iOS project is easy.
 
 You can now use MMMarkdown within your project!
 
+If you'd rather, you can embed the MMMarkdown project and compile it from source in your project.
+
+1. Add MMMarkdown as a git submodule.
+
+2. Add `libMMMarkdown-Mac.a` or `libMMMarkdown-iOS.a` to the "Link Binary with Libraries" section of your project's "Build Phases".
+
+3. Add `$(CONFIGURATION_BUILD_DIR)/MMMarkdown-Mac/public/` or `$(CONFIGURATION_BUILD_DIR)/MMMarkdown-iOS/public/` to the "Header Search Paths" in your project's "Build Settings".
+
 ## License
 MMMarkdown is available under the [MIT License][].
 
