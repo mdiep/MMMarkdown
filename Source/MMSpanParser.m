@@ -33,7 +33,8 @@
 static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 
 @interface MMSpanParser ()
-@property (strong, nonatomic) MMHTMLParser *htmlParser;
+@property (assign, nonatomic, readonly) MMMarkdownVariant variant;
+@property (strong, nonatomic, readonly) MMHTMLParser *htmlParser;
 
 @property (strong, nonatomic) NSMutableArray *elements;
 @property (strong, nonatomic) NSMutableArray *openElements;
@@ -45,27 +46,22 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 
 //==================================================================================================
 #pragma mark -
-#pragma mark NSObject Methods
+#pragma mark Public Methods
 //==================================================================================================
 
-- (id)init
+- (id)initWithVariant:(MMMarkdownVariant)variant
 {
     self = [super init];
     
     if (self)
     {
-        self.htmlParser = [MMHTMLParser new];
+        _variant    = variant;
+        _htmlParser = [MMHTMLParser new];
         self.parseLinks = YES;
     }
     
     return self;
 }
-
-
-//==================================================================================================
-#pragma mark -
-#pragma mark Public Methods
-//==================================================================================================
 
 - (NSArray *)parseSpansWithScanner:(MMScanner *)scanner
 {
@@ -82,7 +78,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 {
     // 1) Check for a text segment
     
-    NSCharacterSet *specialChars = [NSCharacterSet characterSetWithCharactersInString:@"\\`*_<&[! "];
+    NSCharacterSet *specialChars = [NSCharacterSet characterSetWithCharactersInString:@"\\`*_<&[! ~"];
     NSCharacterSet *boringChars  = [specialChars invertedSet];
     NSUInteger skipped = [scanner skipCharactersFromSet:boringChars];
     if (skipped > 0)
@@ -185,6 +181,15 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 {
     MMElement *element;
     
+    if (self.variant == MMMarkdownVariantGitHubFlavored)
+    {
+        [scanner beginTransaction];
+        element = [self _parseStrikethroughWithScanner:scanner];
+        [scanner commitTransaction:element != nil];
+        if (element)
+            return element;
+    }
+    
     [scanner beginTransaction];
     element = [self _parseStrongWithScanner:scanner];
     [scanner commitTransaction:element != nil];
@@ -249,6 +254,38 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
         return element;
     
     return nil;
+}
+
+- (MMElement *)_parseStrikethroughWithScanner:(MMScanner *)scanner
+{
+    if (![scanner matchString:@"~~"])
+        return nil;
+    
+    NSCharacterSet  *whitespaceSet = [NSCharacterSet whitespaceCharacterSet];
+    NSArray         *children      = [self _parseWithScanner:scanner untilTestPasses:^{
+        // Can't be at the beginning of the line
+        if ([scanner atBeginningOfLine])
+            return NO;
+        
+        // Must follow the end of a word
+        if ([whitespaceSet characterIsMember:[scanner previousCharacter]])
+            return NO;
+        
+        if (![scanner matchString:@"~~"])
+            return NO;
+        
+        return YES;
+    }];
+    
+    if (!children)
+        return nil;
+    
+    MMElement *element = [MMElement new];
+    element.type     = MMElementTypeStrikethrough;
+    element.range    = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
+    element.children = children;
+    
+    return element;
 }
 
 - (MMElement *)_parseStrongWithScanner:(MMScanner *)scanner

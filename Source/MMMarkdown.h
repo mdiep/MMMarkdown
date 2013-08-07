@@ -36,4 +36,16 @@
  */
 + (NSString *)HTMLStringWithMarkdown:(NSString *)string error:(__autoreleasing NSError **)error __attribute__((nonnull(1)));
 
+
+/*! Converts a GitHub Flavored Markdown string to HTML.
+ *
+ * More information about GitHub Flavored Markdown is available online at
+ * https://help.github.com/articles/github-flavored-markdown
+ *
+ * @param string A Markdown string. Must not be nil.
+ * @param error  Out parameter used if an error occurs while parsing the Markdown. May be NULL.
+ * @return An HTML string.
+ */
++ (NSString *)HTMLStringWithGitHubFlavoredMarkdown:(NSString *)string error:(__autoreleasing NSError **)error __attribute__((nonnull(1)));
+
 @end

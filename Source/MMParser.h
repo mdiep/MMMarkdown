@@ -26,9 +26,17 @@
 #import <Foundation/Foundation.h>
 
 
+typedef NS_ENUM(NSUInteger, MMMarkdownVariant)
+{
+    MMMarkdownVariantStandard,
+    MMMarkdownVariantGitHubFlavored,
+};
+
 @class MMDocument;
 
 @interface MMParser : NSObject
+
+- (id)initWithVariant:(MMMarkdownVariant)variant;
 
 - (MMDocument *)parseMarkdown:(NSString *)markdown error:(__autoreleasing NSError **)error;
 

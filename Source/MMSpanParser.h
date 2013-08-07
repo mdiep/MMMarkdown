@@ -26,9 +26,13 @@
 #import <Foundation/Foundation.h>
 
 
+#import "MMParser.h"
+
 @class MMScanner;
 
 @interface MMSpanParser : NSObject
+
+- (id)initWithVariant:(MMMarkdownVariant)variant;
 
 - (NSArray *)parseSpansWithScanner:(MMScanner *)scanner;
 

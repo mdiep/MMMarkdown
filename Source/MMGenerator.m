@@ -100,6 +100,8 @@ static NSString * __HTMLStartTagForElement(MMElement *anElement)
             return @"<br />";
         case MMElementTypeHorizontalRule:
             return @"\n<hr />\n";
+        case MMElementTypeStrikethrough:
+            return @"<del>";
         case MMElementTypeStrong:
             return @"<strong>";
         case MMElementTypeEm:
@@ -153,6 +155,8 @@ static NSString * __HTMLEndTagForElement(MMElement *anElement)
             return @"</blockquote>\n";
         case MMElementTypeCodeBlock:
             return @"</code></pre>\n";
+        case MMElementTypeStrikethrough:
+            return @"</del>";
         case MMElementTypeStrong:
             return @"</strong>";
         case MMElementTypeEm:

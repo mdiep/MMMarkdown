@@ -49,35 +49,31 @@ static NSString * __HTMLEntityForCharacter(unichar character)
 }
 
 @interface MMParser ()
-@property (strong, nonatomic) MMHTMLParser *htmlParser;
-@property (strong, nonatomic) MMSpanParser *spanParser;
+@property (assign, nonatomic, readonly) MMMarkdownVariant variant;
+@property (strong, nonatomic, readonly) MMHTMLParser *htmlParser;
+@property (strong, nonatomic, readonly) MMSpanParser *spanParser;
 @end
 
 @implementation MMParser
 
 //==================================================================================================
 #pragma mark -
-#pragma mark NSObject Methods
+#pragma mark Public Methods
 //==================================================================================================
 
-- (id)init
+- (id)initWithVariant:(MMMarkdownVariant)variant
 {
     self = [super init];
     
     if (self)
     {
-        self.htmlParser = [MMHTMLParser new];
-        self.spanParser = [MMSpanParser new];
+        _variant = variant;
+        _htmlParser = [MMHTMLParser new];
+        _spanParser = [[MMSpanParser alloc] initWithVariant:variant];
     }
     
     return self;
 }
-
-
-//==================================================================================================
-#pragma mark -
-#pragma mark Public Methods
-//==================================================================================================
 
 - (MMDocument *)parseMarkdown:(NSString *)markdown error:(__autoreleasing NSError **)error
 {
