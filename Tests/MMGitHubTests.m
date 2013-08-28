@@ -70,6 +70,32 @@
 
 //==================================================================================================
 #pragma mark -
+#pragma mark Multiple Underscores in Words Tests
+//==================================================================================================
+
+- (void)testMultipleUnderscoresInWords
+{
+    MMAssertGitHubMarkdownEqualsHTML(@"perform_complicated_task", @"<p>perform_complicated_task</p>");
+    MMAssertGitHubMarkdownEqualsHTML(@"do_this_and_do_that_and_another_thing", @"<p>do_this_and_do_that_and_another_thing</p>");
+}
+
+- (void)testEmAtBeginningOfString
+{
+    MMAssertGitHubMarkdownEqualsHTML(@"_test_", @"<p><em>test</em></p>");
+}
+
+- (void)testEmEndsInWord
+{
+    MMAssertGitHubMarkdownEqualsHTML(@"_test_of", @"<p>_test_of</p>");
+}
+
+- (void)testEmWithUnderscoreInTheWord
+{
+    MMAssertGitHubMarkdownEqualsHTML(@"_a_test_", @"<p><em>a_test</em></p>");
+}
+
+//==================================================================================================
+#pragma mark -
 #pragma mark Strikethrough Tests
 //==================================================================================================
 

@@ -336,6 +336,14 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 
 - (MMElement *)_parseEmWithScanner:(MMScanner *)scanner
 {
+    NSCharacterSet *whitespaceAndNewlineSet = NSCharacterSet.whitespaceAndNewlineCharacterSet;
+    if (self.variant == MMMarkdownVariantGitHubFlavored)
+    {
+        // GFM doesn't italicize parts of words
+        if (![scanner atBeginningOfLine] && ![whitespaceAndNewlineSet characterIsMember:[scanner previousCharacter]])
+            return nil;
+    }
+    
     // Must have 1 * or _
     unichar character = [scanner nextCharacter];
     if (!(character == '*' || character == '_'))
@@ -343,16 +351,16 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     [scanner advance];
     
     // Can't be at the end of a line or before a space
-    if ([[NSCharacterSet whitespaceAndNewlineCharacterSet] characterIsMember:[scanner nextCharacter]])
+    if ([whitespaceAndNewlineSet characterIsMember:[scanner nextCharacter]])
         return nil;
     
-    NSCharacterSet  *whitespaceSet = [NSCharacterSet whitespaceCharacterSet];
+    NSCharacterSet  *whitespaceSet = NSCharacterSet.whitespaceCharacterSet;
     NSArray         *children      = [self _parseWithScanner:scanner untilTestPasses:^{
         // Can't be at the beginning of the line
         if ([scanner atBeginningOfLine])
             return NO;
         
-        // Must follow the end of a word
+        // Must not be at the start of a word
         if ([whitespaceSet characterIsMember:[scanner previousCharacter]])
             return NO;
         
@@ -360,6 +368,13 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
         if ([scanner nextCharacter] != character)
             return NO;
         [scanner advance];
+        
+        if (self.variant == MMMarkdownVariantGitHubFlavored)
+        {
+            // GFM doesn't italicize parts of words
+            if (![scanner atEndOfLine] && ![whitespaceAndNewlineSet characterIsMember:[scanner nextCharacter]])
+                return NO;
+        }
         
         return YES;
     }];
