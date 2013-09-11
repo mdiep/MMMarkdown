@@ -61,6 +61,14 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
+- (void)testCodeSpans_multipleBackticks
+{
+    NSString *markdown = @"``` `foo` ```\n";
+    NSString *html = @"<p><code>`foo`</code></p>";
+    
+    MMAssertMarkdownEqualsHTML(markdown, html);
+}
+
 - (void)testCodeSpans_withAmpersand
 {
     MMAssertMarkdownEqualsHTML(@"`a&b`", @"<p><code>a&amp;b</code></p>");
@@ -69,6 +77,11 @@
 - (void)testCodeSpans_withAngleBrackets
 {
     MMAssertMarkdownEqualsHTML(@"`<html>`", @"<p><code>&lt;html&gt;</code></p>");
+}
+
+- (void)testCodeSpans_thatGoesToEndOfString
+{
+    MMAssertMarkdownEqualsHTML(@"```\nblah", @"<p>```\nblah</p>");
 }
 
 

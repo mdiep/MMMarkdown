@@ -348,11 +348,11 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     MMElement *element = [MMElement new];
     element.type = MMElementTypeCodeSpan;
     
-    // Check for a 2nd `
+    // Check for more `s
     NSUInteger level = 1;
-    if ([scanner nextCharacter] == '`')
+    while ([scanner nextCharacter] == '`')
     {
-        level = 2;
+        level++;
         [scanner advance];
     }
     
@@ -362,8 +362,11 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     // Skip to the next '`'
     NSCharacterSet *boringChars  = [[NSCharacterSet characterSetWithCharactersInString:@"`&<>"] invertedSet];
     NSUInteger      textLocation = scanner.location;
-    while (![scanner atEndOfString])
+    while (1)
     {
+        if ([scanner atEndOfString])
+            return nil;
+        
         // Skip other characters
         [scanner skipCharactersFromSet:boringChars];
         
@@ -376,30 +379,28 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
             [element addChild:text];
         }
         
-        unichar nextChar = [scanner nextCharacter];
-        // Did we find the closing `?
-        if (nextChar == '`')
+        // Check for closing `s
+        if ([scanner nextCharacter] == '`')
         {
-            if (level == 2)
+            // Set the text location to catch the ` in case it isn't the closing `s
+            textLocation = scanner.location;
+            
+            NSUInteger idx;
+            for (idx=0; idx<level; idx++)
             {
-                // set the location for if this isn't the 2nd backtick--because if it is,
-                // the location doesn't matter
-                textLocation = scanner.location;
-                
-                [scanner beginTransaction];
+                if ([scanner nextCharacter] != '`')
+                    break;
                 [scanner advance];
-                if ([scanner nextCharacter] == '`')
-                    [scanner commitTransaction:NO];
-                else
-                {
-                    [scanner commitTransaction:YES];
-                    continue;
-                }
             }
-            break;
+            if (idx >= level)
+                break;
+            else
+                continue;
         }
-        // Or is it an entity
-        else if (nextChar == '&')
+        
+        unichar nextChar = [scanner nextCharacter];
+        // Check for entities
+        if (nextChar == '&')
         {
             MMElement *entity = [MMElement new];
             entity.type  = MMElementTypeEntity;
@@ -433,14 +434,6 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
         }
         
         textLocation = scanner.location;
-    }
-    
-    // Make sure there are closing `s
-    for (NSUInteger idx=0; idx<level; idx++)
-    {
-        if ([scanner nextCharacter] != '`')
-            return nil;
-        [scanner advance];
     }
     
     // remove trailing whitespace
