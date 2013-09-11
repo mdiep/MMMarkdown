@@ -114,5 +114,44 @@
     MMAssertGitHubMarkdownEqualsHTML(@"~~**Mistaken text.**~~", @"<p><del><strong>Mistaken text.</strong></del></p>");
 }
 
+//==================================================================================================
+#pragma mark -
+#pragma mark Fenced Code Block Tests
+//==================================================================================================
+
+- (void)testFencedCodeBlockWithStandardMarkdown
+{
+    MMAssertMarkdownEqualsHTML(@"```\nblah\n```", @"<p><code>\nblah\n</code></p>");
+}
+
+- (void)testBasicFencedCodeBlock
+{
+    MMAssertGitHubMarkdownEqualsHTML(@"```\nblah\n```", @"<pre><code>blah\n</code></pre>");
+}
+
+- (void)testFencedCodeBlockWithEntity
+{
+    MMAssertGitHubMarkdownEqualsHTML(@"```\na&b\n```", @"<pre><code>a&amp;b\n</code></pre>");
+}
+
+- (void)testFencedCodeBlockAfterBlankLine
+{
+    MMAssertGitHubMarkdownEqualsHTML(@"Test\n\n```\nblah\n```", @"<p>Test</p><pre><code>blah\n</code></pre>");
+}
+
+- (void)testFencedCodeBlockWithoutBlankLine
+{
+    MMAssertGitHubMarkdownEqualsHTML(@"Test\n```\nblah\n```", @"<p>Test</p><pre><code>blah\n</code></pre>");
+}
+
+- (void)testFencedCodeBlockWithLanguage
+{
+    MMAssertGitHubMarkdownEqualsHTML(@"```objc\nblah\n```", @"<pre><code>blah\n</code></pre>");
+}
+
+- (void)testFencedCodeBlockInsideBlockquote
+{
+    MMAssertGitHubMarkdownEqualsHTML(@"> ```\n> test\n> ```", @"<blockquote><pre><code>test\n</code></pre></blockquote>");
+}
 
 @end

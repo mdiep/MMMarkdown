@@ -219,6 +219,10 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         {
             element.children = [self _parseElementsWithScanner:innerScanner];
         }
+        else if (element.type == MMElementTypeCodeBlock)
+        {
+            element.children = [self _parseCodeLinesWithScanner:innerScanner];
+        }
         else
         {
             element.children = [self.spanParser parseSpansWithScanner:innerScanner];
@@ -304,6 +308,15 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     [scanner commitTransaction:element != nil];
     if (element)
         return element;
+    
+    if (self.variant == MMMarkdownVariantGitHubFlavored)
+    {
+        [scanner beginTransaction];
+        element = [self _parseFencedCodeBlockWithScanner:scanner];
+        [scanner commitTransaction:element != nil];
+        if (element)
+            return element;
+    }
     
     // Check horizontal rules before lists since they both start with * or -
     [scanner beginTransaction];
@@ -502,6 +515,55 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     return element;
 }
 
+- (NSArray *)_parseCodeLinesWithScanner:(MMScanner *)scanner
+{
+    NSMutableArray *children = [NSMutableArray new];
+    
+    // &, <, and > need to be escaped
+    NSCharacterSet *entities    = [NSCharacterSet characterSetWithCharactersInString:@"&<>"];
+    NSCharacterSet *nonEntities = [entities invertedSet];
+    
+    while (![scanner atEndOfString])
+    {
+        NSUInteger textLocation = scanner.location;
+        
+        [scanner skipCharactersFromSet:nonEntities];
+        
+        if (textLocation != scanner.location)
+        {
+            MMElement *text = [MMElement new];
+            text.type  = MMElementTypeNone;
+            text.range = NSMakeRange(textLocation, scanner.location-textLocation);
+            [children addObject:text];
+        }
+        
+        // Add the entity
+        if (![scanner atEndOfLine])
+        {
+            unichar    character = [scanner.string characterAtIndex:scanner.location];
+            MMElement *entity    = [MMElement new];
+            entity.type  = MMElementTypeEntity;
+            entity.range = NSMakeRange(scanner.location, 1);
+            entity.stringValue = __HTMLEntityForCharacter(character);
+            [children addObject:entity];
+            [scanner advance];
+        }
+        
+        if ([scanner atEndOfLine])
+        {
+            [scanner advanceToNextLine];
+            
+            // Add a newline
+            MMElement *newline = [MMElement new];
+            newline.type  = MMElementTypeNone;
+            newline.range = NSMakeRange(0, 0);
+            [children addObject:newline];
+        }
+    }
+    
+    return children;
+}
+
 - (MMElement *)_parseCodeBlockWithScanner:(MMScanner *)scanner
 {
     NSUInteger indentation = [scanner skipIndentationUpTo:4];
@@ -562,57 +624,30 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         [element addInnerRange:lineRange];
     }
     
-    // Add the text manually to avoid span parsing// Add the text manually here to avoid span parsing
-    for (NSValue *value in element.innerRanges)
-    {
-        NSRange range = [value rangeValue];
-        
-        // &, <, and > need to be escaped
-        NSCharacterSet *entities = [NSCharacterSet characterSetWithCharactersInString:@"&<>"];
-        while (range.length > 0)
-        {
-            NSRange result    = [scanner.string rangeOfCharacterFromSet:entities options:0 range:range];
-            NSRange textRange = result.location == NSNotFound ? range : NSMakeRange(range.location, result.location-range.location);
-            
-            // Add the text that was skipped over
-            if (textRange.length > 0)
-            {
-                MMElement *text = [MMElement new];
-                text.type  = MMElementTypeNone;
-                text.range = textRange;
-                [element addChild:text];
-            }
-            
-            // Add the entity
-            if (result.location != NSNotFound)
-            {
-                unichar    character = [scanner.string characterAtIndex:result.location];
-                MMElement *entity    = [MMElement new];
-                entity.type  = MMElementTypeEntity;
-                entity.range = result;
-                entity.stringValue = __HTMLEntityForCharacter(character);
-                [element addChild:entity];
-            }
-            
-            // Adjust the range
-            if (result.location != NSNotFound)
-            {
-                range = NSMakeRange(NSMaxRange(result), NSMaxRange(range)-NSMaxRange(result));
-            }
-            else
-            {
-                range = NSMakeRange(NSMaxRange(textRange), NSMaxRange(range)-NSMaxRange(textRange));
-            }
-        }
-        
-        // Add a newline
-        MMElement *newline = [MMElement new];
-        newline.type  = MMElementTypeNone;
-        newline.range = NSMakeRange(0, 0);
-        [element addChild:newline];
-    }
-    element.innerRanges = nil;
     element.range = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
+    
+    return element;
+}
+
+- (MMElement *)_parseFencedCodeBlockWithScanner:(MMScanner *)scanner
+{
+    if (![scanner matchString:@"```"])
+        return nil;
+    
+    // skip additional backticks and language
+    [scanner advanceToNextLine];
+    
+    MMElement *element = [MMElement new];
+    element.type  = MMElementTypeCodeBlock;
+    
+    // block ends when it hints a line starting with ``` or the end of the string
+    while (![scanner matchString:@"```"] && ![scanner atEndOfString])
+    {
+        [element addInnerRange:scanner.currentRange];
+        [scanner advanceToNextLine];
+    }
+    
+    [scanner advanceToNextLine];
     
     return element;
 }
@@ -1051,20 +1086,30 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         }
         [scanner commitTransaction:NO];
         
-        MMElement *header;
+        MMElement *block;
         // Check for an underlined header
         [scanner beginTransaction];
-        header = [self _parseUnderlinedHeaderWithScanner:scanner];
+        block = [self _parseUnderlinedHeaderWithScanner:scanner];
         [scanner commitTransaction:NO];
-        if (header)
+        if (block)
             break;
         
         // Also check for a prefixed header
         [scanner beginTransaction];
-        header = [self _parsePrefixHeaderWithScanner:scanner];
+        block = [self _parsePrefixHeaderWithScanner:scanner];
         [scanner commitTransaction:NO];
-        if (header)
+        if (block)
             break;
+        
+        // Check for a fenced code block under GFM
+        if (self.variant == MMMarkdownVariantGitHubFlavored)
+        {
+            [scanner beginTransaction];
+            block = [self _parseFencedCodeBlockWithScanner:scanner];
+            [scanner commitTransaction:NO];
+            if (block)
+                break;
+        }
         
         [self _addTextLineToElement:element withScanner:scanner];
     }
