@@ -84,6 +84,11 @@
     MMAssertMarkdownEqualsHTML(@"```\nblah", @"<p>```\nblah</p>");
 }
 
+- (void)testCodeSpans_withNewlines
+{
+    MMAssertMarkdownEqualsHTML(@"`\n1\n2\n`", @"<p><code>\n1\n2\n</code></p>");
+}
+
 
 //==================================================================================================
 #pragma mark -

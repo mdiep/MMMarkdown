@@ -430,7 +430,9 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
         // Or did we hit the end of the line?
         else if ([scanner atEndOfLine])
         {
+            textLocation = scanner.location;
             [scanner advanceToNextLine];
+            continue;
         }
         
         textLocation = scanner.location;
