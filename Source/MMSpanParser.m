@@ -78,7 +78,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 {
     // 1) Check for a text segment
     
-    NSCharacterSet *specialChars = [NSCharacterSet characterSetWithCharactersInString:@"\\`*_<&[! ~"];
+    NSCharacterSet *specialChars = [NSCharacterSet characterSetWithCharactersInString:@"\\`*_<&[! ~w"];
     NSCharacterSet *boringChars  = [specialChars invertedSet];
     NSUInteger skipped = [scanner skipCharactersFromSet:boringChars];
     if (skipped > 0)
@@ -190,6 +190,16 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
             return element;
     }
     
+    // URL Autolinking
+    if (self.variant == MMMarkdownVariantGitHubFlavored)
+    {
+        [scanner beginTransaction];
+        element = [self _parseAutolinkWWWURLWithScanner:scanner];
+        [scanner commitTransaction:element != nil];
+        if (element)
+            return element;
+    }
+    
     [scanner beginTransaction];
     element = [self _parseStrongWithScanner:scanner];
     [scanner commitTransaction:element != nil];
@@ -254,6 +264,77 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
         return element;
     
     return nil;
+}
+
+- (MMElement *)_parseAutolinkWWWURLWithScanner:(MMScanner *)scanner
+{
+    if (![scanner matchString:@"www."])
+        return nil;
+    
+    NSCharacterSet        *alphanumerics = NSCharacterSet.alphanumericCharacterSet;
+    NSMutableCharacterSet *domainChars   = [alphanumerics mutableCopy];
+    [domainChars addCharactersInString:@"-:"];
+    
+    // Domain should be at least one alphanumeric
+    if (![alphanumerics characterIsMember:scanner.nextCharacter])
+        return nil;
+    [scanner skipCharactersFromSet:domainChars];
+    
+    // Dot between domain and TLD
+    if (scanner.nextCharacter != '.')
+        return nil;
+    [scanner advance];
+    
+    // TLD must be at least 1 character
+    if ([scanner skipCharactersFromSet:domainChars] == 0)
+        return nil;
+    
+    NSMutableCharacterSet *boringChars = [alphanumerics mutableCopy];
+    [boringChars addCharactersInString:@".,-/:?&;%~!#"];
+    
+    NSUInteger parenLevel = 0;
+    while (1)
+    {
+        if ([scanner skipCharactersFromSet:boringChars] > 0)
+        {
+            continue;
+        }
+        else if (scanner.nextCharacter == '\\')
+        {
+            [scanner advance];
+            if (scanner.nextCharacter == '(' || scanner.nextCharacter == ')')
+                [scanner advance];
+        }
+        else if (scanner.nextCharacter == '(')
+        {
+            parenLevel++;
+            [scanner advance];
+        }
+        else if (scanner.nextCharacter == ')' && parenLevel > 0)
+        {
+            parenLevel--;
+            [scanner advance];
+        }
+        else
+        {
+            break;
+        }
+    }
+    
+    NSRange   range = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
+    NSString *link  = [scanner.string substringWithRange:range];
+    
+    MMElement *element = [MMElement new];
+    element.type     = MMElementTypeLink;
+    element.range    = range;
+    element.href     = [@"http://" stringByAppendingString:link];
+    
+    MMElement *text = [MMElement new];
+    text.type  = MMElementTypeNone;
+    text.range = range;
+    [element addChild:text];
+    
+    return element;
 }
 
 - (MMElement *)_parseStrikethroughWithScanner:(MMScanner *)scanner
