@@ -96,6 +96,67 @@
 
 //==================================================================================================
 #pragma mark -
+#pragma mark URL Autolinking Tests
+//==================================================================================================
+
+- (void)testURLAutolinkingWithStandardMarkdown
+{
+    MMAssertMarkdownEqualsHTML(@"https://github.com", @"<p>https://github.com</p>");
+}
+
+- (void)testURLAutolinkingWithHTTPS
+{
+    MMAssertGitHubMarkdownEqualsHTML(
+        @"Check out https://github.com/mdiep.",
+        @"<p>Check out <a href='https://github.com/mdiep'>https://github.com/mdiep</a>.</p>"
+    );
+}
+
+- (void)testURLAutolinkingWithHTTP
+{
+    MMAssertGitHubMarkdownEqualsHTML(
+        @"Go to http://github.com and sign up!",
+        @"<p>Go to <a href='http://github.com'>http://github.com</a> and sign up!</p>"
+    );
+}
+
+- (void)testURLAutolinkingWithFTP
+{
+    MMAssertGitHubMarkdownEqualsHTML(
+        @"Download ftp://example.com/blah.txt.",
+        @"<p>Download <a href='ftp://example.com/blah.txt'>ftp://example.com/blah.txt</a>.</p>"
+    );
+}
+
+- (void)testURLAutolinkingWithEmailAddress
+{
+    MMAssertGitHubMarkdownEqualsHTML(
+        @"Email me at matt@diephouse.com.",
+        @"<p>Email me at <a href='mailto:matt@diephouse.com'>matt@diephouse.com</a>.</p>"
+    );
+}
+
+- (void)testURLAutolinkingWithWWW
+{
+    MMAssertGitHubMarkdownEqualsHTML(@"www.github.com", @"<p><a href='http://www.github.com'>www.github.com</a></p>");
+    MMAssertGitHubMarkdownEqualsHTML(@"www.github.com/mdiep", @"<p><a href='http://www.github.com/mdiep'>www.github.com/mdiep</a></p>");
+}
+
+- (void)testURLAutolinkingWithParentheses
+{
+    MMAssertGitHubMarkdownEqualsHTML(
+        @"foo http://www.pokemon.com/Pikachu_(Electric) bar",
+        @"<p>foo <a href='http://www.pokemon.com/Pikachu_(Electric)'>http://www.pokemon.com/Pikachu_(Electric)</a> bar</p>"
+    );
+    
+    MMAssertGitHubMarkdownEqualsHTML(
+        @"foo http://www.pokemon.com/Pikachu_(Electric)) bar",
+        @"<p>foo <a href='http://www.pokemon.com/Pikachu_(Electric)'>http://www.pokemon.com/Pikachu_(Electric)</a>) bar</p>"
+    );
+}
+
+//==================================================================================================
+#pragma mark -
 #pragma mark Strikethrough Tests
 //==================================================================================================
 
