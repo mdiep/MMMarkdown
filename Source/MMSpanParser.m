@@ -146,6 +146,12 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     if (self.variant == MMMarkdownVariantGitHubFlavored)
     {
         [scanner beginTransaction];
+        element = [self _parseAutolinkURLWithScanner:scanner];
+        [scanner commitTransaction:element != nil];
+        if (element)
+            return element;
+        
+        [scanner beginTransaction];
         element = [self _parseAutolinkWWWURLWithScanner:scanner];
         [scanner commitTransaction:element != nil];
         if (element)
@@ -242,31 +248,34 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     return nil;
 }
 
-- (MMElement *)_parseAutolinkWWWURLWithScanner:(MMScanner *)scanner
+- (BOOL)_parseAutolinkDomainWithScanner:(MMScanner *)scanner
 {
-    if (![scanner matchString:@"www."])
-        return nil;
-    
     NSCharacterSet        *alphanumerics = NSCharacterSet.alphanumericCharacterSet;
     NSMutableCharacterSet *domainChars   = [alphanumerics mutableCopy];
     [domainChars addCharactersInString:@"-:"];
     
     // Domain should be at least one alphanumeric
     if (![alphanumerics characterIsMember:scanner.nextCharacter])
-        return nil;
+        return NO;
     [scanner skipCharactersFromSet:domainChars];
     
     // Dot between domain and TLD
     if (scanner.nextCharacter != '.')
-        return nil;
+        return NO;
     [scanner advance];
     
     // TLD must be at least 1 character
     if ([scanner skipCharactersFromSet:domainChars] == 0)
-        return nil;
+        return NO;
     
+    return YES;
+}
+
+- (void)_parseAutolinkPathWithScanner:(MMScanner *)scanner
+{
+    NSCharacterSet        *alphanumerics = NSCharacterSet.alphanumericCharacterSet;
     NSMutableCharacterSet *boringChars = [alphanumerics mutableCopy];
-    [boringChars addCharactersInString:@".,-/:?&;%~!#"];
+    [boringChars addCharactersInString:@",_-/:?&;%~!#"];
     
     NSUInteger parenLevel = 0;
     while (1)
@@ -291,11 +300,69 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
             parenLevel--;
             [scanner advance];
         }
+        else if (scanner.nextCharacter == '.')
+        {
+            // Can't end on a '.'
+            [scanner beginTransaction];
+            [scanner advance];
+            if ([boringChars characterIsMember:scanner.nextCharacter])
+            {
+                [scanner commitTransaction:YES];
+            }
+            else
+            {
+                [scanner commitTransaction:NO];
+                break;
+            }
+        }
         else
         {
             break;
         }
     }
+}
+
+- (MMElement *)_parseAutolinkURLWithScanner:(MMScanner *)scanner
+{
+    if (scanner.nextCharacter != ':')
+        return nil;
+    
+    NSArray  *protocols    = @[ @"https", @"http", @"ftp" ];
+    NSString *previousWord = scanner.previousWord;
+    if (![protocols containsObject:previousWord.lowercaseString])
+        return nil;
+    
+    if (![scanner matchString:@"://"])
+        return nil;
+    
+    if (![self _parseAutolinkDomainWithScanner:scanner])
+        return nil;
+    [self _parseAutolinkPathWithScanner:scanner];
+    
+    NSUInteger startLocation = scanner.startLocation - previousWord.length;
+    NSRange   range = NSMakeRange(startLocation, scanner.location-startLocation);
+    
+    MMElement *element = [MMElement new];
+    element.type  = MMElementTypeLink;
+    element.range = range;
+    element.href  = [scanner.string substringWithRange:range];
+    
+    MMElement *text = [MMElement new];
+    text.type  = MMElementTypeNone;
+    text.range = range;
+    [element addChild:text];
+    
+    return element;
+}
+
+- (MMElement *)_parseAutolinkWWWURLWithScanner:(MMScanner *)scanner
+{
+    if (![scanner matchString:@"www."])
+        return nil;
+    
+    if (![self _parseAutolinkDomainWithScanner:scanner])
+        return nil;
+    [self _parseAutolinkPathWithScanner:scanner];
     
     NSRange   range = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
     NSString *link  = [scanner.string substringWithRange:range];

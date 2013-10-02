@@ -54,6 +54,7 @@
 
 - (unichar)previousCharacter;
 - (unichar)nextCharacter;
+- (NSString *)previousWord;
 - (NSString *)nextWord;
 
 - (void)advance;

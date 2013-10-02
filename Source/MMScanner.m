@@ -159,6 +159,25 @@ static NSString *__delimitersForCharacter(unichar character)
     return [self.string characterAtIndex:self.location];
 }
 
+- (NSString *)previousWord
+{
+    NSRange currentLine  = self.currentLineRange;
+    NSRange currentRange = self.currentRange;
+    NSRange range = NSMakeRange(currentLine.location, currentRange.location-currentLine.location);
+    
+    NSCharacterSet *wordChars = NSCharacterSet.alphanumericCharacterSet;
+    NSRange result = [self.string rangeOfCharacterFromSet:wordChars.invertedSet
+                                                  options:NSBackwardsSearch
+                                                    range:range];
+    
+    if (result.location == NSNotFound)
+        return [self.string substringWithRange:range];
+    
+    NSUInteger wordLocation = NSMaxRange(result);
+    NSRange wordRange = NSMakeRange(wordLocation, currentRange.location-wordLocation);
+    return [self.string substringWithRange:wordRange];
+}
+
 - (NSString *)nextWord
 {
     NSRange result = [self.string rangeOfCharacterFromSet:[[NSCharacterSet alphanumericCharacterSet] invertedSet]
@@ -166,7 +185,7 @@ static NSString *__delimitersForCharacter(unichar character)
                                                     range:self.currentRange];
     
     if (result.location == NSNotFound)
-        return @"";
+        return [self.string substringWithRange:self.currentRange];
     
     NSRange wordRange = self.currentRange;
     wordRange.length = result.location - wordRange.location;
