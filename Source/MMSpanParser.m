@@ -74,100 +74,52 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 #pragma mark Private Methods
 //==================================================================================================
 
-- (MMElement *)_parseNextElementWithScanner:(MMScanner *)scanner
-{
-    // 1) Check for a text segment
-    
-    NSCharacterSet *specialChars = [NSCharacterSet characterSetWithCharactersInString:@"\\`*_<&[! ~w"];
-    NSCharacterSet *boringChars  = [specialChars invertedSet];
-    NSUInteger skipped = [scanner skipCharactersFromSet:boringChars];
-    if (skipped > 0)
-    {
-        MMElement *text = [MMElement new];
-        text.type  = MMElementTypeNone;
-        text.range = NSMakeRange(scanner.location-skipped, skipped);
-        return text;
-    }
-    
-    // 2) Check for a newline
-    if ([scanner atEndOfLine])
-    {
-        // TODO: Add a line break?
-        
-        // Add a newline
-        MMElement *newline = [MMElement new];
-        newline.type  = MMElementTypeNone;
-        newline.range = NSMakeRange(0, 0);
-        
-        [scanner advanceToNextLine];
-        
-        return newline;
-    }
-    
-    // 3) Check for a span element
-    
-    MMElement *span = [self _parseSpanWithScanner:scanner];
-    if (span)
-    {
-        return span;
-    }
-    
-    // 4) Check for an entity
-    
-    MMElement *entity = [self _parseEntityWithScanner:scanner];
-    if (entity)
-    {
-        return entity;
-    }
-    
-    // 5) Check for a backslash
-    if ([scanner nextCharacter] == '\\')
-    {
-        // If the next character isn't one that can be escaped, then let the backslash pass through
-        // unchanged. Otherwise, skip the backslash and return the escaped character.
-        
-        [scanner beginTransaction];
-        [scanner advance]; // skip over the backslash
-        
-        NSCharacterSet *escapedChars = [NSCharacterSet characterSetWithCharactersInString:ESCAPABLE_CHARS];
-        if ([escapedChars characterIsMember:[scanner nextCharacter]])
-        {
-            [scanner commitTransaction:YES];
-        }
-        else
-        {
-            [scanner commitTransaction:NO];
-        }
-        
-        // Then fall through to (6) below.
-    }
-    
-    // 6) Otherwise, return the character
-    MMElement *character = [MMElement new];
-    character.type = MMElementTypeNone;
-    character.range = NSMakeRange(scanner.location, 1);
-    
-    [scanner advance];
-    
-    return character;
-}
-
 - (NSArray *)_parseWithScanner:(MMScanner *)scanner untilTestPasses:(BOOL (^)())test
 {
     NSMutableArray *result = [NSMutableArray array];
     
+    NSCharacterSet *specialChars = [NSCharacterSet characterSetWithCharactersInString:@"\\`*_<&[! ~w:"];
+    NSCharacterSet *boringChars  = [specialChars invertedSet];
+    
+    NSUInteger textLocation = scanner.location;
     while (![scanner atEndOfString])
     {
+        
         MMElement *element = [self _parseNextElementWithScanner:scanner];
         if (element)
         {
+            if (textLocation != element.range.location)
+            {
+                MMElement *text = [MMElement new];
+                text.type  = MMElementTypeNone;
+                text.range = NSMakeRange(textLocation, element.range.location-textLocation);
+                [result addObject:text];
+            }
+            
             [result addObject:element];
+            
+            textLocation = scanner.location;
+        }
+        else if ([scanner skipCharactersFromSet:boringChars])
+        {
+        }
+        else
+        {
+            [scanner advance];
         }
         
         // Check for the end character
         [scanner beginTransaction];
         if (test())
         {
+            if (textLocation != scanner.startLocation)
+            {
+                MMElement *text = [MMElement new];
+                text.type  = MMElementTypeNone;
+                text.range = NSMakeRange(textLocation, scanner.startLocation-textLocation);
+                [result addObject:text];
+            }
+            
             [scanner commitTransaction:YES];
             return result;
         }
@@ -177,7 +129,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     return nil;
 }
        
-- (MMElement *)_parseSpanWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseNextElementWithScanner:(MMScanner *)scanner
 {
     MMElement *element;
     
@@ -199,6 +151,12 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
         if (element)
             return element;
     }
+    
+    [scanner beginTransaction];
+    element = [self _parseBackslashWithScanner:scanner];
+    [scanner commitTransaction:element != nil];
+    if (element)
+        return element;
     
     [scanner beginTransaction];
     element = [self _parseStrongWithScanner:scanner];
@@ -259,6 +217,24 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     
     [scanner beginTransaction];
     element = [self.htmlParser parseCommentWithScanner:scanner];
+    [scanner commitTransaction:element != nil];
+    if (element)
+        return element;
+    
+    [scanner beginTransaction];
+    element = [self _parseNewlineWithScanner:scanner];
+    [scanner commitTransaction:element != nil];
+    if (element)
+        return element;
+    
+    [scanner beginTransaction];
+    element = [self _parseAmpersandWithScanner:scanner];
+    [scanner commitTransaction:element != nil];
+    if (element)
+        return element;
+    
+    [scanner beginTransaction];
+    element = [self _parseLeftAngleBracketWithScanner:scanner];
     [scanner commitTransaction:element != nil];
     if (element)
         return element;
@@ -615,7 +591,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     
     MMElement *element = [MMElement new];
     element.type  = MMElementTypeLineBreak;
-    element.range = NSMakeRange(scanner.location, scanner.location-scanner.startLocation);
+    element.range = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
     
     return element;
 }
@@ -989,6 +965,12 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     {
         element.type = MMElementTypeImage;
         
+        // Adjust the range to include the !
+        NSRange range = element.range;
+        range.location -= 1;
+        range.length += 1;
+        element.range = range;
+        
         NSMutableString *altText = [NSMutableString new];
         for (NSValue *value in element.innerRanges)
         {
@@ -1028,6 +1010,28 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     return element;
 }
 
+- (MMElement *)_parseBackslashWithScanner:(MMScanner *)scanner
+{
+    if (scanner.nextCharacter != '\\')
+        return nil;
+    [scanner advance];
+    
+    NSCharacterSet *escapable = [NSCharacterSet characterSetWithCharactersInString:ESCAPABLE_CHARS];
+    if (![escapable characterIsMember:scanner.nextCharacter])
+        return nil;
+    
+    // Return the character
+    
+    MMElement *character = [MMElement new];
+    character.type  = MMElementTypeEntity;
+    character.range = NSMakeRange(scanner.location-1, 2);
+    character.stringValue = [scanner.string substringWithRange:NSMakeRange(scanner.location, 1)];
+    
+    [scanner advance];
+    
+    return character;
+}
+
 - (MMElement *)_parseLeftAngleBracketWithScanner:(MMScanner *)scanner
 {
     if ([scanner nextCharacter] != '<')
@@ -1049,23 +1053,20 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     return element;
 }
 
-- (MMElement *)_parseEntityWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseNewlineWithScanner:(MMScanner *)scanner
 {
-    MMElement *element;
+    if (![scanner atEndOfLine] || [scanner atEndOfString])
+        return nil;
     
-    [scanner beginTransaction];
-    element = [self _parseAmpersandWithScanner:scanner];
-    [scanner commitTransaction:element != nil];
-    if (element)
-        return element;
+    // Add a newline
+    MMElement *newline = [MMElement new];
+    newline.type  = MMElementTypeEntity;
+    newline.range = NSMakeRange(scanner.location, 1);
+    newline.stringValue = @"\n";
     
-    [scanner beginTransaction];
-    element = [self _parseLeftAngleBracketWithScanner:scanner];
-    [scanner commitTransaction:element != nil];
-    if (element)
-        return element;
+    [scanner advanceToNextLine];
     
-    return nil;
+    return newline;
 }
 
 - (NSString *)_stringWithBackslashEscapesRemoved:(NSString *)string
