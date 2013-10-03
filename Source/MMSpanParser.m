@@ -143,7 +143,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     }
     
     // URL Autolinking
-    if (self.variant == MMMarkdownVariantGitHubFlavored)
+    if (self.parseLinks && self.variant == MMMarkdownVariantGitHubFlavored)
     {
         [scanner beginTransaction];
         element = [self _parseAutolinkEmailAddressWithScanner:scanner];

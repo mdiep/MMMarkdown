@@ -104,6 +104,14 @@
     MMAssertMarkdownEqualsHTML(@"https://github.com", @"<p>https://github.com</p>");
 }
 
+- (void)testURLAutolinkingInsideLink
+{
+    MMAssertGitHubMarkdownEqualsHTML(
+        @"[https://github.com](https://github.com)",
+        @"<p><a href='https://github.com'>https://github.com</a></p>"
+    );
+}
+
 - (void)testURLAutolinkingWithHTTPS
 {
     MMAssertGitHubMarkdownEqualsHTML(
