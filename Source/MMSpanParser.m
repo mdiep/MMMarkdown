@@ -78,7 +78,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 {
     NSMutableArray *result = [NSMutableArray array];
     
-    NSCharacterSet *specialChars = [NSCharacterSet characterSetWithCharactersInString:@"\\`*_<&[! ~w:"];
+    NSCharacterSet *specialChars = [NSCharacterSet characterSetWithCharactersInString:@"\\`*_<&[! ~w:@"];
     NSCharacterSet *boringChars  = [specialChars invertedSet];
     
     NSUInteger textLocation = scanner.location;
@@ -145,6 +145,12 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     // URL Autolinking
     if (self.variant == MMMarkdownVariantGitHubFlavored)
     {
+        [scanner beginTransaction];
+        element = [self _parseAutolinkEmailAddressWithScanner:scanner];
+        [scanner commitTransaction:element != nil];
+        if (element)
+            return element;
+        
         [scanner beginTransaction];
         element = [self _parseAutolinkURLWithScanner:scanner];
         [scanner commitTransaction:element != nil];
@@ -320,6 +326,56 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
             break;
         }
     }
+}
+
+- (MMElement *)_parseAutolinkEmailAddressWithScanner:(MMScanner *)scanner
+{
+    if (scanner.nextCharacter != '@')
+        return nil;
+    
+    NSCharacterSet *alphanumerics = NSCharacterSet.alphanumericCharacterSet;
+    NSMutableCharacterSet *localChars  = [alphanumerics mutableCopy];
+    [localChars addCharactersInString:@"._-+"];
+    NSMutableCharacterSet *domainChars = [alphanumerics mutableCopy];
+    [domainChars addCharactersInString:@"._-"];
+    
+    NSString *localPart = [scanner previousWordWithCharactersFromSet:localChars];
+    
+    // Must start with a letter or number
+    NSRange firstAlphanum = [localPart rangeOfCharacterFromSet:alphanumerics options:0];
+    if (firstAlphanum.location == NSNotFound)
+        return nil;
+    localPart = [localPart substringFromIndex:firstAlphanum.location];
+    
+    if (localPart.length == 0)
+        return nil;
+    
+    // '@'
+    [scanner advance];
+    
+    NSString *domainPart = [scanner nextWordWithCharactersFromSet:localChars];
+    
+    // Must end on a letter or number
+    NSRange lastAlphanum = [domainPart rangeOfCharacterFromSet:alphanumerics options:NSBackwardsSearch];
+    if (lastAlphanum.location == NSNotFound)
+        return nil;
+    domainPart = [domainPart substringToIndex:NSMaxRange(lastAlphanum)];
+    
+    // Must contain at least one .
+    if ([domainPart rangeOfString:@"."].location == NSNotFound)
+        return nil;
+    
+    scanner.location += domainPart.length;
+    
+    NSUInteger startLocation = scanner.startLocation - localPart.length;
+    NSRange range = NSMakeRange(startLocation, scanner.location-startLocation);
+    
+    MMElement *element = [MMElement new];
+    element.type  = MMElementTypeMailTo;
+    element.range = range;
+    element.href  = [scanner.string substringWithRange:range];
+    
+    return element;
 }
 
 - (MMElement *)_parseAutolinkURLWithScanner:(MMScanner *)scanner

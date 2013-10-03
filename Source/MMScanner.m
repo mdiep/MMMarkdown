@@ -161,12 +161,21 @@ static NSString *__delimitersForCharacter(unichar character)
 
 - (NSString *)previousWord
 {
+    return [self previousWordWithCharactersFromSet:NSCharacterSet.alphanumericCharacterSet];
+}
+
+- (NSString *)nextWord
+{
+    return [self nextWordWithCharactersFromSet:NSCharacterSet.alphanumericCharacterSet];
+}
+
+- (NSString *)previousWordWithCharactersFromSet:(NSCharacterSet *)set
+{
     NSRange currentLine  = self.currentLineRange;
     NSRange currentRange = self.currentRange;
     NSRange range = NSMakeRange(currentLine.location, currentRange.location-currentLine.location);
     
-    NSCharacterSet *wordChars = NSCharacterSet.alphanumericCharacterSet;
-    NSRange result = [self.string rangeOfCharacterFromSet:wordChars.invertedSet
+    NSRange result = [self.string rangeOfCharacterFromSet:set.invertedSet
                                                   options:NSBackwardsSearch
                                                     range:range];
     
@@ -178,9 +187,9 @@ static NSString *__delimitersForCharacter(unichar character)
     return [self.string substringWithRange:wordRange];
 }
 
-- (NSString *)nextWord
+- (NSString *)nextWordWithCharactersFromSet:(NSCharacterSet *)set
 {
-    NSRange result = [self.string rangeOfCharacterFromSet:[[NSCharacterSet alphanumericCharacterSet] invertedSet]
+    NSRange result = [self.string rangeOfCharacterFromSet:set.invertedSet
                                                   options:0
                                                     range:self.currentRange];
     

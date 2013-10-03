@@ -136,6 +136,11 @@
     );
 }
 
+- (void)testURLAutolinkingWithEmailAddressInItalics
+{
+    MMAssertGitHubMarkdownEqualsHTML(@"_matt@diephouse.com_", @"<p><em><a href='mailto:matt@diephouse.com'>matt@diephouse.com</a></em></p>");
+}
+
 - (void)testURLAutolinkingWithWWW
 {
     MMAssertGitHubMarkdownEqualsHTML(@"www.github.com", @"<p><a href='http://www.github.com'>www.github.com</a></p>");
