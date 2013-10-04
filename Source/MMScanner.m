@@ -104,11 +104,11 @@ static NSString *__delimitersForCharacter(unichar character)
 
 - (void)beginTransaction
 {
-    NSDictionary *transaction = [NSDictionary dictionaryWithObjectsAndKeys:
-                                 [NSNumber numberWithUnsignedInteger:self.rangeIndex],    @"rangeIndex",
-                                 [NSNumber numberWithUnsignedInteger:self.location],      @"location",
-                                 [NSNumber numberWithUnsignedInteger:self.startLocation], @"startLocation",
-                                 nil];
+    NSDictionary *transaction = @{
+        @"rangeIndex":      @(self.rangeIndex),
+        @"location":        @(self.location),
+        @"startLocation":   @(self.startLocation),
+    };
     [self.transactions addObject:transaction];
     self.startLocation = self.location;
 }

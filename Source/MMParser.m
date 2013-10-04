@@ -163,7 +163,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     NSRange searchRange = NSMakeRange(0, aString.length);
     NSRange resultRange;
     NSUInteger lineLocation;
-    NSArray *strings = [NSArray arrayWithObjects:@"", @" ", @"  ", @"   ", @"    ", nil];
+    NSArray *strings = @[ @"", @" ", @"  ", @"   ", @"    " ];
     
     resultRange  = [result rangeOfCharacterFromSet:tabAndNewline options:0 range:searchRange];
     lineLocation = 0;
@@ -766,12 +766,12 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         {
             [scanner commitTransaction:YES];
             if (element.children == nil)
-                element.children = [NSArray array];
+                element.children = @[];
             if (element.innerRanges.count > 0)
             {
                 MMScanner *innerScanner = [MMScanner scannerWithString:scanner.string lineRanges:element.innerRanges];
                 element.children = [element.children arrayByAddingObjectsFromArray:[self _parseElementsWithScanner:innerScanner]];
-                element.innerRanges = [NSArray array];
+                element.innerRanges = @[];
                 
                 // First add a newline so the nested list will start on its own line
                 MMElement *newline = [MMElement new];
@@ -864,12 +864,12 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         [scanner commitTransaction:YES];
         [scanner commitTransaction:YES];
         
-        [followedByBlankLine addObject:[NSNumber numberWithBool:hasBlankLine]];
+        [followedByBlankLine addObject:@(hasBlankLine)];
         [element addChild:item];
         
         // Parse the spans inside the item
         if (!item.children)
-            item.children = [NSArray array];
+            item.children = @[];
         if (item.innerRanges.count > 0)
         {
             MMScanner *innerScanner = [MMScanner scannerWithString:scanner.string lineRanges:item.innerRanges];
@@ -881,7 +881,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     // item. We want to know if there's a blank line after. Removing the first item shifts
     // everything. Add a NO at the end because the last item is never followed by a blank line.
     [followedByBlankLine removeObjectAtIndex:0];
-    [followedByBlankLine addObject:[NSNumber numberWithBool:NO]];
+    [followedByBlankLine addObject:@(NO)];
     
     // Figure out if the items should have paragraphs. If it's not before/after a blank line, and it
     // doesn't have multiple paragraphs, then remove the paragraphs.
