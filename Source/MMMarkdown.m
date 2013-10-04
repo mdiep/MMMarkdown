@@ -38,12 +38,12 @@
 
 + (NSString *)HTMLStringWithMarkdown:(NSString *)string error:(__autoreleasing NSError **)error
 {
-    return [self HTMLStringWithMarkdown:string variant:MMMarkdownVariantStandard fromSelector:_cmd error:error];
+    return [self HTMLStringWithMarkdown:string extensions:MMMarkdownExtensionsNone fromSelector:_cmd error:error];
 }
 
-+ (NSString *)HTMLStringWithGitHubFlavoredMarkdown:(NSString *)string error:(__autoreleasing NSError **)error
++ (NSString *)HTMLStringWithMarkdown:(NSString *)string extensions:(MMMarkdownExtensions)extensions error:(NSError *__autoreleasing *)error
 {
-    return [self HTMLStringWithMarkdown:string variant:MMMarkdownVariantGitHubFlavored fromSelector:_cmd error:error];
+    return [self HTMLStringWithMarkdown:string extensions:extensions fromSelector:_cmd error:error];
 }
 
 
@@ -53,7 +53,7 @@
 //==================================================================================================
 
 + (NSString *)HTMLStringWithMarkdown:(NSString *)string
-                             variant:(MMMarkdownVariant)variant
+                          extensions:(MMMarkdownExtensions)extensions
                         fromSelector:(SEL)selector
                                error:(__autoreleasing NSError **)error
 {
@@ -67,7 +67,7 @@
     if ([string length] == 0)
         return @"";
     
-    MMParser    *parser    = [[MMParser alloc] initWithVariant:variant];
+    MMParser    *parser    = [[MMParser alloc] initWithExtensions:extensions];
     MMGenerator *generator = [MMGenerator new];
     
     MMDocument *document = [parser parseMarkdown:string error:error];

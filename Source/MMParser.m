@@ -49,7 +49,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
 }
 
 @interface MMParser ()
-@property (assign, nonatomic, readonly) MMMarkdownVariant variant;
+@property (assign, nonatomic, readonly) MMMarkdownExtensions extensions;
 @property (strong, nonatomic, readonly) MMHTMLParser *htmlParser;
 @property (strong, nonatomic, readonly) MMSpanParser *spanParser;
 @end
@@ -61,15 +61,15 @@ static NSString * __HTMLEntityForCharacter(unichar character)
 #pragma mark Public Methods
 //==================================================================================================
 
-- (id)initWithVariant:(MMMarkdownVariant)variant
+- (id)initWithExtensions:(MMMarkdownExtensions)extensions
 {
     self = [super init];
     
     if (self)
     {
-        _variant = variant;
+        _extensions = extensions;
         _htmlParser = [MMHTMLParser new];
-        _spanParser = [[MMSpanParser alloc] initWithVariant:variant];
+        _spanParser = [[MMSpanParser alloc] initWithExtensions:extensions];
     }
     
     return self;
@@ -309,7 +309,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     if (element)
         return element;
     
-    if (self.variant == MMMarkdownVariantGitHubFlavored)
+    if (self.extensions & MMMarkdownExtensionsFencedCodeBlocks)
     {
         [scanner beginTransaction];
         element = [self _parseFencedCodeBlockWithScanner:scanner];
@@ -1102,7 +1102,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
             break;
         
         // Check for a fenced code block under GFM
-        if (self.variant == MMMarkdownVariantGitHubFlavored)
+        if (self.extensions & MMMarkdownExtensionsFencedCodeBlocks)
         {
             [scanner beginTransaction];
             block = [self _parseFencedCodeBlockWithScanner:scanner];

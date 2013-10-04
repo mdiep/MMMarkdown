@@ -33,7 +33,7 @@
 static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 
 @interface MMSpanParser ()
-@property (assign, nonatomic, readonly) MMMarkdownVariant variant;
+@property (assign, nonatomic, readonly) MMMarkdownExtensions extensions;
 @property (strong, nonatomic, readonly) MMHTMLParser *htmlParser;
 
 @property (strong, nonatomic) NSMutableArray *elements;
@@ -49,13 +49,13 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 #pragma mark Public Methods
 //==================================================================================================
 
-- (id)initWithVariant:(MMMarkdownVariant)variant
+- (id)initWithExtensions:(MMMarkdownExtensions)extensions
 {
     self = [super init];
     
     if (self)
     {
-        _variant    = variant;
+        _extensions = extensions;
         _htmlParser = [MMHTMLParser new];
         self.parseLinks = YES;
     }
@@ -139,7 +139,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 {
     MMElement *element;
     
-    if (self.variant == MMMarkdownVariantGitHubFlavored)
+    if (self.extensions & MMMarkdownExtensionsStrikethroughs)
     {
         [scanner beginTransaction];
         element = [self _parseStrikethroughWithScanner:scanner];
@@ -149,7 +149,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     }
     
     // URL Autolinking
-    if (self.parseLinks && self.variant == MMMarkdownVariantGitHubFlavored)
+    if (self.parseLinks && self.extensions & MMMarkdownExtensionsAutolinkedURLs)
     {
         [scanner beginTransaction];
         element = [self _parseAutolinkEmailAddressWithScanner:scanner];
@@ -525,7 +525,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 - (MMElement *)_parseEmWithScanner:(MMScanner *)scanner
 {
     NSCharacterSet *whitespaceAndNewlineSet = NSCharacterSet.whitespaceAndNewlineCharacterSet;
-    if (self.variant == MMMarkdownVariantGitHubFlavored)
+    if (self.extensions & MMMarkdownExtensionsUnderscoresInWords)
     {
         // GFM doesn't italicize parts of words
         if (![scanner atBeginningOfLine] && ![whitespaceAndNewlineSet characterIsMember:[scanner previousCharacter]])
@@ -557,7 +557,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
             return NO;
         [scanner advance];
         
-        if (self.variant == MMMarkdownVariantGitHubFlavored)
+        if (self.extensions & MMMarkdownExtensionsUnderscoresInWords)
         {
             // GFM doesn't italicize parts of words
             if (![scanner atEndOfLine] && ![whitespaceAndNewlineSet characterIsMember:[scanner nextCharacter]])
