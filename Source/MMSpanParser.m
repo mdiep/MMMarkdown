@@ -81,24 +81,25 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     NSCharacterSet *specialChars = [NSCharacterSet characterSetWithCharactersInString:@"\\`*_<&[! ~w:@"];
     NSCharacterSet *boringChars  = [specialChars invertedSet];
     
-    NSUInteger textLocation = scanner.location;
+    [scanner beginTransaction];
     while (![scanner atEndOfString])
     {
         
         MMElement *element = [self _parseNextElementWithScanner:scanner];
         if (element)
         {
-            if (textLocation != element.range.location)
+            if (scanner.startLocation != element.range.location)
             {
                 MMElement *text = [MMElement new];
                 text.type  = MMElementTypeNone;
-                text.range = NSMakeRange(textLocation, element.range.location-textLocation);
+                text.range = NSMakeRange(scanner.startLocation, element.range.location-scanner.startLocation);
                 [result addObject:text];
             }
             
             [result addObject:element];
             
-            textLocation = scanner.location;
+            [scanner commitTransaction:YES];
+            [scanner beginTransaction];
         }
         else if ([scanner skipCharactersFromSet:boringChars])
         {
@@ -110,21 +111,26 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
         
         // Check for the end character
         [scanner beginTransaction];
+        NSUInteger location = scanner.location;
         if (test())
         {
-            if (textLocation != scanner.startLocation)
+            [scanner commitTransaction:YES];
+            
+            if (scanner.startLocation != location)
             {
                 MMElement *text = [MMElement new];
                 text.type  = MMElementTypeNone;
-                text.range = NSMakeRange(textLocation, scanner.startLocation-textLocation);
+                text.range = NSMakeRange(scanner.startLocation, location-scanner.startLocation);
                 [result addObject:text];
             }
             
             [scanner commitTransaction:YES];
+            
             return result;
         }
         [scanner commitTransaction:NO];
     }
+    [scanner commitTransaction:NO];
     
     return nil;
 }
@@ -339,13 +345,10 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     NSMutableCharacterSet *domainChars = [alphanumerics mutableCopy];
     [domainChars addCharactersInString:@"._-"];
     
+    // Look for the previous word outside of the current transaction
+    [scanner commitTransaction:NO];
     NSString *localPart = [scanner previousWordWithCharactersFromSet:localChars];
-    
-    // Must start with a letter or number
-    NSRange firstAlphanum = [localPart rangeOfCharacterFromSet:alphanumerics options:0];
-    if (firstAlphanum.location == NSNotFound)
-        return nil;
-    localPart = [localPart substringFromIndex:firstAlphanum.location];
+    [scanner beginTransaction];
     
     if (localPart.length == 0)
         return nil;
@@ -384,7 +387,12 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
         return nil;
     
     NSArray  *protocols    = @[ @"https", @"http", @"ftp" ];
+    
+    // Look for the previous word outside of the current transaction
+    [scanner commitTransaction:NO];
     NSString *previousWord = scanner.previousWord;
+    [scanner beginTransaction];
+    
     if (![protocols containsObject:previousWord.lowercaseString])
         return nil;
     

@@ -171,9 +171,9 @@ static NSString *__delimitersForCharacter(unichar character)
 
 - (NSString *)previousWordWithCharactersFromSet:(NSCharacterSet *)set
 {
-    NSRange currentLine  = self.currentLineRange;
-    NSRange currentRange = self.currentRange;
-    NSRange range = NSMakeRange(currentLine.location, currentRange.location-currentLine.location);
+    NSUInteger start = MAX(self.currentLineRange.location, self.startLocation);
+    NSUInteger end   = self.currentRange.location;
+    NSRange range = NSMakeRange(start, end-start);
     
     NSRange result = [self.string rangeOfCharacterFromSet:set.invertedSet
                                                   options:NSBackwardsSearch
@@ -183,7 +183,7 @@ static NSString *__delimitersForCharacter(unichar character)
         return [self.string substringWithRange:range];
     
     NSUInteger wordLocation = NSMaxRange(result);
-    NSRange wordRange = NSMakeRange(wordLocation, currentRange.location-wordLocation);
+    NSRange wordRange = NSMakeRange(wordLocation, end-wordLocation);
     return [self.string substringWithRange:wordRange];
 }
 
