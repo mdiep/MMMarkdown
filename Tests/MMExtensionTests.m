@@ -70,7 +70,7 @@
 
 //==================================================================================================
 #pragma mark -
-#pragma mark Multiple Underscores in Words Tests
+#pragma mark MMMarkdownExtensionsUnderscoresInWords
 //==================================================================================================
 
 - (void)testMultipleUnderscoresInWords
@@ -131,7 +131,7 @@
 
 //==================================================================================================
 #pragma mark -
-#pragma mark URL Autolinking Tests
+#pragma mark MMMarkdownExtensionsAutolinkedURLs
 //==================================================================================================
 
 - (void)testURLAutolinkingWithStandardMarkdown
@@ -233,7 +233,7 @@
 
 //==================================================================================================
 #pragma mark -
-#pragma mark Strikethrough Tests
+#pragma mark MMMarkdownExtensionsStrikethroughs
 //==================================================================================================
 
 - (void)testStrikethroughWithStandardMarkdown
@@ -264,7 +264,7 @@
 
 //==================================================================================================
 #pragma mark -
-#pragma mark Fenced Code Block Tests
+#pragma mark MMMarkdownExtensionsFencedCodeBlocks
 //==================================================================================================
 
 - (void)testFencedCodeBlockWithStandardMarkdown
