@@ -478,6 +478,14 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 
 - (MMElement *)_parseStrongWithScanner:(MMScanner *)scanner
 {
+    NSCharacterSet *whitespaceAndNewlineSet = NSCharacterSet.whitespaceAndNewlineCharacterSet;
+    if (self.extensions & MMMarkdownExtensionsUnderscoresInWords)
+    {
+        // GFM doesn't italicize parts of words
+        if (![scanner atBeginningOfLine] && ![whitespaceAndNewlineSet characterIsMember:[scanner previousCharacter]])
+            return nil;
+    }
+	
     // Must have 2 *s or _s
     unichar character = [scanner nextCharacter];
     if (!(character == '*' || character == '_'))
@@ -506,6 +514,13 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
             if ([scanner nextCharacter] != character)
                 return NO;
             [scanner advance];
+        }
+        
+        if (self.extensions & MMMarkdownExtensionsUnderscoresInWords)
+        {
+            // GFM doesn't italicize parts of words
+            if (![scanner atEndOfLine] && ![whitespaceAndNewlineSet characterIsMember:[scanner nextCharacter]])
+                return NO;
         }
         
         return YES;
@@ -576,7 +591,6 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     element.children  = children;
     
     return element;
-    
 }
 
 - (MMElement *)_parseCodeSpanWithScanner:(MMScanner *)scanner

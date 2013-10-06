@@ -77,40 +77,55 @@
 {
     MMAssertExtendedMarkdownEqualsHTML(
         MMMarkdownExtensionsUnderscoresInWords,
-        @"perform_complicated_task",
-        @"<p>perform_complicated_task</p>"
+        @"perform_complicated_task perform__complicated__task",
+        @"<p>perform_complicated_task perform__complicated__task</p>"
     );
     MMAssertExtendedMarkdownEqualsHTML(
         MMMarkdownExtensionsUnderscoresInWords,
-        @"do_this_and_do_that_and_another_thing",
-        @"<p>do_this_and_do_that_and_another_thing</p>"
+        @"do_this_and_do_that_and_another_thing do__this__and__do__that__and__another__thing",
+        @"<p>do_this_and_do_that_and_another_thing do__this__and__do__that__and__another__thing</p>"
     );
 }
 
-- (void)testEmAtBeginningOfString
+- (void)testUnderscoresAtBeginningOfString
 {
     MMAssertExtendedMarkdownEqualsHTML(
         MMMarkdownExtensionsUnderscoresInWords,
         @"_test_",
         @"<p><em>test</em></p>"
     );
+    MMAssertExtendedMarkdownEqualsHTML(
+        MMMarkdownExtensionsUnderscoresInWords,
+        @"__test__",
+        @"<p><strong>test</strong></p>"
+    );
 }
 
-- (void)testEmEndsInWord
+- (void)testUnderscoresEndsInWord
 {
     MMAssertExtendedMarkdownEqualsHTML(
         MMMarkdownExtensionsUnderscoresInWords,
         @"_test_of",
         @"<p>_test_of</p>"
     );
+    MMAssertExtendedMarkdownEqualsHTML(
+        MMMarkdownExtensionsUnderscoresInWords,
+        @"__test__of",
+        @"<p>__test__of</p>"
+    );
 }
 
-- (void)testEmWithUnderscoreInTheWord
+- (void)testUnderscoresInTheWord
 {
     MMAssertExtendedMarkdownEqualsHTML(
         MMMarkdownExtensionsUnderscoresInWords,
         @"_a_test_",
         @"<p><em>a_test</em></p>"
+    );
+    MMAssertExtendedMarkdownEqualsHTML(
+        MMMarkdownExtensionsUnderscoresInWords,
+        @"__a__test__",
+        @"<p><strong>a__test</strong></p>"
     );
 }
 
