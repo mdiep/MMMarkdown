@@ -136,6 +136,76 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
+- (void)testListParagraphs
+{
+    NSString *markdown = @"* A\n"
+                          "* B\n"
+                          "\n"
+                          "* C\n"
+                          "* D\n";
+    NSString *html = @"<ul>\n"
+                      "<li>A</li>\n"
+                      "<li><p>B</p></li>\n"
+                      "<li><p>C</p></li>\n"
+                      "<li>D</li>\n"
+                      "</ul>";
+    MMAssertMarkdownEqualsHTML(markdown, html);
+}
+
+- (void)testListParagraphsInNestedList
+{
+    NSString *markdown = @"* A\n"
+                          "    - 1\n"
+                          "\n"
+                          "    - 2\n";
+    NSString *html = @"<ul>\n"
+                      "<li><p>A</p>\n"
+                      "\n"
+                      "<ul><li><p>1</p></li>\n"
+                      "<li><p>2</p></li></ul></li>\n"
+                      "</ul>";
+    MMAssertMarkdownEqualsHTML(markdown, html);
+}
+
+- (void)testListParagraphsWithNestedList
+{
+    NSString *markdown = @"* A\n"
+                          "    - 1\n"
+                          "    - 2\n"
+                          "* B\n"
+                          "    - 1\n"
+                          "    - 2\n"
+                          "\n"
+                          "    B2\n"
+                          "* C\n";
+    NSString *html = @"<ul>\n"
+                      "<li>A\n"
+                      "<ul><li>1</li>\n"
+                      "<li>2</li></ul></li>\n"
+                      "<li><p>B</p>\n"
+                      "\n"
+                      "<ul><li>1</li>\n"
+                      "<li>2</li></ul>\n"
+                      "\n"
+                      "<p>B2</p></li>\n"
+                      "<li>C</li>\n"
+                      "</ul>";
+    MMAssertMarkdownEqualsHTML(markdown, html);
+}
+
+- (void)testInlineListItems
+{
+    NSString *markdown = @"* # A\n"
+                          "* B\n"
+                          "* C\n";
+    NSString *html = @"<ul>\n"
+                      "<li># A</li>\n"
+                      "<li>B</li>\n"
+                      "<li>C</li>\n"
+                      "</ul>";
+    MMAssertMarkdownEqualsHTML(markdown, html);
+}
+
 - (void)testList_hangingIndents
 {
     NSString *markdown = @"*   Lorem ipsum dolor sit amet, consectetuer adipiscing elit.\n"
