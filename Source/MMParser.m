@@ -211,28 +211,6 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     return result;
 }
 
-- (NSUInteger)_skipEmptyLinesWithScanner:(MMScanner *)scanner
-{
-    NSUInteger numOfLinesSkipped = 0;
-    
-    NSCharacterSet *whitespaceSet = [NSCharacterSet whitespaceCharacterSet];
-    while (![scanner atEndOfString])
-    {
-        [scanner beginTransaction];
-        [scanner skipCharactersFromSet:whitespaceSet];
-        if (![scanner atEndOfLine])
-        {
-            [scanner commitTransaction:NO];
-            break;
-        }
-        [scanner commitTransaction:YES];
-        [scanner advanceToNextLine];
-        numOfLinesSkipped++;
-    }
-    
-    return numOfLinesSkipped;
-}
-
 - (MMElement *)_parseBlockElementWithScanner:(MMScanner *)scanner
 {
     MMElement *element;
@@ -503,7 +481,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     while (![scanner atEndOfString])
     {
         // Skip empty lines
-        NSUInteger numOfEmptyLines = [self _skipEmptyLinesWithScanner:scanner];
+        NSUInteger numOfEmptyLines = [scanner skipEmptyLines];
         for (NSUInteger idx=0; idx<numOfEmptyLines; idx++)
         {
             [element addInnerRange:NSMakeRange(0, 0)];
@@ -691,7 +669,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
 {
     BOOL canContainBlocks = NO;
     
-    if ([self _skipEmptyLinesWithScanner:scanner])
+    if ([scanner skipEmptyLines])
     {
         canContainBlocks = YES;
     }
@@ -724,7 +702,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     {
         // Skip over any empty lines
         [scanner beginTransaction];
-        NSUInteger numOfEmptyLines = [self _skipEmptyLinesWithScanner:scanner];
+        NSUInteger numOfEmptyLines = [scanner skipEmptyLines];
         afterBlankLine = numOfEmptyLines != 0;
         
         // Check for a horizontal rule
@@ -872,7 +850,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         [scanner beginTransaction];
         
         // Check for a horizontal rule first -- they look like a list marker
-        [self _skipEmptyLinesWithScanner:scanner];
+        [scanner skipEmptyLines];
         MMElement *rule = [self _parseHorizontalRuleWithScanner:scanner];
         
         [scanner commitTransaction:NO];
