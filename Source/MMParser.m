@@ -342,7 +342,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     if (element.innerRanges.count > 0)
     {
         MMScanner *innerScanner = [MMScanner scannerWithString:scanner.string lineRanges:element.innerRanges];
-        element.children = [self.spanParser parseSpansWithScanner:innerScanner];
+        element.children = [self.spanParser parseSpansInBlockElement:element withScanner:innerScanner];
     }
     
     return element;
@@ -406,7 +406,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     if (element.innerRanges.count > 0)
     {
         MMScanner *innerScanner = [MMScanner scannerWithString:scanner.string lineRanges:element.innerRanges];
-        element.children = [self.spanParser parseSpansWithScanner:innerScanner];
+        element.children = [self.spanParser parseSpansInBlockElement:element withScanner:innerScanner];
     }
     
     return element;
@@ -843,7 +843,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
             }
             else
             {
-                element.children = [self.spanParser parseSpansWithScanner:preListScanner];
+                element.children = [self.spanParser parseSpansInBlockElement:element withScanner:preListScanner];
             }
             
             element.children = [element.children arrayByAddingObjectsFromArray:[self _parseElementsWithScanner:postListScanner]];
@@ -857,7 +857,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
             }
             else
             {
-                element.children = [self.spanParser parseSpansWithScanner:innerScanner];
+                element.children = [self.spanParser parseSpansInBlockElement:element withScanner:innerScanner];
             }
         }
     }
@@ -1066,7 +1066,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     element.range = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
     
     MMScanner *innerScanner = [MMScanner scannerWithString:scanner.string lineRanges:element.innerRanges];
-    element.children = [self.spanParser parseSpansWithScanner:innerScanner];
+    element.children = [self.spanParser parseSpansInBlockElement:element withScanner:innerScanner];
     
     return element;
 }

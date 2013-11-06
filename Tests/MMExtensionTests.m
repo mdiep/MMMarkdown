@@ -231,6 +231,81 @@
     );
 }
 
+
+//==================================================================================================
+#pragma mark -
+#pragma mark MMMarkdownExtensionsHardNewlines
+//==================================================================================================
+
+- (void)testHardNewlinesWithStandardMarkdown
+{
+	MMAssertMarkdownEqualsHTML(
+	    @"A\nB\nC",
+		@"<p>A\nB\nC</p>"
+	);
+}
+
+- (void)testHardNewlines
+{
+	MMAssertExtendedMarkdownEqualsHTML(
+		MMMarkdownExtensionsHardNewlines,
+	    @"A\nB\nC",
+		@"<p>A<br />\nB<br />\nC</p>"
+	);
+}
+
+- (void)testHardNewlinesWithCarriageReturns
+{
+	MMAssertExtendedMarkdownEqualsHTML(
+		MMMarkdownExtensionsHardNewlines,
+	    @"A\rB\rC",
+		@"<p>A<br />\nB<br />\nC</p>"
+	);
+}
+
+- (void)testHardNewlinesWithCarriageReturnsAndNewlines
+{
+	MMAssertExtendedMarkdownEqualsHTML(
+		MMMarkdownExtensionsHardNewlines,
+	    @"A\r\nB\r\nC",
+		@"<p>A<br />\nB<br />\nC</p>"
+	);
+}
+
+- (void)testHardNewlinesWithTwoSpaces
+{
+	MMAssertExtendedMarkdownEqualsHTML(
+		MMMarkdownExtensionsHardNewlines,
+	    @"A  \nB",
+		@"<p>A <br />\n<br />\nB</p>"
+	);
+}
+
+- (void)testHardNewlinesInLists
+{
+	MMAssertExtendedMarkdownEqualsHTML(
+		MMMarkdownExtensionsHardNewlines,
+	    @"* A\nB\nC\n* D\nE\nF",
+		@"<ul><li>A\nB\nC</li><li>D\nE\nF</li></ul>"
+	);
+	
+	MMAssertExtendedMarkdownEqualsHTML(
+		MMMarkdownExtensionsHardNewlines,
+	    @"* A\nB\nC\n\n* D\nE\nF",
+		@"<ul><li><p>A<br />\nB<br />\nC</p></li><li><p>D<br />\nE<br />\nF</p></li></ul>"
+	);
+}
+
+- (void)testHardNewlinesInBlockquote
+{
+	MMAssertExtendedMarkdownEqualsHTML(
+		MMMarkdownExtensionsHardNewlines,
+	    @"> A\n> B\n> C",
+		@"<blockquote><p>A<br />\nB<br />\nC</p></blockquote>"
+	);
+}
+
+
 //==================================================================================================
 #pragma mark -
 #pragma mark MMMarkdownExtensionsStrikethroughs

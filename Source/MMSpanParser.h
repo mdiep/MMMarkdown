@@ -29,12 +29,13 @@
 #import "MMMarkdown.h"
 #import "MMParser.h"
 
+@class MMElement;
 @class MMScanner;
 
 @interface MMSpanParser : NSObject
 
 - (id)initWithExtensions:(MMMarkdownExtensions)extensions;
 
-- (NSArray *)parseSpansWithScanner:(MMScanner *)scanner;
+- (NSArray *)parseSpansInBlockElement:(MMElement *)block withScanner:(MMScanner *)scanner;
 
 @end

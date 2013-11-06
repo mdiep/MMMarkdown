@@ -39,6 +39,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 @property (strong, nonatomic) NSMutableArray *elements;
 @property (strong, nonatomic) NSMutableArray *openElements;
 
+@property (strong, nonatomic) MMElement *blockElement;
 @property (assign, nonatomic) BOOL parseLinks;
 @end
 
@@ -63,8 +64,9 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     return self;
 }
 
-- (NSArray *)parseSpansWithScanner:(MMScanner *)scanner
+- (NSArray *)parseSpansInBlockElement:(MMElement *)block withScanner:(MMScanner *)scanner
 {
+    self.blockElement = block;
     return [self _parseWithScanner:scanner untilTestPasses:^{ return [scanner atEndOfString]; }];
 }
 
@@ -98,6 +100,38 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
             
             [result addObject:element];
             
+            [scanner commitTransaction:YES];
+            [scanner beginTransaction];
+        }
+        else if ([scanner atEndOfLine])
+        {
+            // This is done here (and not in _parseNextElementWithScanner:)
+            // because it can result in 2 elements.
+            
+            if (scanner.startLocation != scanner.location)
+            {
+                MMElement *text = [MMElement new];
+                text.type  = MMElementTypeNone;
+                text.range = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
+                [result addObject:text];
+            }
+            
+            if (self.extensions & MMMarkdownExtensionsHardNewlines && self.blockElement.type == MMElementTypeParagraph)
+            {
+                MMElement *lineBreak = [MMElement new];
+                lineBreak.range = NSMakeRange(scanner.location, 1);
+                lineBreak.type  = MMElementTypeLineBreak;
+                [result addObject:lineBreak];
+            }
+            
+            // Add a newline
+            MMElement *newline = [MMElement new];
+            newline.range        = NSMakeRange(scanner.location, 1);
+            newline.type        = MMElementTypeEntity;
+            newline.stringValue = @"\n";
+            [result addObject:newline];
+            
+            [scanner advanceToNextLine];
             [scanner commitTransaction:YES];
             [scanner beginTransaction];
         }
@@ -235,12 +269,6 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     
     [scanner beginTransaction];
     element = [self.htmlParser parseCommentWithScanner:scanner];
-    [scanner commitTransaction:element != nil];
-    if (element)
-        return element;
-    
-    [scanner beginTransaction];
-    element = [self _parseNewlineWithScanner:scanner];
     [scanner commitTransaction:element != nil];
     if (element)
         return element;
@@ -485,7 +513,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
         if (![scanner atBeginningOfLine] && ![whitespaceAndNewlineSet characterIsMember:[scanner previousCharacter]])
             return nil;
     }
-	
+    
     // Must have 2 *s or _s
     unichar character = [scanner nextCharacter];
     if (!(character == '*' || character == '_'))
@@ -714,18 +742,9 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 
 - (MMElement *)_parseLineBreakWithScanner:(MMScanner *)scanner
 {
-    // A line break is made up of 2 spaces. Since 1 is left on the line, match it against the
-    // previous character instead of the next one.
-    if ([scanner previousCharacter] != ' ')
+    NSCharacterSet *spaces = [NSCharacterSet characterSetWithCharactersInString:@" "];
+    if ([scanner skipCharactersFromSet:spaces] < 2)
         return nil;
-    if ([scanner nextCharacter] != ' ')
-        return nil;
-    
-    [scanner advance];
-    while ([scanner nextCharacter] == ' ')
-    {
-        [scanner advance];
-    }
     
     if (![scanner atEndOfLine])
         return nil;
@@ -734,9 +753,11 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     if ([scanner atEndOfString])
         return nil;
     
+    NSUInteger startLocation = scanner.startLocation + 1;
+    
     MMElement *element = [MMElement new];
     element.type  = MMElementTypeLineBreak;
-    element.range = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
+    element.range = NSMakeRange(startLocation, scanner.location-startLocation);
     
     return element;
 }
@@ -1196,22 +1217,6 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     element.stringValue = @"&lt;";
     
     return element;
-}
-
-- (MMElement *)_parseNewlineWithScanner:(MMScanner *)scanner
-{
-    if (![scanner atEndOfLine] || [scanner atEndOfString])
-        return nil;
-    
-    // Add a newline
-    MMElement *newline = [MMElement new];
-    newline.type  = MMElementTypeEntity;
-    newline.range = NSMakeRange(scanner.location, 1);
-    newline.stringValue = @"\n";
-    
-    [scanner advanceToNextLine];
-    
-    return newline;
 }
 
 - (NSString *)_stringWithBackslashEscapesRemoved:(NSString *)string
