@@ -275,6 +275,27 @@ static NSString *__delimitersForCharacter(unichar character)
     return idx;
 }
 
+- (NSUInteger)skipEmptyLines
+{
+    NSUInteger skipped = 0;
+    
+    while (![self atEndOfString])
+    {
+        [self beginTransaction];
+        [self skipWhitespace];
+        if (![self atEndOfLine])
+        {
+            [self commitTransaction:NO];
+            break;
+        }
+        [self commitTransaction:YES];
+        [self advanceToNextLine];
+        skipped++;
+    }
+    
+    return skipped;
+}
+
 - (NSUInteger)skipIndentationUpTo:(NSUInteger)maxSpacesToSkip
 {
     NSUInteger skipped = 0;
@@ -366,7 +387,7 @@ static NSString *__delimitersForCharacter(unichar character)
 
 - (NSUInteger)skipWhitespace
 {
-    return [self skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet]];
+    return [self skipCharactersFromSet:NSCharacterSet.whitespaceCharacterSet];
 }
 
 - (NSUInteger)skipWhitespaceAndNewlines

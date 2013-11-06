@@ -189,7 +189,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     
     while (![scanner atEndOfString])
     {
-        MMElement *element = [self _parseNextElementWithScanner:scanner];
+        MMElement *element = [self _parseBlockElementWithScanner:scanner];
         if (element)
         {
             [result addObject:element];
@@ -205,67 +205,6 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     }
     
     return result;
-}
-
-
-- (MMElement *)_parseNextElementWithScanner:(MMScanner *)scanner
-{
-    MMElement *element = [self _parseBlockElementWithScanner:scanner];
-    
-    if (element.innerRanges.count > 0)
-    {
-        MMScanner *innerScanner = [MMScanner scannerWithString:scanner.string lineRanges:element.innerRanges];
-        if ([self _blockElementCanHaveChildren:element])
-        {
-            element.children = [self _parseElementsWithScanner:innerScanner];
-        }
-        else if (element.type == MMElementTypeCodeBlock)
-        {
-            element.children = [self _parseCodeLinesWithScanner:innerScanner];
-        }
-        else
-        {
-            element.children = [self.spanParser parseSpansWithScanner:innerScanner];
-        }
-    }
-    
-    return element;
-}
-
-- (BOOL)_blockElementCanHaveChildren:(MMElement *)anElement
-{
-    switch (anElement.type)
-    {
-        case MMElementTypeCodeBlock:
-        case MMElementTypeParagraph:
-        case MMElementTypeHeader:
-            return NO;
-            
-        default:
-            return YES;
-    }
-}
-
-- (NSUInteger)_skipEmptyLinesWithScanner:(MMScanner *)scanner
-{
-    NSUInteger numOfLinesSkipped = 0;
-    
-    NSCharacterSet *whitespaceSet = [NSCharacterSet whitespaceCharacterSet];
-    while (![scanner atEndOfString])
-    {
-        [scanner beginTransaction];
-        [scanner skipCharactersFromSet:whitespaceSet];
-        if (![scanner atEndOfLine])
-        {
-            [scanner commitTransaction:NO];
-            break;
-        }
-        [scanner commitTransaction:YES];
-        [scanner advanceToNextLine];
-        numOfLinesSkipped++;
-    }
-    
-    return numOfLinesSkipped;
 }
 
 - (MMElement *)_parseBlockElementWithScanner:(MMScanner *)scanner
@@ -392,13 +331,19 @@ static NSString * __HTMLEntityForCharacter(unichar character)
             break;
     }
     
+    [scanner advanceToNextLine];
+    
     MMElement *element = [MMElement new];
     element.type  = MMElementTypeHeader;
     element.range = NSMakeRange(scanner.startLocation, NSMaxRange(scanner.currentRange)-scanner.startLocation);
     element.level = level;
     [element addInnerRange:headerRange];
     
-    [scanner advanceToNextLine];
+    if (element.innerRanges.count > 0)
+    {
+        MMScanner *innerScanner = [MMScanner scannerWithString:scanner.string lineRanges:element.innerRanges];
+        element.children = [self.spanParser parseSpansWithScanner:innerScanner];
+    }
     
     return element;
 }
@@ -458,6 +403,11 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     [scanner advanceToNextLine]; // The underlines
     
     element.range = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
+    if (element.innerRanges.count > 0)
+    {
+        MMScanner *innerScanner = [MMScanner scannerWithString:scanner.string lineRanges:element.innerRanges];
+        element.children = [self.spanParser parseSpansWithScanner:innerScanner];
+    }
     
     return element;
 }
@@ -511,6 +461,12 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     }
     
     element.range = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
+    
+    if (element.innerRanges.count > 0)
+    {
+        MMScanner *innerScanner = [MMScanner scannerWithString:scanner.string lineRanges:element.innerRanges];
+        element.children = [self _parseElementsWithScanner:innerScanner];
+    }
     
     return element;
 }
@@ -579,7 +535,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     while (![scanner atEndOfString])
     {
         // Skip empty lines
-        NSUInteger numOfEmptyLines = [self _skipEmptyLinesWithScanner:scanner];
+        NSUInteger numOfEmptyLines = [scanner skipEmptyLines];
         for (NSUInteger idx=0; idx<numOfEmptyLines; idx++)
         {
             [element addInnerRange:NSMakeRange(0, 0)];
@@ -626,6 +582,12 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     
     element.range = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
     
+    if (element.innerRanges.count > 0)
+    {
+        MMScanner *innerScanner = [MMScanner scannerWithString:scanner.string lineRanges:element.innerRanges];
+        element.children = [self _parseCodeLinesWithScanner:innerScanner];
+    }
+    
     return element;
 }
 
@@ -648,6 +610,12 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     }
     
     [scanner advanceToNextLine];
+    
+    if (element.innerRanges.count > 0)
+    {
+        MMScanner *innerScanner = [MMScanner scannerWithString:scanner.string lineRanges:element.innerRanges];
+        element.children = [self _parseCodeLinesWithScanner:innerScanner];
+    }
     
     return element;
 }
@@ -738,6 +706,13 @@ static NSString * __HTMLEntityForCharacter(unichar character)
 
 - (MMElement *)_parseListItemWithScanner:(MMScanner *)scanner atIndentationLevel:(NSUInteger)level
 {
+    BOOL canContainBlocks = NO;
+    
+    if ([scanner skipEmptyLines])
+    {
+        canContainBlocks = YES;
+    }
+    
     // Make sure there's enough leading space
     [scanner beginTransaction];
     NSUInteger toSkip  = 4 * level;
@@ -761,24 +736,13 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     element.type = MMElementTypeListItem;
     
     BOOL afterBlankLine = NO;
-    NSCharacterSet *whitespaceSet = [NSCharacterSet whitespaceCharacterSet];
+    NSUInteger nestedListIndex = NSNotFound;
     while (![scanner atEndOfString])
     {
         // Skip over any empty lines
         [scanner beginTransaction];
-        NSUInteger numOfEmptyLines = [self _skipEmptyLinesWithScanner:scanner];
+        NSUInteger numOfEmptyLines = [scanner skipEmptyLines];
         afterBlankLine = numOfEmptyLines != 0;
-        
-        // Check for the start of a new list item
-        [scanner beginTransaction];
-        [scanner skipIndentationUpTo:4*level + 3];
-        BOOL newMarker = [self _parseListMarkerWithScanner:scanner];
-        [scanner commitTransaction:NO];
-        if (newMarker)
-        {
-            [scanner commitTransaction:NO];
-            break;
-        }
         
         // Check for a horizontal rule
         [scanner beginTransaction];
@@ -790,27 +754,36 @@ static NSString * __HTMLEntityForCharacter(unichar character)
             break;
         }
         
+        // Check for the start of a new list item
+        [scanner beginTransaction];
+        [scanner skipIndentationUpTo:4*level + 3];
+        BOOL newMarker = [self _parseListMarkerWithScanner:scanner];
+        [scanner commitTransaction:NO];
+        if (newMarker)
+        {
+            [scanner commitTransaction:NO];
+            if (afterBlankLine)
+            {
+                canContainBlocks = YES;
+            }
+            break;
+        }
+        
         // Check for a nested list
         [scanner beginTransaction];
-        MMElement *list = [self _parseListWithScanner:scanner atIndentationLevel:1+level];
-        if (list)
+        [scanner skipIndentationUpTo:4*(level + 1) + 3];
+        [scanner beginTransaction];
+        BOOL newList = [self _parseListMarkerWithScanner:scanner];
+        [scanner commitTransaction:NO];
+        if (newList && nestedListIndex == NSNotFound)
         {
+            [element addInnerRange:NSMakeRange(0, 0)];
+            nestedListIndex = element.innerRanges.count;
+            [element addInnerRange:scanner.currentRange];
+            
             [scanner commitTransaction:YES];
-            if (element.children == nil)
-                element.children = @[];
-            if (element.innerRanges.count > 0)
-            {
-                MMScanner *innerScanner = [MMScanner scannerWithString:scanner.string lineRanges:element.innerRanges];
-                element.children = [element.children arrayByAddingObjectsFromArray:[self _parseElementsWithScanner:innerScanner]];
-                element.innerRanges = @[];
-                
-                // First add a newline so the nested list will start on its own line
-                MMElement *newline = [MMElement new];
-                newline.type  = MMElementTypeNone;
-                newline.range = NSMakeRange(0, 0);
-                element.children = [element.children arrayByAddingObject:newline];
-            }
-            element.children = [element.children arrayByAddingObject:list];
+            [scanner commitTransaction:YES];
+            [scanner advanceToNextLine];
             continue;
         }
         [scanner commitTransaction:NO];
@@ -831,17 +804,63 @@ static NSString * __HTMLEntityForCharacter(unichar character)
             [scanner commitTransaction:YES];
             
             [element addInnerRange:NSMakeRange(0, 0)];
+            canContainBlocks = YES;
         }
         else
         {
             [scanner commitTransaction:YES];
-            [scanner skipCharactersFromSet:whitespaceSet];
+            
+            // Don't skip past where a nested list would start because that list
+            // could have its own nested list, so the whitespace will be needed.
+            [scanner skipIndentationUpTo:4*(level + 1)];
         }
         
-        [self _addTextLineToElement:element withScanner:scanner];
+        if (nestedListIndex != NSNotFound)
+        {
+            [element addInnerRange:scanner.currentRange];
+            [scanner advanceToNextLine];
+        }
+        else
+        {
+            [self _addTextLineToElement:element withScanner:scanner];
+        }
     }
     
     element.range = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
+    
+    if (element.innerRanges.count > 0)
+    {
+        if (nestedListIndex != NSNotFound)
+        {
+            NSArray *preListRanges  = [element.innerRanges subarrayWithRange:NSMakeRange(0, nestedListIndex)];
+            NSArray *postListRanges = [element.innerRanges subarrayWithRange:NSMakeRange(nestedListIndex, element.innerRanges.count - nestedListIndex)];
+            MMScanner *preListScanner  = [MMScanner scannerWithString:scanner.string lineRanges:preListRanges];
+            MMScanner *postListScanner = [MMScanner scannerWithString:scanner.string lineRanges:postListRanges];
+            
+            if (canContainBlocks)
+            {
+                element.children = [self _parseElementsWithScanner:preListScanner];
+            }
+            else
+            {
+                element.children = [self.spanParser parseSpansWithScanner:preListScanner];
+            }
+            
+            element.children = [element.children arrayByAddingObjectsFromArray:[self _parseElementsWithScanner:postListScanner]];
+        }
+        else
+        {
+            MMScanner *innerScanner = [MMScanner scannerWithString:scanner.string lineRanges:element.innerRanges];
+            if (canContainBlocks)
+            {
+                element.children = [self _parseElementsWithScanner:innerScanner];
+            }
+            else
+            {
+                element.children = [self.spanParser parseSpansWithScanner:innerScanner];
+            }
+        }
+    }
     
     return element;
 }
@@ -865,99 +884,29 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     MMElement *element = [MMElement new];
     element.type = isBulleted ? MMElementTypeBulletedList : MMElementTypeNumberedList;
     
-    NSMutableArray *followedByBlankLine = [NSMutableArray new];
-    
     while (![scanner atEndOfString])
     {
-        // Skip over empty lines
         [scanner beginTransaction];
-        NSUInteger numOfEmptyLines = [self _skipEmptyLinesWithScanner:scanner];
-        BOOL hasBlankLine = (numOfEmptyLines != 0);
         
         // Check for a horizontal rule first -- they look like a list marker
-        [scanner beginTransaction];
+        [scanner skipEmptyLines];
         MMElement *rule = [self _parseHorizontalRuleWithScanner:scanner];
+        
         [scanner commitTransaction:NO];
         if (rule)
-        {
-            [scanner commitTransaction:NO];
             break;
-        }
         
         [scanner beginTransaction];
         MMElement *item = [self _parseListItemWithScanner:scanner atIndentationLevel:level];
         if (!item)
         {
             [scanner commitTransaction:NO];
-            [scanner commitTransaction:NO];
             break;
         }
         [scanner commitTransaction:YES];
-        [scanner commitTransaction:YES];
         
-        [followedByBlankLine addObject:@(hasBlankLine)];
         [element addChild:item];
-        
-        // Parse the spans inside the item
-        if (!item.children)
-            item.children = @[];
-        if (item.innerRanges.count > 0)
-        {
-            MMScanner *innerScanner = [MMScanner scannerWithString:scanner.string lineRanges:item.innerRanges];
-            item.children = [item.children arrayByAddingObjectsFromArray:[self _parseElementsWithScanner:innerScanner]];
-        }
     }
-    
-    // Remove the first item because it will be whether there was an empty line before the first
-    // item. We want to know if there's a blank line after. Removing the first item shifts
-    // everything. Add a NO at the end because the last item is never followed by a blank line.
-    [followedByBlankLine removeObjectAtIndex:0];
-    [followedByBlankLine addObject:@(NO)];
-    
-    // Figure out if the items should have paragraphs. If it's not before/after a blank line, and it
-    // doesn't have multiple paragraphs, then remove the paragraphs.
-    __block BOOL isAfterBlankLine = NO;
-    [element.children enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        BOOL isBeforeBlankLine = [[followedByBlankLine objectAtIndex:idx] boolValue];
-        MMElement *item = obj;
-        
-        if (!isBeforeBlankLine && !isAfterBlankLine)
-        {
-            // check if it has multiple consecutive paragraphs
-            BOOL shouldHavePs = NO;
-            BOOL isAfterPType = NO;
-            for (MMElement *child in item.children)
-            {
-                // This is somewhat deceptively named, but I couldn't come up with anything better.
-                // Having any 2 elements in a row that are one of these types is enough to add
-                // paragraphs to the list item.
-                BOOL isPType = child.type == MMElementTypeParagraph
-                            || child.type == MMElementTypeBlockquote
-                            || child.type == MMElementTypeCodeBlock;
-                if (isPType && isAfterPType)
-                {
-                    shouldHavePs = YES;
-                    break;
-                }
-                isAfterPType = isPType;
-            }
-            
-            if (!shouldHavePs)
-            {
-                NSMutableArray *newChildren = [NSMutableArray new];
-                for (MMElement *child in item.children)
-                {
-                    if (child.type == MMElementTypeParagraph)
-                        [newChildren addObjectsFromArray:child.children];
-                    else
-                        [newChildren addObject:child];
-                }
-                item.children = newChildren;
-            }
-        }
-        
-        isAfterBlankLine = isBeforeBlankLine;
-    }];
     
     element.range = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
     
@@ -1115,6 +1064,9 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     }
     
     element.range = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
+    
+    MMScanner *innerScanner = [MMScanner scannerWithString:scanner.string lineRanges:element.innerRanges];
+    element.children = [self.spanParser parseSpansWithScanner:innerScanner];
     
     return element;
 }

@@ -68,6 +68,7 @@
 
 - (NSUInteger)skipCharactersFromSet:(NSCharacterSet *)aSet;
 - (NSUInteger)skipCharactersFromSet:(NSCharacterSet *)aSet max:(NSUInteger)maxToSkip;
+- (NSUInteger)skipEmptyLines;
 - (NSUInteger)skipIndentationUpTo:(NSUInteger)maxSpacesToSkip;
 - (NSUInteger)skipNestedBracketsWithDelimiter:(unichar)delimiter;
 - (NSUInteger)skipToEndOfLine;
