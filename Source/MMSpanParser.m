@@ -666,7 +666,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     
     // Find the []
     element.innerRanges = [self _parseLinkTextBodyWithScanner:scanner];
-    if (!element.innerRanges.count)
+    if (!element.innerRanges)
         return nil;
     
     // Find the ()
