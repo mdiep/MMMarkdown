@@ -500,19 +500,19 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 
 - (MMElement *)_parseEmAndStrongWithScanner:(MMScanner *)scanner
 {
-        NSCharacterSet *alphanumericSet = NSCharacterSet.alphanumericCharacterSet;
+    NSCharacterSet *alphanumericSet = NSCharacterSet.alphanumericCharacterSet;
     if (self.extensions & MMMarkdownExtensionsUnderscoresInWords)
     {
         // GFM doesn't italicize parts of words
-                
-                [scanner commitTransaction:NO];
-                // Look for the previous char outside of the current transaction
-                unichar prevChar = scanner.previousCharacter;
-                unichar nextChar = scanner.nextCharacter;
-                [scanner beginTransaction];
-                
-                BOOL isWordChar    = [alphanumericSet characterIsMember:prevChar];
-                BOOL isAnotherChar = prevChar == nextChar;
+        
+        [scanner commitTransaction:NO];
+        // Look for the previous char outside of the current transaction
+        unichar prevChar = scanner.previousCharacter;
+        unichar nextChar = scanner.nextCharacter;
+        [scanner beginTransaction];
+        
+        BOOL isWordChar    = [alphanumericSet characterIsMember:prevChar];
+        BOOL isAnotherChar = prevChar == nextChar;
         if (isWordChar || isAnotherChar)
             return nil;
     }
@@ -522,19 +522,19 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     if (!(character == '*' || character == '_'))
         return nil;
     
-        NSUInteger numberOfChars = 0;
-        while (scanner.nextCharacter == character)
-        {
-                numberOfChars++;
-                [scanner advance];
-        }
-        
-        if (numberOfChars > 3)
-                return nil;
+    NSUInteger numberOfChars = 0;
+    while (scanner.nextCharacter == character)
+    {
+        numberOfChars++;
+        [scanner advance];
+    }
+    
+    if (numberOfChars > 3)
+        return nil;
     
     NSCharacterSet  *whitespaceSet = [NSCharacterSet whitespaceCharacterSet];
-        __block NSUInteger remainingChars = numberOfChars;
-        BOOL (^findEnd)(void) = ^{
+    __block NSUInteger remainingChars = numberOfChars;
+    BOOL (^findEnd)(void) = ^{
         // Can't be at the beginning of the line
         if ([scanner atBeginningOfLine])
             return NO;
@@ -544,65 +544,65 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
             return NO;
         
         // Must have 1-3 *s or _s
-                NSUInteger numberOfEndChars = 0;
-                while (scanner.nextCharacter == character)
-                {
-                        numberOfEndChars++;
-                        [scanner advance];
-                }
-                
-                if (numberOfEndChars == 0 || (numberOfEndChars != remainingChars && remainingChars != 3))
-                        return NO;
+        NSUInteger numberOfEndChars = 0;
+        while (scanner.nextCharacter == character)
+        {
+            numberOfEndChars++;
+            [scanner advance];
+        }
+        
+        if (numberOfEndChars == 0 || (numberOfEndChars != remainingChars && remainingChars != 3))
+            return NO;
         
         if (self.extensions & MMMarkdownExtensionsUnderscoresInWords)
         {
             // GFM doesn't italicize parts of words
-                        unichar prevChar = scanner.previousCharacter;
-                        unichar nextChar = scanner.nextCharacter;
-                        
-                        BOOL isWordChar    = [alphanumericSet characterIsMember:nextChar];
-                        BOOL isAnotherChar = prevChar == nextChar;
-                        if (isWordChar || isAnotherChar)
+            unichar prevChar = scanner.previousCharacter;
+            unichar nextChar = scanner.nextCharacter;
+            
+            BOOL isWordChar    = [alphanumericSet characterIsMember:nextChar];
+            BOOL isAnotherChar = prevChar == nextChar;
+            if (isWordChar || isAnotherChar)
                 return NO;
         }
-                
-                remainingChars -= numberOfEndChars;
+        
+        remainingChars -= numberOfEndChars;
         
         return YES;
-        };
-        
+    };
+    
     NSArray *children = [self _parseWithScanner:scanner untilTestPasses:findEnd];
     if (!children)
         return nil;
     
-        BOOL isEm = (numberOfChars == 1) || (numberOfChars == 3 && (remainingChars == 0 || remainingChars == 2));
-        NSUInteger startLocation = scanner.startLocation + remainingChars;
+    BOOL isEm = (numberOfChars == 1) || (numberOfChars == 3 && (remainingChars == 0 || remainingChars == 2));
+    NSUInteger startLocation = scanner.startLocation + remainingChars;
     MMElement *element = [MMElement new];
     element.type     = isEm ? MMElementTypeEm : MMElementTypeStrong;
     element.range    = NSMakeRange(startLocation, scanner.location-startLocation);
     element.children = children;
+    
+    if (numberOfChars == 3 && remainingChars == 0)
+    {
+        NSArray *outerChildren = @[ element ];
+        element = [MMElement new];
+        element.type     = MMElementTypeStrong;
+        element.range    = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
+        element.children = outerChildren;
+    }
+    else if (remainingChars > 0)
+    {
+        NSMutableArray *outerChildren = [[self _parseWithScanner:scanner untilTestPasses:findEnd] mutableCopy];
+        if (!outerChildren)
+            return nil;
         
-        if (numberOfChars == 3 && remainingChars == 0)
-        {
-                NSArray *outerChildren = @[ element ];
-                element = [MMElement new];
-                element.type     = MMElementTypeStrong;
-                element.range    = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
-                element.children = outerChildren;
-        }
-        else if (remainingChars > 0)
-        {
-                NSMutableArray *outerChildren = [[self _parseWithScanner:scanner untilTestPasses:findEnd] mutableCopy];
-                if (!outerChildren)
-                        return nil;
-                
-                [outerChildren insertObject:element atIndex:0];
-                
-                element = [MMElement new];
-                element.type     = !isEm ? MMElementTypeEm : MMElementTypeStrong;
-                element.range    = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
-                element.children = outerChildren;
-        }
+        [outerChildren insertObject:element atIndex:0];
+        
+        element = [MMElement new];
+        element.type     = !isEm ? MMElementTypeEm : MMElementTypeStrong;
+        element.range    = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
+        element.children = outerChildren;
+    }
     
     return element;
 }
