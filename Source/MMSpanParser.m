@@ -211,13 +211,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
         return element;
     
     [scanner beginTransaction];
-    element = [self _parseStrongWithScanner:scanner];
-    [scanner commitTransaction:element != nil];
-    if (element)
-        return element;
-    
-    [scanner beginTransaction];
-    element = [self _parseEmWithScanner:scanner];
+    element = [self _parseEmAndStrongWithScanner:scanner];
     [scanner commitTransaction:element != nil];
     if (element)
         return element;
@@ -504,119 +498,111 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     return element;
 }
 
-- (MMElement *)_parseStrongWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseEmAndStrongWithScanner:(MMScanner *)scanner
 {
-    NSCharacterSet *whitespaceAndNewlineSet = NSCharacterSet.whitespaceAndNewlineCharacterSet;
+        NSCharacterSet *alphanumericSet = NSCharacterSet.alphanumericCharacterSet;
     if (self.extensions & MMMarkdownExtensionsUnderscoresInWords)
     {
         // GFM doesn't italicize parts of words
-        if (![scanner atBeginningOfLine] && ![whitespaceAndNewlineSet characterIsMember:[scanner previousCharacter]])
+                
+                [scanner commitTransaction:NO];
+                // Look for the previous char outside of the current transaction
+                unichar prevChar = scanner.previousCharacter;
+                unichar nextChar = scanner.nextCharacter;
+                [scanner beginTransaction];
+                
+                BOOL isWordChar    = [alphanumericSet characterIsMember:prevChar];
+                BOOL isAnotherChar = prevChar == nextChar;
+        if (isWordChar || isAnotherChar)
             return nil;
     }
     
-    // Must have 2 *s or _s
+    // Must have 1-3 *s or _s
     unichar character = [scanner nextCharacter];
     if (!(character == '*' || character == '_'))
         return nil;
     
-    for (NSUInteger idx=0; idx<2; idx++)
-    {
-        if ([scanner nextCharacter] != character)
-            return nil;
-        [scanner advance];
-    }
+        NSUInteger numberOfChars = 0;
+        while (scanner.nextCharacter == character)
+        {
+                numberOfChars++;
+                [scanner advance];
+        }
+        
+        if (numberOfChars > 3)
+                return nil;
     
     NSCharacterSet  *whitespaceSet = [NSCharacterSet whitespaceCharacterSet];
-    NSArray         *children      = [self _parseWithScanner:scanner untilTestPasses:^{
+        __block NSUInteger remainingChars = numberOfChars;
+        BOOL (^findEnd)(void) = ^{
         // Can't be at the beginning of the line
         if ([scanner atBeginningOfLine])
             return NO;
         
         // Must follow the end of a word
-        if ([whitespaceSet characterIsMember:[scanner previousCharacter]])
+        if ([whitespaceSet characterIsMember:scanner.previousCharacter])
             return NO;
         
-        // Must have 2 *s or _s
-        for (NSUInteger idx=0; idx<2; idx++)
-        {
-            if ([scanner nextCharacter] != character)
-                return NO;
-            [scanner advance];
-        }
+        // Must have 1-3 *s or _s
+                NSUInteger numberOfEndChars = 0;
+                while (scanner.nextCharacter == character)
+                {
+                        numberOfEndChars++;
+                        [scanner advance];
+                }
+                
+                if (numberOfEndChars == 0 || (numberOfEndChars != remainingChars && remainingChars != 3))
+                        return NO;
         
         if (self.extensions & MMMarkdownExtensionsUnderscoresInWords)
         {
             // GFM doesn't italicize parts of words
-            if (![scanner atEndOfLine] && ![whitespaceAndNewlineSet characterIsMember:[scanner nextCharacter]])
+                        unichar prevChar = scanner.previousCharacter;
+                        unichar nextChar = scanner.nextCharacter;
+                        
+                        BOOL isWordChar    = [alphanumericSet characterIsMember:nextChar];
+                        BOOL isAnotherChar = prevChar == nextChar;
+                        if (isWordChar || isAnotherChar)
                 return NO;
         }
+                
+                remainingChars -= numberOfEndChars;
         
         return YES;
-    }];
-    
+        };
+        
+    NSArray *children = [self _parseWithScanner:scanner untilTestPasses:findEnd];
     if (!children)
         return nil;
     
+        BOOL isEm = (numberOfChars == 1) || (numberOfChars == 3 && (remainingChars == 0 || remainingChars == 2));
+        NSUInteger startLocation = scanner.startLocation + remainingChars;
     MMElement *element = [MMElement new];
-    element.type     = MMElementTypeStrong;
-    element.range    = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
+    element.type     = isEm ? MMElementTypeEm : MMElementTypeStrong;
+    element.range    = NSMakeRange(startLocation, scanner.location-startLocation);
     element.children = children;
-    
-    return element;
-}
-
-- (MMElement *)_parseEmWithScanner:(MMScanner *)scanner
-{
-    NSCharacterSet *whitespaceAndNewlineSet = NSCharacterSet.whitespaceAndNewlineCharacterSet;
-    if (self.extensions & MMMarkdownExtensionsUnderscoresInWords)
-    {
-        // GFM doesn't italicize parts of words
-        if (![scanner atBeginningOfLine] && ![whitespaceAndNewlineSet characterIsMember:[scanner previousCharacter]])
-            return nil;
-    }
-    
-    // Must have 1 * or _
-    unichar character = [scanner nextCharacter];
-    if (!(character == '*' || character == '_'))
-        return nil;
-    [scanner advance];
-    
-    // Can't be at the end of a line or before a space
-    if ([whitespaceAndNewlineSet characterIsMember:[scanner nextCharacter]])
-        return nil;
-    
-    NSCharacterSet  *whitespaceSet = NSCharacterSet.whitespaceCharacterSet;
-    NSArray         *children      = [self _parseWithScanner:scanner untilTestPasses:^{
-        // Can't be at the beginning of the line
-        if ([scanner atBeginningOfLine])
-            return NO;
         
-        // Must not be at the start of a word
-        if ([whitespaceSet characterIsMember:[scanner previousCharacter]])
-            return NO;
-        
-        // Must have a * or _
-        if ([scanner nextCharacter] != character)
-            return NO;
-        [scanner advance];
-        
-        if (self.extensions & MMMarkdownExtensionsUnderscoresInWords)
+        if (numberOfChars == 3 && remainingChars == 0)
         {
-            // GFM doesn't italicize parts of words
-            if (![scanner atEndOfLine] && ![whitespaceAndNewlineSet characterIsMember:[scanner nextCharacter]])
-                return NO;
+                NSArray *outerChildren = @[ element ];
+                element = [MMElement new];
+                element.type     = MMElementTypeStrong;
+                element.range    = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
+                element.children = outerChildren;
         }
-        
-        return YES;
-    }];
-    
-    if (!children)
-        return nil;
-    
-    MMElement *element = [MMElement new];
-    element.type      = MMElementTypeEm;
-    element.range     = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
-    element.children  = children;
+        else if (remainingChars > 0)
+        {
+                NSMutableArray *outerChildren = [[self _parseWithScanner:scanner untilTestPasses:findEnd] mutableCopy];
+                if (!outerChildren)
+                        return nil;
+                
+                [outerChildren insertObject:element atIndex:0];
+                
+                element = [MMElement new];
+                element.type     = !isEm ? MMElementTypeEm : MMElementTypeStrong;
+                element.range    = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
+                element.children = outerChildren;
+        }
     
     return element;
 }

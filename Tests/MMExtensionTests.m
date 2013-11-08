@@ -129,6 +129,76 @@
     );
 }
 
+- (void)testEmNextToPunctuation
+{
+        MMAssertExtendedMarkdownEqualsHTML(
+                MMMarkdownExtensionsUnderscoresInWords,
+                @"Well that's true--_except_ you're a liar!",
+                @"<p>Well that's true--<em>except</em> you're a liar!</p>"
+        );
+        
+        MMAssertExtendedMarkdownEqualsHTML(
+                MMMarkdownExtensionsUnderscoresInWords,
+                @"This is an interesting set (_i.e._ it's very expensive!).",
+                @"<p>This is an interesting set (<em>i.e.</em> it's very expensive!).</p>"
+        );
+        
+        MMAssertExtendedMarkdownEqualsHTML(
+                MMMarkdownExtensionsUnderscoresInWords,
+                @"(_How does it work?!_)",
+                @"<p>(<em>How does it work?!</em>)</p>"
+        );
+}
+
+- (void)testStrongNextToPunctuation
+{
+        MMAssertExtendedMarkdownEqualsHTML(
+                MMMarkdownExtensionsUnderscoresInWords,
+                @"Well that's true--__except__ you're a liar!",
+                @"<p>Well that's true--<strong>except</strong> you're a liar!</p>"
+        );
+        
+        MMAssertExtendedMarkdownEqualsHTML(
+                MMMarkdownExtensionsUnderscoresInWords,
+                @"This is an interesting set (__i.e.__ it's very expensive!).",
+                @"<p>This is an interesting set (<strong>i.e.</strong> it's very expensive!).</p>"
+        );
+        
+        MMAssertExtendedMarkdownEqualsHTML(
+                MMMarkdownExtensionsUnderscoresInWords,
+                @"(__How does it work?!__)",
+                @"<p>(<strong>How does it work?!</strong>)</p>"
+        );
+}
+
+- (void)testStrongEm
+{
+    MMAssertExtendedMarkdownEqualsHTML(
+        MMMarkdownExtensionsUnderscoresInWords,
+        @"___test___",
+        @"<p><strong><em>test</em></strong></p>"
+    );
+}
+
+- (void)testEmInsideStrong
+{
+    MMAssertExtendedMarkdownEqualsHTML(
+        MMMarkdownExtensionsUnderscoresInWords,
+        @"___test_ test__",
+        @"<p><strong><em>test</em> test</strong></p>"
+    );
+}
+
+- (void)testStrongInsideEm
+{
+    MMAssertExtendedMarkdownEqualsHTML(
+        MMMarkdownExtensionsUnderscoresInWords,
+        @"___test__ test_",
+        @"<p><em><strong>test</strong> test</em></p>"
+    );
+}
+
+
 //==================================================================================================
 #pragma mark -
 #pragma mark MMMarkdownExtensionsAutolinkedURLs
@@ -239,70 +309,70 @@
 
 - (void)testHardNewlinesWithStandardMarkdown
 {
-	MMAssertMarkdownEqualsHTML(
-	    @"A\nB\nC",
-		@"<p>A\nB\nC</p>"
-	);
+        MMAssertMarkdownEqualsHTML(
+            @"A\nB\nC",
+                @"<p>A\nB\nC</p>"
+        );
 }
 
 - (void)testHardNewlines
 {
-	MMAssertExtendedMarkdownEqualsHTML(
-		MMMarkdownExtensionsHardNewlines,
-	    @"A\nB\nC",
-		@"<p>A<br />\nB<br />\nC</p>"
-	);
+        MMAssertExtendedMarkdownEqualsHTML(
+                MMMarkdownExtensionsHardNewlines,
+            @"A\nB\nC",
+                @"<p>A<br />\nB<br />\nC</p>"
+        );
 }
 
 - (void)testHardNewlinesWithCarriageReturns
 {
-	MMAssertExtendedMarkdownEqualsHTML(
-		MMMarkdownExtensionsHardNewlines,
-	    @"A\rB\rC",
-		@"<p>A<br />\nB<br />\nC</p>"
-	);
+        MMAssertExtendedMarkdownEqualsHTML(
+                MMMarkdownExtensionsHardNewlines,
+            @"A\rB\rC",
+                @"<p>A<br />\nB<br />\nC</p>"
+        );
 }
 
 - (void)testHardNewlinesWithCarriageReturnsAndNewlines
 {
-	MMAssertExtendedMarkdownEqualsHTML(
-		MMMarkdownExtensionsHardNewlines,
-	    @"A\r\nB\r\nC",
-		@"<p>A<br />\nB<br />\nC</p>"
-	);
+        MMAssertExtendedMarkdownEqualsHTML(
+                MMMarkdownExtensionsHardNewlines,
+            @"A\r\nB\r\nC",
+                @"<p>A<br />\nB<br />\nC</p>"
+        );
 }
 
 - (void)testHardNewlinesWithTwoSpaces
 {
-	MMAssertExtendedMarkdownEqualsHTML(
-		MMMarkdownExtensionsHardNewlines,
-	    @"A  \nB",
-		@"<p>A <br />\n<br />\nB</p>"
-	);
+        MMAssertExtendedMarkdownEqualsHTML(
+                MMMarkdownExtensionsHardNewlines,
+            @"A  \nB",
+                @"<p>A <br />\n<br />\nB</p>"
+        );
 }
 
 - (void)testHardNewlinesInLists
 {
-	MMAssertExtendedMarkdownEqualsHTML(
-		MMMarkdownExtensionsHardNewlines,
-	    @"* A\nB\nC\n* D\nE\nF",
-		@"<ul><li>A\nB\nC</li><li>D\nE\nF</li></ul>"
-	);
-	
-	MMAssertExtendedMarkdownEqualsHTML(
-		MMMarkdownExtensionsHardNewlines,
-	    @"* A\nB\nC\n\n* D\nE\nF",
-		@"<ul><li><p>A<br />\nB<br />\nC</p></li><li><p>D<br />\nE<br />\nF</p></li></ul>"
-	);
+        MMAssertExtendedMarkdownEqualsHTML(
+                MMMarkdownExtensionsHardNewlines,
+            @"* A\nB\nC\n* D\nE\nF",
+                @"<ul><li>A\nB\nC</li><li>D\nE\nF</li></ul>"
+        );
+        
+        MMAssertExtendedMarkdownEqualsHTML(
+                MMMarkdownExtensionsHardNewlines,
+            @"* A\nB\nC\n\n* D\nE\nF",
+                @"<ul><li><p>A<br />\nB<br />\nC</p></li><li><p>D<br />\nE<br />\nF</p></li></ul>"
+        );
 }
 
 - (void)testHardNewlinesInBlockquote
 {
-	MMAssertExtendedMarkdownEqualsHTML(
-		MMMarkdownExtensionsHardNewlines,
-	    @"> A\n> B\n> C",
-		@"<blockquote><p>A<br />\nB<br />\nC</p></blockquote>"
-	);
+        MMAssertExtendedMarkdownEqualsHTML(
+                MMMarkdownExtensionsHardNewlines,
+            @"> A\n> B\n> C",
+                @"<blockquote><p>A<br />\nB<br />\nC</p></blockquote>"
+        );
 }
 
 
