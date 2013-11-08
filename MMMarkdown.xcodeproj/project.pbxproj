@@ -7,11 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BE0AC4AC182D44BB0055E514 /* MMMarkdown.h in Copy Public Headers */ = {isa = PBXBuildFile; fileRef = BE813DE214F893EB00EC9469 /* MMMarkdown.h */; };
+		BE0AC4AE182D45DC0055E514 /* MMMarkdown.h in Copy Public Headers */ = {isa = PBXBuildFile; fileRef = BE813DE214F893EB00EC9469 /* MMMarkdown.h */; };
 		BE1DB5D51514184000B26092 /* MMSpanTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BE1DB5D41514184000B26092 /* MMSpanTests.m */; };
 		BE1DB5DA15143F4200B26092 /* MMBlockTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BE1DB5D915143F4200B26092 /* MMBlockTests.m */; };
 		BE1DB5DD1515033000B26092 /* MMLinkTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BE1DB5DC1515032F00B26092 /* MMLinkTests.m */; };
-		BE6CA530158179670083887C /* MMHTMLParser.h in Headers */ = {isa = PBXBuildFile; fileRef = BE6CA52E158179670083887C /* MMHTMLParser.h */; };
-		BE6CA531158179670083887C /* MMHTMLParser.h in Headers */ = {isa = PBXBuildFile; fileRef = BE6CA52E158179670083887C /* MMHTMLParser.h */; };
 		BE6CA532158179670083887C /* MMHTMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = BE6CA52F158179670083887C /* MMHTMLParser.m */; };
 		BE6CA533158179670083887C /* MMHTMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = BE6CA52F158179670083887C /* MMHTMLParser.m */; };
 		BE813DE414F893EB00EC9469 /* MMMarkdown.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813DE314F893EB00EC9469 /* MMMarkdown.m */; };
@@ -24,32 +24,19 @@
 		BE813E1814F92B6200EC9469 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E1714F92B6100EC9469 /* main.m */; };
 		BE813E2014F92BF600EC9469 /* libMMMarkdown-Mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE813DD614F893EB00EC9469 /* libMMMarkdown-Mac.a */; };
 		BE813E7114F941AD00EC9469 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE813DDE14F893EB00EC9469 /* Foundation.framework */; };
-		BE813E7414F959BC00EC9469 /* MMElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BE813E7214F959BC00EC9469 /* MMElement.h */; };
-		BE813E7514F959BC00EC9469 /* MMElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BE813E7214F959BC00EC9469 /* MMElement.h */; };
 		BE813E7614F959BC00EC9469 /* MMElement.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E7314F959BC00EC9469 /* MMElement.m */; };
 		BE813E7714F959BC00EC9469 /* MMElement.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E7314F959BC00EC9469 /* MMElement.m */; };
-		BE813E7A14F95B2A00EC9469 /* MMParser.h in Headers */ = {isa = PBXBuildFile; fileRef = BE813E7814F95B2A00EC9469 /* MMParser.h */; };
-		BE813E7B14F95B2A00EC9469 /* MMParser.h in Headers */ = {isa = PBXBuildFile; fileRef = BE813E7814F95B2A00EC9469 /* MMParser.h */; };
 		BE813E7C14F95B2A00EC9469 /* MMParser.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E7914F95B2A00EC9469 /* MMParser.m */; };
 		BE813E7D14F95B2A00EC9469 /* MMParser.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E7914F95B2A00EC9469 /* MMParser.m */; };
-		BE813E8014F95FD400EC9469 /* MMDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = BE813E7E14F95FD300EC9469 /* MMDocument.h */; };
-		BE813E8114F95FD400EC9469 /* MMDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = BE813E7E14F95FD300EC9469 /* MMDocument.h */; };
 		BE813E8214F95FD400EC9469 /* MMDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E7F14F95FD300EC9469 /* MMDocument.m */; };
 		BE813E8314F95FD400EC9469 /* MMDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E7F14F95FD300EC9469 /* MMDocument.m */; };
-		BE813E8614F9602500EC9469 /* MMGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = BE813E8414F9602400EC9469 /* MMGenerator.h */; };
-		BE813E8714F9602500EC9469 /* MMGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = BE813E8414F9602400EC9469 /* MMGenerator.h */; };
 		BE813E8814F9602500EC9469 /* MMGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E8514F9602500EC9469 /* MMGenerator.m */; };
 		BE813E8914F9602500EC9469 /* MMGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E8514F9602500EC9469 /* MMGenerator.m */; };
-		BE813E8C14F9658600EC9469 /* MMDocument_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = BE813E8A14F9658600EC9469 /* MMDocument_Private.h */; };
-		BE813E8D14F9658600EC9469 /* MMDocument_Private.h in Headers */ = {isa = PBXBuildFile; fileRef = BE813E8A14F9658600EC9469 /* MMDocument_Private.h */; };
-		BE813E9214FACF0D00EC9469 /* MMScanner.h in Headers */ = {isa = PBXBuildFile; fileRef = BE813E9014FACF0C00EC9469 /* MMScanner.h */; };
-		BE813E9314FACF0D00EC9469 /* MMScanner.h in Headers */ = {isa = PBXBuildFile; fileRef = BE813E9014FACF0C00EC9469 /* MMScanner.h */; };
 		BE813E9414FACF0D00EC9469 /* MMScanner.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E9114FACF0C00EC9469 /* MMScanner.m */; };
 		BE813E9514FACF0D00EC9469 /* MMScanner.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E9114FACF0C00EC9469 /* MMScanner.m */; };
 		BE813E981502E78900EC9469 /* MMTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E971502E78700EC9469 /* MMTestCase.m */; };
 		BE813E9B15031B4000EC9469 /* MMListTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E9A15031B4000EC9469 /* MMListTests.m */; };
 		BE813E9E1503C14300EC9469 /* MMEscapingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E9D1503C14200EC9469 /* MMEscapingTests.m */; };
-		BEA3FB6217B1852200E9D18C /* MMMarkdown.h in Headers */ = {isa = PBXBuildFile; fileRef = BE813DE214F893EB00EC9469 /* MMMarkdown.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BEAAEB431549DD1700EF1EA0 /* MMImageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BEAAEB421549DD1700EF1EA0 /* MMImageTests.m */; };
 		BEAAEB62154A4A1D00EF1EA0 /* MMErrorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BEAAEB5E154A49B500EF1EA0 /* MMErrorTests.m */; };
 		BEAAEBE31554E8A400EF1EA0 /* Amps and angle encoding.html in CopyFiles */ = {isa = PBXBuildFile; fileRef = BE813E2414F93D8700EC9469 /* Amps and angle encoding.html */; };
@@ -127,8 +114,6 @@
 		BEAAEC2E1554E93800EF1EA0 /* MMPHPMarkdownTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BEAAEC2D1554E93700EF1EA0 /* MMPHPMarkdownTests.m */; };
 		BEABD17117B2BA3700511479 /* MMExtensionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BEABD17017B2BA3700511479 /* MMExtensionTests.m */; };
 		BEDDD54A1544E42200EA7D65 /* MMHTMLTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BEDDD5491544E42200EA7D65 /* MMHTMLTests.m */; };
-		BEF3421C150CEA6D00BFA0E2 /* MMSpanParser.h in Headers */ = {isa = PBXBuildFile; fileRef = BEF3421A150CEA6D00BFA0E2 /* MMSpanParser.h */; };
-		BEF3421D150CEA6D00BFA0E2 /* MMSpanParser.h in Headers */ = {isa = PBXBuildFile; fileRef = BEF3421A150CEA6D00BFA0E2 /* MMSpanParser.h */; };
 		BEF3421E150CEA6D00BFA0E2 /* MMSpanParser.m in Sources */ = {isa = PBXBuildFile; fileRef = BEF3421B150CEA6D00BFA0E2 /* MMSpanParser.m */; };
 		BEF3421F150CEA6D00BFA0E2 /* MMSpanParser.m in Sources */ = {isa = PBXBuildFile; fileRef = BEF3421B150CEA6D00BFA0E2 /* MMSpanParser.m */; };
 /* End PBXBuildFile section */
@@ -144,6 +129,28 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		BE0AC4AB182D448D0055E514 /* Copy Public Headers */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "MMMarkdown-Mac/public/MMMarkdown";
+			dstSubfolderSpec = 16;
+			files = (
+				BE0AC4AC182D44BB0055E514 /* MMMarkdown.h in Copy Public Headers */,
+			);
+			name = "Copy Public Headers";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BE0AC4AD182D45BF0055E514 /* Copy Public Headers */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "MMMarkdown-iOS/public/MMMarkdown";
+			dstSubfolderSpec = 16;
+			files = (
+				BE0AC4AE182D45DC0055E514 /* MMMarkdown.h in Copy Public Headers */,
+			);
+			name = "Copy Public Headers";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BE813E1114F92B6100EC9469 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -410,6 +417,7 @@
 				BE813DD714F893EB00EC9469 /* Products */,
 			);
 			sourceTree = "<group>";
+			usesTabs = 0;
 		};
 		BE813DD714F893EB00EC9469 /* Products */ = {
 			isa = PBXGroup;
@@ -587,40 +595,6 @@
 		};
 /* End PBXGroup section */
 
-/* Begin PBXHeadersBuildPhase section */
-		BE813DD414F893EB00EC9469 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				BEA3FB6217B1852200E9D18C /* MMMarkdown.h in Headers */,
-				BE813E7414F959BC00EC9469 /* MMElement.h in Headers */,
-				BE813E7A14F95B2A00EC9469 /* MMParser.h in Headers */,
-				BE813E8014F95FD400EC9469 /* MMDocument.h in Headers */,
-				BE813E8614F9602500EC9469 /* MMGenerator.h in Headers */,
-				BE813E8C14F9658600EC9469 /* MMDocument_Private.h in Headers */,
-				BE813E9214FACF0D00EC9469 /* MMScanner.h in Headers */,
-				BEF3421C150CEA6D00BFA0E2 /* MMSpanParser.h in Headers */,
-				BE6CA530158179670083887C /* MMHTMLParser.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		BE813E0A14F8961D00EC9469 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				BE813E7514F959BC00EC9469 /* MMElement.h in Headers */,
-				BE813E7B14F95B2A00EC9469 /* MMParser.h in Headers */,
-				BE813E8114F95FD400EC9469 /* MMDocument.h in Headers */,
-				BE813E8714F9602500EC9469 /* MMGenerator.h in Headers */,
-				BE813E8D14F9658600EC9469 /* MMDocument_Private.h in Headers */,
-				BE813E9314FACF0D00EC9469 /* MMScanner.h in Headers */,
-				BEF3421D150CEA6D00BFA0E2 /* MMSpanParser.h in Headers */,
-				BE6CA531158179670083887C /* MMHTMLParser.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXHeadersBuildPhase section */
-
 /* Begin PBXNativeTarget section */
 		BE813DD514F893EB00EC9469 /* MMMarkdown-Mac */ = {
 			isa = PBXNativeTarget;
@@ -628,7 +602,7 @@
 			buildPhases = (
 				BE813DD214F893EB00EC9469 /* Sources */,
 				BE813DD314F893EB00EC9469 /* Frameworks */,
-				BE813DD414F893EB00EC9469 /* Headers */,
+				BE0AC4AB182D448D0055E514 /* Copy Public Headers */,
 			);
 			buildRules = (
 			);
@@ -666,7 +640,7 @@
 			buildPhases = (
 				BE813E0714F8961D00EC9469 /* Sources */,
 				BE813E0914F8961D00EC9469 /* Frameworks */,
-				BE813E0A14F8961D00EC9469 /* Headers */,
+				BE0AC4AD182D45BF0055E514 /* Copy Public Headers */,
 			);
 			buildRules = (
 			);
@@ -859,8 +833,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = YES;
-				PRIVATE_HEADERS_FOLDER_PATH = "$(PRODUCT_NAME)/private/MMMarkdown";
-				PUBLIC_HEADERS_FOLDER_PATH = "$(PRODUCT_NAME)/public/MMMarkdown";
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -888,8 +860,6 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
-				PRIVATE_HEADERS_FOLDER_PATH = "$(PRODUCT_NAME)/private/MMMarkdown";
-				PUBLIC_HEADERS_FOLDER_PATH = "$(PRODUCT_NAME)/public/MMMarkdown";
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -901,6 +871,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Source/MMMarkdown-Prefix.pch";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -911,6 +882,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Source/MMMarkdown-Prefix.pch";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};

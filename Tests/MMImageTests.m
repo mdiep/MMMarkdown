@@ -48,6 +48,14 @@
                                @"<p><img src=\"/image.jpg\" alt=\"Alt text\" title=\"Title Here\" /></p>");
 }
 
+- (void)testInlineImageWithNoAltText
+{
+    MMAssertMarkdownEqualsHTML(
+        @"![](http://cl.ly/image/3I340R25053q/content)",
+        @"<p><img src='http://cl.ly/image/3I340R25053q/content' alt='' /></p>"
+    );
+}
+
 
 //==================================================================================================
 #pragma mark -
