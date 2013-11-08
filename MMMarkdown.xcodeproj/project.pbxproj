@@ -415,6 +415,7 @@
 				BE813DD714F893EB00EC9469 /* Products */,
 			);
 			sourceTree = "<group>";
+			usesTabs = 0;
 		};
 		BE813DD714F893EB00EC9469 /* Products */ = {
 			isa = PBXGroup;
