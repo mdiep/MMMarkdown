@@ -150,11 +150,47 @@
 - (void)testEmInsideStrong
 {
     MMAssertMarkdownEqualsHTML(@"***test* test**", @"<p><strong><em>test</em> test</strong></p>");
+    MMAssertMarkdownEqualsHTML(@"**test *test***", @"<p><strong>test <em>test</em></strong></p>");
+    MMAssertMarkdownEqualsHTML(@"***test* *test* *test***", @"<p><strong><em>test</em> <em>test</em> <em>test</em></strong></p>");
 }
 
 - (void)testStrongInsideEm
 {
     MMAssertMarkdownEqualsHTML(@"***test** test*", @"<p><em><strong>test</strong> test</em></p>");
+    MMAssertMarkdownEqualsHTML(@"*test **test***", @"<p><em>test <strong>test</strong></em></p>");
+    MMAssertMarkdownEqualsHTML(@"***test** **test** **test***", @"<p><em><strong>test</strong> <strong>test</strong> <strong>test</strong></em></p>");
+}
+
+- (void)testEmInsideEm
+{
+    MMAssertMarkdownEqualsHTML(
+        @"*A *B* C*",
+        @"<p><em>A <em>B</em> C</em></p>"
+    );
+    MMAssertMarkdownEqualsHTML(
+        @"*A _B_ C*",
+        @"<p><em>A <em>B</em> C</em></p>"
+    );
+    MMAssertMarkdownEqualsHTML(
+        @"_A *B* C_",
+        @"<p><em>A <em>B</em> C</em></p>"
+    );
+}
+
+- (void)testStrongInsideStrong
+{
+    MMAssertMarkdownEqualsHTML(
+        @"**A **B** C**",
+        @"<p><strong>A <strong>B</strong> C</strong></p>"
+    );
+    MMAssertMarkdownEqualsHTML(
+        @"**A __B__ C**",
+        @"<p><strong>A <strong>B</strong> C</strong></p>"
+    );
+    MMAssertMarkdownEqualsHTML(
+        @"__A **B** C__",
+        @"<p><strong>A <strong>B</strong> C</strong></p>"
+    );
 }
 
 

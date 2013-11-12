@@ -532,11 +532,11 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     if (numberOfChars > 3)
         return nil;
     
-    NSCharacterSet  *whitespaceSet = [NSCharacterSet whitespaceCharacterSet];
+    NSCharacterSet *whitespaceSet = NSCharacterSet.whitespaceCharacterSet;
     __block NSUInteger remainingChars = numberOfChars;
     BOOL (^findEnd)(void) = ^{
         // Can't be at the beginning of the line
-        if ([scanner atBeginningOfLine])
+        if (scanner.atBeginningOfLine)
             return NO;
         
         // Must follow the end of a word
@@ -545,7 +545,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
         
         // Must have 1-3 *s or _s
         NSUInteger numberOfEndChars = 0;
-        while (scanner.nextCharacter == character)
+        while (scanner.nextCharacter == character && numberOfEndChars < remainingChars)
         {
             numberOfEndChars++;
             [scanner advance];
@@ -557,12 +557,10 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
         if (self.extensions & MMMarkdownExtensionsUnderscoresInWords)
         {
             // GFM doesn't italicize parts of words
-            unichar prevChar = scanner.previousCharacter;
             unichar nextChar = scanner.nextCharacter;
             
-            BOOL isWordChar    = [alphanumericSet characterIsMember:nextChar];
-            BOOL isAnotherChar = prevChar == nextChar;
-            if (isWordChar || isAnotherChar)
+            BOOL isWordChar = [alphanumericSet characterIsMember:nextChar];
+            if (isWordChar)
                 return NO;
         }
         

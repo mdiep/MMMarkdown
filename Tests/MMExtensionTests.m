@@ -187,6 +187,18 @@
         @"___test_ test__",
         @"<p><strong><em>test</em> test</strong></p>"
     );
+    
+    MMAssertExtendedMarkdownEqualsHTML(
+        MMMarkdownExtensionsUnderscoresInWords,
+        @"__test _test___",
+        @"<p><strong>test <em>test</em></strong></p>"
+    );
+    
+    MMAssertExtendedMarkdownEqualsHTML(
+        MMMarkdownExtensionsUnderscoresInWords,
+        @"___test_ _test_ _test___",
+        @"<p><strong><em>test</em> <em>test</em> <em>test</em></strong></p>"
+    );
 }
 
 - (void)testStrongInsideEm
@@ -195,6 +207,18 @@
         MMMarkdownExtensionsUnderscoresInWords,
         @"___test__ test_",
         @"<p><em><strong>test</strong> test</em></p>"
+    );
+    
+    MMAssertExtendedMarkdownEqualsHTML(
+        MMMarkdownExtensionsUnderscoresInWords,
+        @"_test __test___",
+        @"<p><em>test <strong>test</strong></em></p>"
+    );
+    
+    MMAssertExtendedMarkdownEqualsHTML(
+        MMMarkdownExtensionsUnderscoresInWords,
+        @"___test__ __test__ __test___",
+        @"<p><em><strong>test</strong> <strong>test</strong> <strong>test</strong></em></p>"
     );
 }
 
