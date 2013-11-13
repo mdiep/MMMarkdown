@@ -310,6 +310,15 @@
     );
 }
 
+- (void)testURLAutolinkingWithWWWButNoDomain
+{
+    MMAssertExtendedMarkdownEqualsHTML(
+        MMMarkdownExtensionsAutolinkedURLs,
+        @"Put www. in front",
+        @"<p>Put www. in front</p>"
+    );
+}
+
 - (void)testURLAutolinkingWithParentheses
 {
     MMAssertExtendedMarkdownEqualsHTML(
