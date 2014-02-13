@@ -8,7 +8,7 @@ Unlike other Markdown libraries, MMMarkdown implements an actual parser. It is n
 ## API
 Using MMMarkdown is simple. The main API is a single class method:
 
-    #import "MMMarkdown.h"
+    #import <MMMarkdown/MMMarkdown.h>
     
     NSError  *error;
     NSString *markdown   = @"# Example\nWhat a library!";
@@ -23,23 +23,13 @@ While the development branch (`master`) includes the headers and libraries from 
 ## Setup
 Adding MMMarkdown to your Mac or iOS project is easy.
 
-1. Copy `include/MMMarkdown.h` and either `lib/libMMMarkdown-Mac.a` or `lib/libMMMarkdown-iOS.a` into your project directory.
+0. Add MMMarkdown as a git submodule. (`git submodule add https://github.com/mdiep/MMMarkdown <path>`)
 
-    It is probably best to copy these into a folder specifically for files from MMMarkdown. This makes updating in the future easy. Consider placing them under `Frameworks/MMMarkdown`.
+0. Add `MMMarkdown.xcodeproj` to your project or workspace
 
-2. Add the files you just copied into your Xcode project.
+0. Add `libMMMarkdown-Mac.a` or `libMMMarkdown-iOS.a` to the "Link Binary with Libraries" section of your project's "Build Phases".
 
-    If you created a directory for those files, you can add the directory itself. It is probably best to place the group that Xcode creates for this directory under the Frameworks group.
-
-You can now use MMMarkdown within your project!
-
-If you'd rather, you can embed the MMMarkdown project and compile it from source in your project.
-
-1. Add MMMarkdown as a git submodule.
-
-2. Add `libMMMarkdown-Mac.a` or `libMMMarkdown-iOS.a` to the "Link Binary with Libraries" section of your project's "Build Phases".
-
-3. Add `$(CONFIGURATION_BUILD_DIR)/MMMarkdown-Mac/public/` or `$(CONFIGURATION_BUILD_DIR)/MMMarkdown-iOS/public/` to the "Header Search Paths" in your project's "Build Settings".
+0. Add `$(CONFIGURATION_BUILD_DIR)/MMMarkdown-Mac/public/` or `$(CONFIGURATION_BUILD_DIR)/MMMarkdown-iOS/public/` to the "Header Search Paths" in your project's "Build Settings".
 
 ## License
 MMMarkdown is available under the [MIT License][].
