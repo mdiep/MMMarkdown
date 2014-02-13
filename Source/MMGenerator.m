@@ -65,11 +65,11 @@ static NSString *__obfuscatedEmailAddress(NSString *anAddress)
         if (character == '@')
         {
             // Make sure that the @ gets encoded
-            encoder = [encoders objectAtIndex:rand() % 2];
+            encoder = [encoders objectAtIndex:arc4random_uniform(2)];
         }
         else
         {
-            int r = rand() % 100;
+            int r = arc4random_uniform(100);
             encoder = [encoders objectAtIndex:(r >= 90) ? 2 : (r >= 45) ? 1 : 0];
         }
         [result appendString:encoder(character)];
