@@ -1,5 +1,20 @@
 # MMMarkdown Release Notes
 
+## 0.3
+This release adds an HTML parser, which is needed to properly handle HTML inside Markdown. It also removes the precompiled libraries in favor of including the project.
+
+Other changes include:
+
+ - Support newer iOS architectures
+ - Fix a crash when passed an empty string
+ - Fix code spans with multiple backticks
+ - Fix code spans that contain newlines
+ - Fix handling of images with no alt text
+ - Annotate that the markdown can't be nil
+ - Fix behavior of archive builds
+ - Update Xcode project settings
+ - Modernize the code
+
 ## 0.2.3
 Fix the iOS deployment target and static library to support iOS 5.0.
 

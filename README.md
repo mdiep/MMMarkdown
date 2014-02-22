@@ -37,9 +37,6 @@ MMMarkdown is available under the [MIT License][].
 [MIT License]: http://opensource.org/licenses/mit-license.php
 
 ## Roadmap
-### 0.3 - Full HTML Support
-Because Markdown can contain raw HTML, correctly parsing Markdown requires an HTML parser; otherwise, the HTML may not be passed through correctly. This release will add an HTML parser.
-
 ### 0.4 - Performance
 This release will focus on the overall performance of MMMarkdown. It should be fast and require little memory.
 
