@@ -28,6 +28,12 @@
 
 @interface MMMarkdown : NSObject
 
-+ (NSString *) HTMLStringWithMarkdown:(NSString *)string error:(__autoreleasing NSError **)error;
+/*! Converts a Markdown string to HTML.
+ *
+ * @param string A Markdown string. Must not be nil.
+ * @param error  Out parameter used if an error occurs while parsing the Markdown. May be NULL.
+ * @return An HTML string.
+ */
++ (NSString *)HTMLStringWithMarkdown:(NSString *)string error:(__autoreleasing NSError **)error __attribute__((nonnull(1)));
 
 @end

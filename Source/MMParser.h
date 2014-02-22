@@ -30,6 +30,6 @@
 
 @interface MMParser : NSObject
 
-- (MMDocument *) parseMarkdown:(NSString *)markdown error:(__autoreleasing NSError **)error;
+- (MMDocument *)parseMarkdown:(NSString *)markdown error:(__autoreleasing NSError **)error;
 
 @end

@@ -37,9 +37,83 @@
 #pragma mark Inline HTML Tests
 //==================================================================================================
 
-- (void) testInlineHTML
+- (void)testInlineHTML
 {
     MMAssertMarkdownEqualsHTML(@"A <i>test</i> with HTML.", @"<p>A <i>test</i> with HTML.</p>");
+}
+
+- (void)testInlineHTMLWithSpansInAttribute
+{
+    MMAssertMarkdownEqualsHTML(@"<a href=\"#\" title=\"*blah*\">foo</a>",
+                               @"<p><a href=\"#\" title=\"*blah*\">foo</a></p>");
+}
+
+- (void)testInlineHTMLWithSpansInUnquotedAttribute
+{
+    MMAssertMarkdownEqualsString(@"<a href=\"#\" title=*blah*>foo</a>",
+                                 @"<p><a href=\"#\" title=*blah*>foo</a></p>\n");
+}
+
+- (void)testInlineHTMLWithEmptyAttribute
+{
+    MMAssertMarkdownEqualsString(@"<input type=\"checkbox\" name=\"*foo*\" checked />",
+                                 @"<p><input type=\"checkbox\" name=\"*foo*\" checked /></p>\n");
+    MMAssertMarkdownEqualsString(@"<input type=\"checkbox\" checked name=\"*foo*\"/>",
+                                 @"<p><input type=\"checkbox\" checked name=\"*foo*\"/></p>\n");
+}
+
+- (void)testInlineHTMLWithSpacesInAttribute
+{
+    MMAssertMarkdownEqualsHTML(@"<a href  =  \"#\" title = '*blah*'>foo</a>",
+                               @"<p><a href  =  \"#\" title = '*blah*'>foo</a></p>");
+}
+
+- (void)testInlineHTMLWithNewlineBetweenAttributes
+{
+    MMAssertMarkdownEqualsHTML(@"<a href=\"#\"\n   title=\"*blah*\">foo</a>",
+                               @"<p><a href=\"#\"\n   title=\"*blah*\">foo</a></p>");
+}
+
+- (void)testInlineHTMLWithAngleInAttribute
+{
+    MMAssertMarkdownEqualsHTML(@"<a href=\"#\" title=\">\">foo</a>",
+                               @"<p><a href=\"#\" title=\">\">foo</a></p>");
+}
+
+
+//==================================================================================================
+#pragma mark -
+#pragma mark HTML Comment Tests
+//==================================================================================================
+
+- (void)testHTMLComment
+{
+    MMAssertMarkdownEqualsString(@"<!-- **Test** -->", @"<!-- **Test** -->");
+    MMAssertMarkdownEqualsString(@"<!-- **Test**\n\n -->", @"<!-- **Test**\n\n -->");
+}
+
+- (void)testHTMLCommentAtEndOfParagraph
+{
+    MMAssertMarkdownEqualsString(@"1 <!-- **A Test**\n\n-->",
+                                 @"<p>1 <!-- **A Test**\n\n--></p>\n");
+}
+
+- (void)testHTMLCommentInParagraph
+{
+    MMAssertMarkdownEqualsString(@"A <!-- **A Test** --> B",
+                                 @"<p>A <!-- **A Test** --> B</p>\n");
+}
+
+- (void)testHTMLCommentAtEndOfListItem
+{
+    MMAssertMarkdownEqualsString(@"1. <!-- **A Test**\n\n-->",
+                                 @"<ol>\n<li><!-- **A Test**\n\n--></li>\n</ol>\n");
+}
+
+- (void)testHTMLCommentInListItem
+{
+    MMAssertMarkdownEqualsString(@"1. A <!-- **A Test** --> B",
+                                 @"<ol>\n<li>A <!-- **A Test** --> B</li>\n</ol>\n");
 }
 
 
@@ -48,7 +122,7 @@
 #pragma mark Block HTML Tests
 //==================================================================================================
 
-- (void) testHTML_basic
+- (void)testBlockHTML_basic
 {
     NSString *markdown = @"A paragraph.\n"
                           "\n"
@@ -67,7 +141,7 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-- (void) testHTML_withSingleQuotedAttribute
+- (void)testBlockHTML_withSingleQuotedAttribute
 {
     NSString *markdown = @"A paragraph.\n"
                           "\n"
@@ -86,7 +160,7 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-- (void) testHTML_withDoubleQuotedAttribute
+- (void)testBlockHTML_withDoubleQuotedAttribute
 {
     NSString *markdown = @"A paragraph.\n"
                           "\n"
@@ -103,6 +177,57 @@
                       "\n"
                       "<p>Another paragraph.</p>";
     MMAssertMarkdownEqualsHTML(markdown, html);
+}
+
+- (void)testBlockHTMLWithInsTag
+{
+    MMAssertMarkdownEqualsHTML(@"<ins>\nSome text.\n</ins>", @"<ins>\nSome text.\n</ins>");
+}
+
+- (void)testBlockHTMLWithDelTag
+{
+    MMAssertMarkdownEqualsHTML(@"<del>\nSome text.\n</del>", @"<del>\nSome text.\n</del>");
+}
+
+- (void)testBlockHTMLOnASingleLine
+{
+    MMAssertMarkdownEqualsHTML(@"<div>A test.</div>", @"<div>A test.</div>");
+}
+
+- (void)testBlockHTMLBlankLineBetweenCloseTags
+{
+    // Primitive HTML handling might end the HTML block after the first div, since it's a close tag
+    // followed by a blank line. But the block should extend to the end of the opening div.
+    NSString *html = @"<div>\n"
+                      "<div>\n"
+                      "A\n"
+                      "</div>\n"
+                      "\n"
+                      "</div>\n";
+    MMAssertMarkdownEqualsHTML(html, html);
+}
+
+- (void)testBlockHTMLWithUnclosedTag
+{
+    NSString *markdown = @"<div>\n"
+                          "<div>\n"
+                          "A\n"
+                          "</div>\n"
+                          "\n"
+                          "div\n";
+    NSString *string = @"<div>\n"
+                        "<div>\n"
+                        "A\n"
+                        "</div>\n"
+                        "<p>div</p>\n";
+    MMAssertMarkdownEqualsString(markdown, string);
+}
+
+- (void)testBlockHTMLCommentWithSpans
+{
+    // An SGML comment starts and ends with "--", so you can't have an odd number of dashes before
+    // the closing angle bracket.
+    MMAssertMarkdownEqualsHTML(@"<!------> *hello*-->", @"<!------> *hello*-->");
 }
 
 

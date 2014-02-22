@@ -31,7 +31,7 @@
 @property (strong, nonatomic, readonly) NSString *markdown;
 @property (copy,   nonatomic, readonly) NSArray  *elements;
 
-+ (id) documentWithMarkdown:(NSString *)markdown;
-- (id) initWithMarkdown:(NSString *)markdown;
++ (id)documentWithMarkdown:(NSString *)markdown;
+- (id)initWithMarkdown:(NSString *)markdown;
 
 @end

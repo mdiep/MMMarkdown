@@ -32,6 +32,6 @@
 
 @property (copy, nonatomic) NSArray *elements;
 
-- (void) addElement:(MMElement *)anElement;
+- (void)addElement:(MMElement *)anElement;
 
 @end

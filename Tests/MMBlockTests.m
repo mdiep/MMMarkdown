@@ -37,25 +37,25 @@
 #pragma mark Blockquote Tests
 //==================================================================================================
 
-- (void) testBasicBlockquote
+- (void)testBasicBlockquote
 {
     MMAssertMarkdownEqualsHTML(@"> A quotation.",
                                @"<blockquote>\n  <p>A quotation.</p>\n</blockquote>");
 }
 
-- (void) testBlockquoteWithAngleOnOnlyTheFirstLine
+- (void)testBlockquoteWithAngleOnOnlyTheFirstLine
 {
     MMAssertMarkdownEqualsHTML(@"> A quotation\nthat spans 2 lines.",
                                @"<blockquote>\n  <p>A quotation\nthat spans 2 lines.</p>\n</blockquote>");
 }
 
-- (void) testBlockquoteWithMultipleParagraphs
+- (void)testBlockquoteWithMultipleParagraphs
 {
     MMAssertMarkdownEqualsHTML(@"> A quotation.\n>\n> A long one.",
                                @"<blockquote>\n  <p>A quotation.</p>\n\n<p>A long one.</p>\n</blockquote>");
 }
 
-- (void) testBlockquoteWithOtherElements
+- (void)testBlockquoteWithOtherElements
 {
     NSString *markdown = @"> # A Header\n"
                           "> \n"
@@ -81,7 +81,7 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-- (void) testNestedBlockquote
+- (void)testNestedBlockquote
 {
     NSString *markdown = @"> A quotation.\n"
                           "> \n"
@@ -106,7 +106,7 @@
 #pragma mark Code Block Tests
 //==================================================================================================
 
-- (void) testCodeBlocks_blankLinesInBetween
+- (void)testCodeBlocks_blankLinesInBetween
 {
     NSString *markdown = @"    Some Code\n"
                           "\n"
@@ -119,7 +119,7 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-- (void) testCodeBlocks_carriageReturn
+- (void)testCodeBlocks_carriageReturn
 {
     NSString *markdown = @"    Some Code\r"
                           "\r"
@@ -132,7 +132,7 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-- (void) testCodeBlocks_carriageReturnLineFeed
+- (void)testCodeBlocks_carriageReturnLineFeed
 {
     NSString *markdown = @"    Some Code\r\n"
                           "\r\n"
@@ -145,7 +145,7 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-- (void) testCodeBlocks_blankLinesInBetween_betweenParagraphs
+- (void)testCodeBlocks_blankLinesInBetween_betweenParagraphs
 {
     NSString *markdown = @"Foo\n"
                           "\n"
@@ -170,7 +170,7 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-- (void) testCodeBlocks_withTabs
+- (void)testCodeBlocks_withTabs
 {
     // Tabs inside code blocks should be converted to spaces
     NSString *markdown = @"\t+\tSome Code\n";
@@ -180,23 +180,23 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-- (void) testCodeBlocks_withAmpersand
+- (void)testCodeBlocks_withAmpersand
 {
     MMAssertMarkdownEqualsHTML(@"    a&b", @"<pre><code>a&amp;b\n</code></pre>");
 }
 
-- (void) testCodeBlocks_withAngleBrackets
+- (void)testCodeBlocks_withAngleBrackets
 {
     MMAssertMarkdownEqualsHTML(@"    <html>", @"<pre><code>&lt;html&gt;\n</code></pre>");
 }
 
-- (void) testCodeBlocks_withTrailingSpaces
+- (void)testCodeBlocks_withTrailingSpaces
 {
     // Trailing spaces should be removed from the last line in the code block
     MMAssertMarkdownEqualsHTML(@"    A  \n    B  ", @"<pre><code>A  \nB\n</code></pre>");
 }
 
-- (void) testCodeBlocks_doNotParseSpansBeforeAmpersand
+- (void)testCodeBlocks_doNotParseSpansBeforeAmpersand
 {
     // Code blocks handle text segments on their own. But there was a bug where the text in a code
     // block would be parsed if the block extended to the end of the document.
@@ -210,12 +210,12 @@
 #pragma mark Prefixed Header Tests
 //==================================================================================================
 
-- (void) testPrefixedHeaderWithTrailingHashes
+- (void)testPrefixedHeaderWithTrailingHashes
 {
     MMAssertMarkdownEqualsHTML(@"## A # Header! #####", @"<h2>A # Header!</h2>");
 }
 
-- (void) testPrefixedHeaderImmediatelyFollowingParagraph
+- (void)testPrefixedHeaderImmediatelyFollowingParagraph
 {
     MMAssertMarkdownEqualsHTML(@"A\n# Example", @"<p>A</p>\n<h1>Example</h1>");
 }
@@ -226,19 +226,19 @@
 #pragma mark Underlined Header Tests
 //==================================================================================================
 
-- (void) testUnderlinedHeaderWithEqualsSigns
+- (void)testUnderlinedHeaderWithEqualsSigns
 {
     MMAssertMarkdownEqualsHTML(@"Foo\n=",   @"<h1>Foo</h1>");
     MMAssertMarkdownEqualsHTML(@"Foo\n===", @"<h1>Foo</h1>");
 }
 
-- (void) testUnderlinedHeaderWithDashes
+- (void)testUnderlinedHeaderWithDashes
 {
     MMAssertMarkdownEqualsHTML(@"Foo\n-",   @"<h2>Foo</h2>");
     MMAssertMarkdownEqualsHTML(@"Foo\n---", @"<h2>Foo</h2>");
 }
 
-- (void) testUnderlinedHeaderInBlockquote
+- (void)testUnderlinedHeaderInBlockquote
 {
     MMAssertMarkdownEqualsHTML(@"> A\n> -", @"<blockquote><h2>A</h2></blockquote>");
 }
@@ -249,7 +249,7 @@
 #pragma mark Paragraph Tests
 //==================================================================================================
 
-- (void) testParagraphs_hangingIndent
+- (void)testParagraphs_hangingIndent
 {
     // Tabs should be converted to spaces
     NSString *markdown = @"A Paragraph\n    Here\n";
@@ -259,7 +259,7 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-- (void) testParagraphs_withTabs
+- (void)testParagraphs_withTabs
 {
     // Tabs should be converted to spaces
     NSString *markdown = @"A\tParagraph\n\tHere\n";
@@ -269,12 +269,12 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-- (void) testParagraphs_blankLineHasSpaces
+- (void)testParagraphs_blankLineHasSpaces
 {
     MMAssertMarkdownEqualsHTML(@"A\n \nB", @"<p>A</p><p>B</p>");
 }
 
-- (void) testParapgraphImmediatelyFollowedByBlockquote
+- (void)testParapgraphImmediatelyFollowedByBlockquote
 {
     NSString *html = @"<p>A</p>\n"
                       "\n"

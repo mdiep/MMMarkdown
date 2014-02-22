@@ -79,25 +79,12 @@ static NSString * __MMStringFromElementType(MMElementType type)
     NSMutableArray *_children;
 }
 
-@synthesize range       = _range;
-@synthesize type        = _type;
-@synthesize innerRanges = _innerRanges;
-
-@synthesize level       = _level;
-@synthesize href        = _href;
-@synthesize title       = _title;
-@synthesize identifier  = _identifier;
-@synthesize stringValue = _stringValue;
-
-@synthesize parent   = _parent;
-@synthesize children = _children;
-
 //==================================================================================================
 #pragma mark -
 #pragma mark NSObject Methods
 //==================================================================================================
 
-- (id) init
+- (id)init
 {
     self = [super init];
     
@@ -110,12 +97,12 @@ static NSString * __MMStringFromElementType(MMElementType type)
     return self;
 }
 
-- (void) dealloc
+- (void)dealloc
 {
     [self.children makeObjectsPerformSelector:@selector(setParent:) withObject:nil];
 }
 
-- (NSString *) description
+- (NSString *)description
 {
     return [NSString stringWithFormat:@"<%@: %p; type=%@; range=%@>",
             NSStringFromClass([self class]), self, __MMStringFromElementType(self.type), NSStringFromRange(self.range)];
@@ -128,21 +115,21 @@ static NSString * __MMStringFromElementType(MMElementType type)
 #pragma mark Public Methods
 //==================================================================================================
 
-- (void) addInnerRange:(NSRange)aRange
+- (void)addInnerRange:(NSRange)aRange
 {
     [self willChangeValueForKey:@"innerRanges"];
     [_innerRanges addObject:[NSValue valueWithRange:aRange]];
     [self didChangeValueForKey:@"innerRanges"];
 }
 
-- (void) removeLastInnerRange
+- (void)removeLastInnerRange
 {
     [self willChangeValueForKey:@"innerRanges"];
     [_innerRanges removeLastObject];
     [self didChangeValueForKey:@"innerRanges"];
 }
 
-- (void) addChild:(MMElement *)aChild
+- (void)addChild:(MMElement *)aChild
 {
     [self willChangeValueForKey:@"children"];
     [_children addObject:aChild];
@@ -150,7 +137,7 @@ static NSString * __MMStringFromElementType(MMElementType type)
     [self didChangeValueForKey:@"children"];
 }
 
-- (void) removeChild:(MMElement *)aChild
+- (void)removeChild:(MMElement *)aChild
 {
     [self willChangeValueForKey:@"children"];
     [_children removeObjectIdenticalTo:aChild];
@@ -158,7 +145,7 @@ static NSString * __MMStringFromElementType(MMElementType type)
     [self didChangeValueForKey:@"children"];
 }
 
-- (MMElement *) removeLastChild
+- (MMElement *)removeLastChild
 {
     MMElement *child = [self.children lastObject];
     [_children removeLastObject];
@@ -171,12 +158,12 @@ static NSString * __MMStringFromElementType(MMElementType type)
 #pragma mark Public Properties
 //==================================================================================================
 
-- (void) setInnerRanges:(NSArray *)innerRanges
+- (void)setInnerRanges:(NSArray *)innerRanges
 {
     _innerRanges = [innerRanges mutableCopy];
 }
 
-- (void) setChildren:(NSArray *)children
+- (void)setChildren:(NSArray *)children
 {
     _children = [children mutableCopy];
 }

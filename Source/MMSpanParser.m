@@ -27,11 +27,14 @@
 
 
 #import "MMElement.h"
+#import "MMHTMLParser.h"
 #import "MMScanner.h"
 
 static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 
 @interface MMSpanParser ()
+@property (strong, nonatomic) MMHTMLParser *htmlParser;
+
 @property (strong, nonatomic) NSMutableArray *elements;
 @property (strong, nonatomic) NSMutableArray *openElements;
 
@@ -40,22 +43,18 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 
 @implementation MMSpanParser
 
-@synthesize elements     = _elements;
-@synthesize openElements = _openElements;
-
-@synthesize parseLinks = _parseLinks;
-
 //==================================================================================================
 #pragma mark -
 #pragma mark NSObject Methods
 //==================================================================================================
 
-- (id) init
+- (id)init
 {
     self = [super init];
     
     if (self)
     {
+        self.htmlParser = [MMHTMLParser new];
         self.parseLinks = YES;
     }
     
@@ -68,7 +67,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 #pragma mark Public Methods
 //==================================================================================================
 
-- (NSArray *) parseSpansWithScanner:(MMScanner *)scanner
+- (NSArray *)parseSpansWithScanner:(MMScanner *)scanner
 {
     return [self _parseWithScanner:scanner untilTestPasses:^{ return [scanner atEndOfString]; }];
 }
@@ -79,7 +78,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 #pragma mark Private Methods
 //==================================================================================================
 
-- (MMElement *) _parseNextElementWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseNextElementWithScanner:(MMScanner *)scanner
 {
     // 1) Check for a text segment
     
@@ -157,7 +156,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     return character;
 }
 
-- (NSArray *) _parseWithScanner:(MMScanner *)scanner untilTestPasses:(BOOL (^)())test
+- (NSArray *)_parseWithScanner:(MMScanner *)scanner untilTestPasses:(BOOL (^)())test
 {
     NSMutableArray *result = [NSMutableArray array];
     
@@ -182,7 +181,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     return nil;
 }
        
-- (MMElement *) _parseSpanWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseSpanWithScanner:(MMScanner *)scanner
 {
     MMElement *element;
     
@@ -237,10 +236,22 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
             return element;
     }
     
+    [scanner beginTransaction];
+    element = [self.htmlParser parseInlineTagWithScanner:scanner];
+    [scanner commitTransaction:element != nil];
+    if (element)
+        return element;
+    
+    [scanner beginTransaction];
+    element = [self.htmlParser parseCommentWithScanner:scanner];
+    [scanner commitTransaction:element != nil];
+    if (element)
+        return element;
+    
     return nil;
 }
 
-- (MMElement *) _parseStrongWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseStrongWithScanner:(MMScanner *)scanner
 {
     // Must have 2 *s or _s
     unichar character = [scanner nextCharacter];
@@ -286,7 +297,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     return element;
 }
 
-- (MMElement *) _parseEmWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseEmWithScanner:(MMScanner *)scanner
 {
     // Must have 1 * or _
     unichar character = [scanner nextCharacter];
@@ -328,7 +339,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     
 }
 
-- (MMElement *) _parseCodeSpanWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseCodeSpanWithScanner:(MMScanner *)scanner
 {
     if ([scanner nextCharacter] != '`')
         return nil;
@@ -337,11 +348,11 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     MMElement *element = [MMElement new];
     element.type = MMElementTypeCodeSpan;
     
-    // Check for a 2nd `
+    // Check for more `s
     NSUInteger level = 1;
-    if ([scanner nextCharacter] == '`')
+    while ([scanner nextCharacter] == '`')
     {
-        level = 2;
+        level++;
         [scanner advance];
     }
     
@@ -351,8 +362,11 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     // Skip to the next '`'
     NSCharacterSet *boringChars  = [[NSCharacterSet characterSetWithCharactersInString:@"`&<>"] invertedSet];
     NSUInteger      textLocation = scanner.location;
-    while (![scanner atEndOfString])
+    while (1)
     {
+        if ([scanner atEndOfString])
+            return nil;
+        
         // Skip other characters
         [scanner skipCharactersFromSet:boringChars];
         
@@ -365,30 +379,28 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
             [element addChild:text];
         }
         
-        unichar nextChar = [scanner nextCharacter];
-        // Did we find the closing `?
-        if (nextChar == '`')
+        // Check for closing `s
+        if ([scanner nextCharacter] == '`')
         {
-            if (level == 2)
+            // Set the text location to catch the ` in case it isn't the closing `s
+            textLocation = scanner.location;
+            
+            NSUInteger idx;
+            for (idx=0; idx<level; idx++)
             {
-                // set the location for if this isn't the 2nd backtick--because if it is,
-                // the location doesn't matter
-                textLocation = scanner.location;
-                
-                [scanner beginTransaction];
+                if ([scanner nextCharacter] != '`')
+                    break;
                 [scanner advance];
-                if ([scanner nextCharacter] == '`')
-                    [scanner commitTransaction:NO];
-                else
-                {
-                    [scanner commitTransaction:YES];
-                    continue;
-                }
             }
-            break;
+            if (idx >= level)
+                break;
+            else
+                continue;
         }
-        // Or is it an entity
-        else if (nextChar == '&')
+        
+        unichar nextChar = [scanner nextCharacter];
+        // Check for entities
+        if (nextChar == '&')
         {
             MMElement *entity = [MMElement new];
             entity.type  = MMElementTypeEntity;
@@ -418,18 +430,12 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
         // Or did we hit the end of the line?
         else if ([scanner atEndOfLine])
         {
+            textLocation = scanner.location;
             [scanner advanceToNextLine];
+            continue;
         }
         
         textLocation = scanner.location;
-    }
-    
-    // Make sure there are closing `s
-    for (NSUInteger idx=0; idx<level; idx++)
-    {
-        if ([scanner nextCharacter] != '`')
-            return nil;
-        [scanner advance];
     }
     
     // remove trailing whitespace
@@ -452,7 +458,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     return element;
 }
 
-- (MMElement *) _parseLineBreakWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseLineBreakWithScanner:(MMScanner *)scanner
 {
     // A line break is made up of 2 spaces. Since 1 is left on the line, match it against the
     // previous character instead of the next one.
@@ -481,7 +487,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     return element;
 }
 
-- (MMElement *) _parseAutomaticLinkWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseAutomaticLinkWithScanner:(MMScanner *)scanner
 {
     // Leading <
     if ([scanner nextCharacter] != '<')
@@ -558,7 +564,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     return element;
 }
 
-- (MMElement *) _parseAutomaticEmailLinkWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseAutomaticEmailLinkWithScanner:(MMScanner *)scanner
 {
     // Leading <
     if ([scanner nextCharacter] != '<')
@@ -594,7 +600,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     return element;
 }
 
-- (NSArray *) _parseLinkTextBodyWithScanner:(MMScanner *)scanner
+- (NSArray *)_parseLinkTextBodyWithScanner:(MMScanner *)scanner
 {
     NSMutableArray *ranges  = [NSMutableArray new];
     NSCharacterSet *boringChars;
@@ -650,7 +656,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     return ranges;
 }
 
-- (MMElement *) _parseInlineLinkWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseInlineLinkWithScanner:(MMScanner *)scanner
 {
     NSCharacterSet *boringChars;
     NSUInteger      level;
@@ -660,7 +666,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     
     // Find the []
     element.innerRanges = [self _parseLinkTextBodyWithScanner:scanner];
-    if (!element.innerRanges.count)
+    if (!element.innerRanges)
         return nil;
     
     // Find the ()
@@ -757,7 +763,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     return element;
 }
 
-- (MMElement *) _parseReferenceLinkWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseReferenceLinkWithScanner:(MMScanner *)scanner
 {
     MMElement *element = [MMElement new];
     element.type = MMElementTypeLink;
@@ -797,7 +803,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     return element;
 }
 
-- (MMElement *) _parseLinkWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseLinkWithScanner:(MMScanner *)scanner
 {
     MMElement *element;
     
@@ -822,7 +828,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     return element;
 }
 
-- (MMElement *) _parseImageWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseImageWithScanner:(MMScanner *)scanner
 {
     MMElement *element;
     
@@ -862,7 +868,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     return element;
 }
 
-- (MMElement *) _parseAmpersandWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseAmpersandWithScanner:(MMScanner *)scanner
 {
     if ([scanner nextCharacter] != '&')
         return nil;
@@ -889,7 +895,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     return element;
 }
 
-- (MMElement *) _parseLeftAngleBracketWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseLeftAngleBracketWithScanner:(MMScanner *)scanner
 {
     if ([scanner nextCharacter] != '<')
         return nil;
@@ -910,7 +916,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     return element;
 }
 
-- (MMElement *) _parseEntityWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseEntityWithScanner:(MMScanner *)scanner
 {
     MMElement *element;
     
@@ -929,7 +935,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     return nil;
 }
 
-- (NSString *) _stringWithBackslashEscapesRemoved:(NSString *)string
+- (NSString *)_stringWithBackslashEscapesRemoved:(NSString *)string
 {
     NSMutableString *result = [string mutableCopy];
     

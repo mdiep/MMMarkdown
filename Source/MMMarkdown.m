@@ -36,10 +36,17 @@
 #pragma mark Public Methods
 //==================================================================================================
 
-+ (NSString *) HTMLStringWithMarkdown:(NSString *)string error:(__autoreleasing NSError **)error
++ (NSString *)HTMLStringWithMarkdown:(NSString *)string error:(__autoreleasing NSError **)error
 {
     if (string == nil)
-        return nil;
+    {
+        NSString *reason = [NSString stringWithFormat:@"[%@ %@]: nil argument for markdown",
+                            NSStringFromClass([self class]), NSStringFromSelector(_cmd)];
+        @throw [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
+    }
+    
+    if ([string length] == 0)
+        return @"";
     
     MMParser    *parser    = [MMParser new];
     MMGenerator *generator = [MMGenerator new];

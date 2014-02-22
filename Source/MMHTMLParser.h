@@ -1,5 +1,5 @@
 //
-//  MMMarkdown.h
+//  MMHTMLParser.h
 //  MMMarkdown
 //
 //  Copyright (c) 2012 Matt Diephouse.
@@ -26,8 +26,13 @@
 #import <Foundation/Foundation.h>
 
 
-@interface MMMarkdown : NSObject
+@class MMElement;
+@class MMScanner;
 
-+ (NSString *) HTMLStringWithMarkdown:(NSString *)string error:(__autoreleasing NSError **)error;
+@interface MMHTMLParser : NSObject
+
+- (MMElement *)parseBlockTagWithScanner:(MMScanner *)scanner;
+- (MMElement *)parseCommentWithScanner:(MMScanner *)scanner;
+- (MMElement *)parseInlineTagWithScanner:(MMScanner *)scanner;
 
 @end

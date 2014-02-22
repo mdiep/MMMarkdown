@@ -37,7 +37,7 @@
 #pragma mark Tests
 //==================================================================================================
 
-- (void) testBasicList_bulletedWithStars
+- (void)testBasicList_bulletedWithStars
 {
     NSString *markdown = @"* One\n"
                           "* Two\n"
@@ -47,7 +47,7 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-- (void) testBasicList_bulletedWithDashes
+- (void)testBasicList_bulletedWithDashes
 {
     NSString *markdown = @"- One\n"
                           "- Two\n"
@@ -57,7 +57,7 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-- (void) testBasicList_numbered
+- (void)testBasicList_numbered
 {
     NSString *markdown = @"0. One\n"
                           "1. Two\n"
@@ -67,7 +67,7 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-- (void) testList_bulletedWithParagraphs
+- (void)testList_bulletedWithParagraphs
 {
     NSString *markdown = @"- One\n"
                           "\n"
@@ -81,17 +81,17 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-- (void) testList_carriageReturn
+- (void)testList_carriageReturn
 {
     MMAssertMarkdownEqualsHTML(@"- One\r- Two\r", @"<ul><li>One</li>\n<li>Two</li></ul>");
 }
 
-- (void) testList_carriageReturnLineFeed
+- (void)testList_carriageReturnLineFeed
 {
     MMAssertMarkdownEqualsHTML(@"- One\r\n- Two\r", @"<ul><li>One</li>\n<li>Two</li></ul>");
 }
 
-- (void) testList_multipleParagraphs
+- (void)testList_multipleParagraphs
 {
     NSString *markdown = @"- One\n"
                           "\n"
@@ -105,7 +105,7 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-- (void) testList_multipleParagraphs_blockquote
+- (void)testList_multipleParagraphs_blockquote
 {
     NSString *markdown = @"* Item\n"
                           "\n"
@@ -121,7 +121,7 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-- (void) testList_multipleParagraphs_codeBlock
+- (void)testList_multipleParagraphs_codeBlock
 {
     NSString *markdown = @"* Item\n"
                           "\n"
@@ -136,7 +136,77 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-- (void) testList_hangingIndents
+- (void)testListParagraphs
+{
+    NSString *markdown = @"* A\n"
+                          "* B\n"
+                          "\n"
+                          "* C\n"
+                          "* D\n";
+    NSString *html = @"<ul>\n"
+                      "<li>A</li>\n"
+                      "<li><p>B</p></li>\n"
+                      "<li><p>C</p></li>\n"
+                      "<li>D</li>\n"
+                      "</ul>";
+    MMAssertMarkdownEqualsHTML(markdown, html);
+}
+
+- (void)testListParagraphsInNestedList
+{
+    NSString *markdown = @"* A\n"
+                          "    - 1\n"
+                          "\n"
+                          "    - 2\n";
+    NSString *html = @"<ul>\n"
+                      "<li><p>A</p>\n"
+                      "\n"
+                      "<ul><li><p>1</p></li>\n"
+                      "<li><p>2</p></li></ul></li>\n"
+                      "</ul>";
+    MMAssertMarkdownEqualsHTML(markdown, html);
+}
+
+- (void)testListParagraphsWithNestedList
+{
+    NSString *markdown = @"* A\n"
+                          "    - 1\n"
+                          "    - 2\n"
+                          "* B\n"
+                          "    - 1\n"
+                          "    - 2\n"
+                          "\n"
+                          "    B2\n"
+                          "* C\n";
+    NSString *html = @"<ul>\n"
+                      "<li>A\n"
+                      "<ul><li>1</li>\n"
+                      "<li>2</li></ul></li>\n"
+                      "<li><p>B</p>\n"
+                      "\n"
+                      "<ul><li>1</li>\n"
+                      "<li>2</li></ul>\n"
+                      "\n"
+                      "<p>B2</p></li>\n"
+                      "<li>C</li>\n"
+                      "</ul>";
+    MMAssertMarkdownEqualsHTML(markdown, html);
+}
+
+- (void)testInlineListItems
+{
+    NSString *markdown = @"* # A\n"
+                          "* B\n"
+                          "* C\n";
+    NSString *html = @"<ul>\n"
+                      "<li># A</li>\n"
+                      "<li>B</li>\n"
+                      "<li>C</li>\n"
+                      "</ul>";
+    MMAssertMarkdownEqualsHTML(markdown, html);
+}
+
+- (void)testList_hangingIndents
 {
     NSString *markdown = @"*   Lorem ipsum dolor sit amet, consectetuer adipiscing elit.\n"
                           "Aliquam hendrerit mi posuere lectus. Vestibulum enim wisi,\n"
@@ -154,7 +224,12 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-- (void) testNestedLists
+- (void)testEmptyList
+{
+    MMAssertMarkdownEqualsHTML(@"1. ", @"<ol><li></li></ol>");
+}
+
+- (void)testNestedLists
 {
     NSString *markdown = @"- One\n"
                           "    * A\n"
@@ -168,7 +243,7 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-- (void) testNestedLists_multipleParagraphs
+- (void)testNestedLists_multipleParagraphs
 {
     NSString *markdown = @"- One\n"
                           "\n"
@@ -184,7 +259,7 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-- (void) testNestedLists_multipleLevels
+- (void)testNestedLists_multipleLevels
 {
     NSString *markdown = @"- One\n"
                           "\n"
@@ -201,7 +276,7 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-- (void) testNestedLists_trailingNested
+- (void)testNestedLists_trailingNested
 {
     NSString *markdown = @"- One\n"
                           "- Two\n"
@@ -216,7 +291,7 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-- (void) testList_followedByHorizontalRule
+- (void)testList_followedByHorizontalRule
 {
     NSString *markdown = @"* One\n"
                           "* Two\n"
@@ -231,7 +306,7 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-- (void) testList_mustHaveWhitespaceAfterMarker
+- (void)testList_mustHaveWhitespaceAfterMarker
 {
     // First element
     MMAssertMarkdownEqualsHTML(@"*One\n",  @"<p>*One</p>");
@@ -252,7 +327,7 @@
     MMAssertMarkdownEqualsHTML(@"1.\tOne\n", @"<ol><li>One</li></ol>");
 }
 
-- (void) testList_withTabs
+- (void)testList_withTabs
 {
     // Tabs should be converted to spaces
     NSString *markdown = @"* A\tParagraph\n";
@@ -263,7 +338,7 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
-- (void) testList_withLeadingSpace
+- (void)testList_withLeadingSpace
 {
     MMAssertMarkdownEqualsHTML(@" - One\n - Two", @"<ul><li>One</li><li>Two</li></ul>");
 }

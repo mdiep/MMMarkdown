@@ -36,20 +36,17 @@
     NSMutableArray *_elements;
 }
 
-@synthesize markdown = _markdown;
-@synthesize elements = _elements;
-
 //==================================================================================================
 #pragma mark -
 #pragma mark Public Methods
 //==================================================================================================
 
-+ (id) documentWithMarkdown:(NSString *)markdown
++ (id)documentWithMarkdown:(NSString *)markdown
 {
     return [[[self class] alloc] initWithMarkdown:markdown];
 }
 
-- (id) initWithMarkdown:(NSString *)markdown
+- (id)initWithMarkdown:(NSString *)markdown
 {
     self = [super init];
     
@@ -68,7 +65,7 @@
 #pragma mark Private Methods
 //==================================================================================================
 
-- (void) addElement:(MMElement *)anElement
+- (void)addElement:(MMElement *)anElement
 {
     [self willChangeValueForKey:@"elements"];
     [_elements addObject:anElement];

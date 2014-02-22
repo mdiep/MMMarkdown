@@ -65,11 +65,11 @@ static NSString *__obfuscatedEmailAddress(NSString *anAddress)
         if (character == '@')
         {
             // Make sure that the @ gets encoded
-            encoder = [encoders objectAtIndex:rand() % 2];
+            encoder = [encoders objectAtIndex:arc4random_uniform(2)];
         }
         else
         {
-            int r = rand() % 100;
+            int r = arc4random_uniform(100);
             encoder = [encoders objectAtIndex:(r >= 90) ? 2 : (r >= 45) ? 1 : 0];
         }
         [result appendString:encoder(character)];
@@ -83,7 +83,7 @@ static NSString * __HTMLStartTagForElement(MMElement *anElement)
     switch (anElement.type)
     {
         case MMElementTypeHeader:
-            return [NSString stringWithFormat:@"<h%u>", anElement.level];
+            return [NSString stringWithFormat:@"<h%u>", (unsigned int)anElement.level];
         case MMElementTypeParagraph:
             return @"<p>";
         case MMElementTypeBulletedList:
@@ -140,7 +140,7 @@ static NSString * __HTMLEndTagForElement(MMElement *anElement)
     switch (anElement.type)
     {
         case MMElementTypeHeader:
-            return [NSString stringWithFormat:@"</h%u>\n", anElement.level];
+            return [NSString stringWithFormat:@"</h%u>\n", (unsigned int)anElement.level];
         case MMElementTypeParagraph:
             return @"</p>\n";
         case MMElementTypeBulletedList:
@@ -180,7 +180,7 @@ static NSString * __HTMLEndTagForElement(MMElement *anElement)
 #pragma mark Public Methods
 //==================================================================================================
 
-- (NSString *) generateHTML:(MMDocument *)aDocument
+- (NSString *)generateHTML:(MMDocument *)aDocument
 {
     NSString   *markdown = aDocument.markdown;
     NSUInteger  location = 0;
@@ -212,10 +212,10 @@ static NSString * __HTMLEndTagForElement(MMElement *anElement)
 #pragma mark Public Methods
 //==================================================================================================
 
-- (void) _generateHTMLForElement:(MMElement *)anElement
-                      inDocument:(MMDocument *)aDocument
-                            HTML:(NSMutableString *)theHTML
-                        location:(NSUInteger *)aLocation
+- (void)_generateHTMLForElement:(MMElement *)anElement
+                     inDocument:(MMDocument *)aDocument
+                           HTML:(NSMutableString *)theHTML
+                       location:(NSUInteger *)aLocation
 {
     NSString *startTag = __HTMLStartTagForElement(anElement);
     NSString *endTag   = __HTMLEndTagForElement(anElement);
@@ -236,6 +236,10 @@ static NSString * __HTMLEndTagForElement(MMElement *anElement)
             {
                 [theHTML appendString:[markdown substringWithRange:child.range]];
             }
+        }
+        else if (child.type == MMElementTypeHTML)
+        {
+            [theHTML appendString:[aDocument.markdown substringWithRange:child.range]];
         }
         else
         {

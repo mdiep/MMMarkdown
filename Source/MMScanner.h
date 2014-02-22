@@ -39,31 +39,36 @@
 // Settable
 @property (assign, nonatomic) NSUInteger location;
 
-+ (id) scannerWithString:(NSString *)aString;
-- (id) initWithString:(NSString *)aString;
++ (id)scannerWithString:(NSString *)aString;
+- (id)initWithString:(NSString *)aString;
 
-+ (id) scannerWithString:(NSString *)aString lineRanges:(NSArray *)theLineRanges;
-- (id) initWithString:(NSString *)aString lineRanges:(NSArray *)theLineRanges;
++ (id)scannerWithString:(NSString *)aString lineRanges:(NSArray *)theLineRanges;
+- (id)initWithString:(NSString *)aString lineRanges:(NSArray *)theLineRanges;
 
-- (void) beginTransaction;
-- (void) commitTransaction:(BOOL)shouldSave;
+- (void)beginTransaction;
+- (void)commitTransaction:(BOOL)shouldSave;
 
-- (BOOL) atBeginningOfLine;
-- (BOOL) atEndOfLine;
-- (BOOL) atEndOfString;
+- (BOOL)atBeginningOfLine;
+- (BOOL)atEndOfLine;
+- (BOOL)atEndOfString;
 
-- (unichar) previousCharacter;
-- (unichar) nextCharacter;
-- (NSString *) nextWord;
+- (unichar)previousCharacter;
+- (unichar)nextCharacter;
+- (NSString *)nextWord;
 
-- (void) advance;
-- (void) advanceToNextLine;
+- (void)advance;
+- (void)advanceToNextLine;
 
-- (NSUInteger) skipCharactersFromSet:(NSCharacterSet *)aSet;
-- (NSUInteger) skipCharactersFromSet:(NSCharacterSet *)aSet max:(NSUInteger)maxToSkip;
-- (NSUInteger) skipIndentationUpTo:(NSUInteger)maxSpacesToSkip;
-- (NSUInteger) skipNestedBracketsWithDelimiter:(unichar)delimiter;
-- (NSUInteger) skipToEndOfLine;
-- (NSUInteger) skipToLastCharacterOfLine;
+- (BOOL)matchString:(NSString *)string;
+
+- (NSUInteger)skipCharactersFromSet:(NSCharacterSet *)aSet;
+- (NSUInteger)skipCharactersFromSet:(NSCharacterSet *)aSet max:(NSUInteger)maxToSkip;
+- (NSUInteger)skipEmptyLines;
+- (NSUInteger)skipIndentationUpTo:(NSUInteger)maxSpacesToSkip;
+- (NSUInteger)skipNestedBracketsWithDelimiter:(unichar)delimiter;
+- (NSUInteger)skipToEndOfLine;
+- (NSUInteger)skipToLastCharacterOfLine;
+- (NSUInteger)skipWhitespace;
+- (NSUInteger)skipWhitespaceAndNewlines;
 
 @end

@@ -37,15 +37,23 @@
 #pragma mark Inline Image Tests
 //==================================================================================================
 
-- (void) testBasicInlineImage
+- (void)testBasicInlineImage
 {
     MMAssertMarkdownEqualsHTML(@"![Alt text](/image.jpg)", @"<p><img src=\"/image.jpg\" alt=\"Alt text\" /></p>");
 }
 
-- (void) testInlineImageWithTitle
+- (void)testInlineImageWithTitle
 {
     MMAssertMarkdownEqualsHTML(@"![Alt text](/image.jpg \"Title Here\")",
                                @"<p><img src=\"/image.jpg\" alt=\"Alt text\" title=\"Title Here\" /></p>");
+}
+
+- (void)testInlineImageWithNoAltText
+{
+    MMAssertMarkdownEqualsHTML(
+        @"![](http://cl.ly/image/3I340R25053q/content)",
+        @"<p><img src='http://cl.ly/image/3I340R25053q/content' alt='' /></p>"
+    );
 }
 
 
@@ -54,19 +62,19 @@
 #pragma mark Reference Image Tests
 //==================================================================================================
 
-- (void) testBasicReferenceImage
+- (void)testBasicReferenceImage
 {
     MMAssertMarkdownEqualsHTML(@"![Description][1]\n\n[1]: /image.jpg",
                                @"<p><img src=\"/image.jpg\" alt=\"Description\" /></p>");
 }
 
-- (void) testReferenceImageWithImplicitName
+- (void)testReferenceImageWithImplicitName
 {
     MMAssertMarkdownEqualsHTML(@"![Description][]\n\n[description]: /image.jpg",
                                @"<p><img src=\"/image.jpg\" alt=\"Description\" /></p>");
 }
 
-- (void) testReferenceImageWithTitle
+- (void)testReferenceImageWithTitle
 {
     MMAssertMarkdownEqualsHTML(@"![Description][1]\n\n[1]: /image.jpg \"A Title\"",
                                @"<p><img src=\"/image.jpg\" alt=\"Description\" title=\"A Title\" /></p>");
