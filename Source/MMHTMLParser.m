@@ -38,31 +38,13 @@
 
 - (MMElement *)parseBlockTagWithScanner:(MMScanner *)scanner
 {
-    // which starts with a '<'
-    if ([scanner nextCharacter] != '<')
-        return nil;
-    [scanner advance];
+    [scanner beginTransaction];
+    MMElement *element = [self _parseStrictBlockTagWithScanner:scanner];
+    [scanner commitTransaction:element != nil];
+    if (element)
+        return element;
     
-    NSSet *htmlBlockTags = [NSSet setWithObjects:
-                            @"p", @"div", @"h1", @"h2", @"h3", @"h4", @"h5", @"h6",
-                            @"blockquote", @"pre", @"table", @"dl", @"ol", @"ul",
-                            @"script", @"noscript", @"form", @"fieldset", @"iframe",
-                            @"math", @"ins", @"del", nil];
-    NSString *tagName = [scanner nextWord];
-    if (![htmlBlockTags containsObject:tagName])
-        return nil;
-    
-    // Skip lines until we come across a blank line
-    while (![scanner atEndOfLine])
-    {
-        [scanner advanceToNextLine];
-    }
-    
-    MMElement *element = [MMElement new];
-    element.type  = MMElementTypeHTML;
-    element.range = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
-    
-    return element;
+    return [self _parseLenientBlockTagWithScanner:scanner];
 }
 
 - (MMElement *)parseCommentWithScanner:(MMScanner *)scanner
@@ -107,7 +89,6 @@
         return nil;
     
     [self _parseAttributesWithScanner:scanner];
-    
     [scanner skipWhitespace];
     
     if ([scanner nextCharacter] == '/')
@@ -130,6 +111,132 @@
 #pragma mark -
 #pragma mark Private Methods
 //==================================================================================================
+
+- (MMElement *)_parseStrictBlockTagWithScanner:(MMScanner *)scanner
+{
+    // which starts with a '<'
+    if ([scanner nextCharacter] != '<')
+        return nil;
+    [scanner advance];
+    
+    NSSet *htmlBlockTags = [NSSet setWithObjects:
+                            @"p", @"div", @"h1", @"h2", @"h3", @"h4", @"h5", @"h6",
+                            @"blockquote", @"pre", @"table", @"dl", @"ol", @"ul",
+                            @"script", @"noscript", @"form", @"fieldset", @"iframe",
+                            @"math", @"ins", @"del", nil];
+    NSString *tagName = [scanner nextWord];
+    if (![htmlBlockTags containsObject:tagName])
+        return nil;
+    scanner.location += tagName.length;
+    
+    [self _parseAttributesWithScanner:scanner];
+    [scanner skipWhitespace];
+    
+    if ([scanner nextCharacter] != '>')
+        return nil;
+    [scanner advance];
+    
+    NSCharacterSet *boringChars = [[NSCharacterSet characterSetWithCharactersInString:@"<"] invertedSet];
+    while (1)
+    {
+        if ([scanner atEndOfString])
+            return nil;
+        
+        [scanner skipCharactersFromSet:boringChars];
+        if ([scanner atEndOfLine])
+        {
+            [scanner advanceToNextLine];
+            continue;
+        }
+        
+        [scanner beginTransaction];
+        if ([self _parseEndTag:tagName withScanner:scanner])
+        {
+            [scanner commitTransaction:YES];
+            break;
+        }
+        [scanner commitTransaction:NO];
+        
+        MMElement *element;
+        
+        [scanner beginTransaction];
+        element = [self _parseStrictBlockTagWithScanner:scanner];
+        [scanner commitTransaction:element != nil];
+        if (element)
+            continue;
+        
+        [scanner beginTransaction];
+        element = [self parseCommentWithScanner:scanner];
+        [scanner commitTransaction:element != nil];
+        if (element)
+            continue;
+        
+        [scanner beginTransaction];
+        element = [self parseInlineTagWithScanner:scanner];
+        [scanner commitTransaction:element != nil];
+        if (element)
+            continue;
+        
+        return nil;
+    }
+    
+    MMElement *element = [MMElement new];
+    element.type  = MMElementTypeHTML;
+    element.range = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
+    
+    return element;
+}
+
+- (BOOL)_parseEndTag:(NSString *)tagName withScanner:(MMScanner *)scanner
+{
+    if (scanner.nextCharacter != '<')
+        return NO;
+    [scanner advance];
+    
+    if (scanner.nextCharacter != '/')
+        return NO;
+    [scanner advance];
+    
+    [scanner skipWhitespace];
+    if (![scanner matchString:tagName])
+        return NO;
+    [scanner skipWhitespace];
+    
+    if (scanner.nextCharacter != '>')
+        return NO;
+    [scanner advance];
+    
+    return YES;
+}
+
+- (MMElement *)_parseLenientBlockTagWithScanner:(MMScanner *)scanner
+{
+    // which starts with a '<'
+    if ([scanner nextCharacter] != '<')
+        return nil;
+    [scanner advance];
+    
+    NSSet *htmlBlockTags = [NSSet setWithObjects:
+                            @"p", @"div", @"h1", @"h2", @"h3", @"h4", @"h5", @"h6",
+                            @"blockquote", @"pre", @"table", @"dl", @"ol", @"ul",
+                            @"script", @"noscript", @"form", @"fieldset", @"iframe",
+                            @"math", @"ins", @"del", nil];
+    NSString *tagName = [scanner nextWord];
+    if (![htmlBlockTags containsObject:tagName])
+        return nil;
+    
+    // Skip lines until we come across a blank line
+    while (![scanner atEndOfLine])
+    {
+        [scanner advanceToNextLine];
+    }
+    
+    MMElement *element = [MMElement new];
+    element.type  = MMElementTypeHTML;
+    element.range = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
+    
+    return element;
+}
 
 - (NSRange)_parseNameWithScanner:(MMScanner *)scanner
 {

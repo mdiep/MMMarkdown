@@ -194,7 +194,6 @@
     MMAssertMarkdownEqualsHTML(@"<div>A test.</div>", @"<div>A test.</div>");
 }
 
-#if RUN_KNOWN_FAILURES
 - (void)testBlockHTMLBlankLineBetweenCloseTags
 {
     // Primitive HTML handling might end the HTML block after the first div, since it's a close tag
@@ -207,7 +206,22 @@
                       "</div>\n";
     MMAssertMarkdownEqualsHTML(html, html);
 }
-#endif
+
+- (void)testBlockHTMLWithUnclosedTag
+{
+    NSString *markdown = @"<div>\n"
+                          "<div>\n"
+                          "A\n"
+                          "</div>\n"
+                          "\n"
+                          "div\n";
+    NSString *string = @"<div>\n"
+                        "<div>\n"
+                        "A\n"
+                        "</div>\n"
+                        "<p>div</p>\n";
+    MMAssertMarkdownEqualsString(markdown, string);
+}
 
 - (void)testBlockHTMLCommentWithSpans
 {
