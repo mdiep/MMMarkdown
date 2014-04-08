@@ -671,7 +671,7 @@
 		BE813DCD14F893EB00EC9469 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0500;
+				LastUpgradeCheck = 0510;
 			};
 			buildConfigurationList = BE813DD014F893EB00EC9469 /* Build configuration list for PBXProject "MMMarkdown" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -913,7 +913,6 @@
 		BE813E0C14F8961D00EC9469 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Source/MMMarkdown-Prefix.pch";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
@@ -927,7 +926,6 @@
 		BE813E0D14F8961D00EC9469 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Source/MMMarkdown-Prefix.pch";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
