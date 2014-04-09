@@ -996,19 +996,27 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         }
         [scanner commitTransaction:NO];
         
-        MMElement *header;
+        BOOL hasElement;
+        
+        // Check for a link definitoin
+        [scanner beginTransaction];
+        hasElement = [self _parseLinkDefinitionWithScanner:scanner] != nil;
+        [scanner commitTransaction:NO];
+        if (hasElement)
+            break;
+        
         // Check for an underlined header
         [scanner beginTransaction];
-        header = [self _parseUnderlinedHeaderWithScanner:scanner];
+        hasElement = [self _parseUnderlinedHeaderWithScanner:scanner] != nil;
         [scanner commitTransaction:NO];
-        if (header)
+        if (hasElement)
             break;
         
         // Also check for a prefixed header
         [scanner beginTransaction];
-        header = [self _parsePrefixHeaderWithScanner:scanner];
+        hasElement = [self _parsePrefixHeaderWithScanner:scanner] != nil;
         [scanner commitTransaction:NO];
-        if (header)
+        if (hasElement)
             break;
         
         [self _addTextLineToElement:element withScanner:scanner];
