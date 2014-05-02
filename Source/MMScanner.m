@@ -367,7 +367,7 @@ static NSString *__delimitersForCharacter(unichar character)
     NSCharacterSet *whitespaceSet = [NSCharacterSet whitespaceCharacterSet];
     NSUInteger      length = 0;
     
-    while (1)
+    while (!self.atEndOfString)
     {
         if ([self atEndOfLine])
         {

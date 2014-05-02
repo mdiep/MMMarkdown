@@ -80,6 +80,11 @@
                                @"<p><a href=\"#\" title=\">\">foo</a></p>");
 }
 
+- (void)testUnclosedAngleBracket
+{
+    MMAssertMarkdownEqualsHTML(@"<1", @"<p>&lt;1</p>");
+}
+
 
 //==================================================================================================
 #pragma mark -
