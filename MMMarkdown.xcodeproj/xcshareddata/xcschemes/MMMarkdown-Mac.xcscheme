@@ -33,7 +33,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "BE813DE914F893EB00EC9469"
-               BuildableName = "MMMarkdownTests.octest"
+               BuildableName = "MMMarkdownTests.xctest"
                BlueprintName = "MMMarkdownTests"
                ReferencedContainer = "container:MMMarkdown.xcodeproj">
             </BuildableReference>
