@@ -23,7 +23,7 @@
 // THE SOFTWARE.
 //
 
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 
 
 #import "MMMarkdown.h"
@@ -32,68 +32,34 @@
 
 #define MMAssertMarkdownEqualsHTML(markdown, html) \
     do { \
-        @try {\
-            id a1value = (markdown); \
-            id a2value = (html); \
-            \
-            NSError *error; \
-            NSString *output = [MMMarkdown HTMLStringWithMarkdown:a1value error:&error]; \
-            NSString *html2  = a2value;\
-            \
-            /* Add root elements for parsing */ \
-            output = [NSString stringWithFormat:@"<test>%@</test>", output]; \
-            html2  = [NSString stringWithFormat:@"<test>%@</test>", html2]; \
-            \
-            NSXMLDocument *actual   = [[NSXMLDocument alloc] initWithXMLString:output options:0 error:nil]; \
-            NSXMLDocument *expected = [[NSXMLDocument alloc] initWithXMLString:html2  options:0 error:nil]; \
-            \
-            if (actual != expected) { \
-                if ([(id)actual isEqual:(id)expected]) \
-                    continue; \
-                [self failWithException:([NSException failureInEqualityBetweenObject:actual \
-                                                                           andObject:expected \
-                                                                              inFile:[NSString stringWithUTF8String:__FILE__] \
-                                                                              atLine:__LINE__ \
-                            withDescription:@"Markdown output doesn't match expected HTML"])]; \
-            } \
-        }\
-        @catch (id anException) {\
-            [self failWithException:([NSException failureInRaise:[NSString stringWithFormat:@"(%s) == (%s)", #markdown, #html] \
-                          exception:anException \
-                             inFile:[NSString stringWithUTF8String:__FILE__] \
-                             atLine:__LINE__ \
-                    withDescription:@"Markdown output doesn't match expected HTML"])]; \
-        }\
+        id a1value = (markdown); \
+        id a2value = (html); \
+        \
+        NSError *error; \
+        NSString *output = [MMMarkdown HTMLStringWithMarkdown:a1value error:&error]; \
+        NSString *html2  = a2value;\
+        \
+        /* Add root elements for parsing */ \
+        output = [NSString stringWithFormat:@"<test>%@</test>", output]; \
+        html2  = [NSString stringWithFormat:@"<test>%@</test>", html2]; \
+        \
+        NSXMLDocument *actual   = [[NSXMLDocument alloc] initWithXMLString:output options:0 error:nil]; \
+        NSXMLDocument *expected = [[NSXMLDocument alloc] initWithXMLString:html2  options:0 error:nil]; \
+        XCTAssertEqualObjects(actual, expected); \
     } while(0)
 
 #define MMAssertMarkdownEqualsString(markdown, string) \
     do { \
-        @try {\
-            id a1value = (markdown); \
-            id a2value = (string); \
-            \
-            NSError *error; \
-            NSString *actual   = [MMMarkdown HTMLStringWithMarkdown:a1value error:&error]; \
-            NSString *expected = a2value; \
-            \
-            if ([(id)actual isEqual:(id)expected]) \
-                continue; \
-            [self failWithException:([NSException failureInEqualityBetweenObject:actual \
-                          andObject:expected \
-                             inFile:[NSString stringWithUTF8String:__FILE__] \
-                             atLine:__LINE__ \
-                    withDescription:@"Markdown output doesn't match expected string value"])]; \
-        }\
-        @catch (id anException) {\
-            [self failWithException:([NSException failureInRaise:[NSString stringWithFormat:@"(%s) == (%s)", #markdown, #string] \
-                          exception:anException \
-                             inFile:[NSString stringWithUTF8String:__FILE__] \
-                             atLine:__LINE__ \
-                    withDescription:@"Markdown output doesn't match expected string value"])]; \
-        }\
+        id a1value = (markdown); \
+        id a2value = (string); \
+        \
+        NSError *error; \
+        NSString *actual   = [MMMarkdown HTMLStringWithMarkdown:a1value error:&error]; \
+        NSString *expected = a2value; \
+        XCTAssertEqualObjects(actual, expected); \
     } while(0)
 
-@interface MMTestCase : SenTestCase
+@interface MMTestCase : XCTestCase
 
 - (NSString *)stringWithContentsOfFile:(NSString *)aString inDirectory:(NSString *)aDirectory;
 - (void)runTestWithName:(NSString *)aName inDirectory:(NSString *)aDirectory;

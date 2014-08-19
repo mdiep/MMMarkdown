@@ -57,7 +57,7 @@
     NSString *markdown  = @"A <i> test with no HTML.";
     NSString *generated = [MMMarkdown HTMLStringWithMarkdown:markdown error:nil];
     NSString *expected  = @"<p>A <i> test with no HTML.</p>\n";
-    STAssertEqualObjects(generated, expected, @"HTML didn't match expected value");
+    XCTAssertEqualObjects(generated, expected, @"HTML didn't match expected value");
 }
 
 - (void)testAutomaticEmailLink
@@ -71,8 +71,8 @@
     NSString *generated = [MMMarkdown HTMLStringWithMarkdown:markdown error:nil];
     NSString *unescaped = (__bridge_transfer NSString *)CFXMLCreateStringByUnescapingEntities(NULL, (__bridge CFStringRef)generated, NULL);
     NSString *expected  = @"<p><a href=\"mailto:address@example.com\">address@example.com</a></p>\n";
-    STAssertEqualObjects(unescaped, expected, @"Unescaped output doesn't match expected");
-    STAssertFalse([expected isEqualToString:generated], @"Generated output should be escaped");
+    XCTAssertEqualObjects(unescaped, expected, @"Unescaped output doesn't match expected");
+    XCTAssertFalse([expected isEqualToString:generated], @"Generated output should be escaped");
 }
 
 - (void)testAutomaticEmailLink_withAnInternationalDomain
@@ -86,8 +86,8 @@
     NSString *generated = [MMMarkdown HTMLStringWithMarkdown:markdown error:nil];
     NSString *unescaped = (__bridge_transfer NSString *)CFXMLCreateStringByUnescapingEntities(NULL, (__bridge CFStringRef)generated, NULL);
     NSString *expected  = @"<p><a href=\"mailto:hélp@tūdaliņ.làv\">hélp@tūdaliņ.làv</a></p>\n";
-    STAssertEqualObjects(unescaped, expected, @"Unescaped output doesn't match expected");
-    STAssertFalse([expected isEqualToString:generated], @"Generated output should be escaped");
+    XCTAssertEqualObjects(unescaped, expected, @"Unescaped output doesn't match expected");
+    XCTAssertFalse([expected isEqualToString:generated], @"Generated output should be escaped");
 }
 
 
