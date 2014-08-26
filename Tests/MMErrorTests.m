@@ -39,7 +39,7 @@
 
 - (void)testEmptyInput
 {
-	STAssertEqualObjects([MMMarkdown HTMLStringWithMarkdown:@"" error:nil], @"", @"empty input should give empty output");
+	XCTAssertEqualObjects([MMMarkdown HTMLStringWithMarkdown:@"" error:nil], @"", @"empty input should give empty output");
 }
 
 - (void)testNilInput
@@ -47,7 +47,7 @@
     // Ignore the nonnull diagnostic here because we're explicitly testing the behavior with nil
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wnonnull"
-    STAssertThrows([MMMarkdown HTMLStringWithMarkdown:nil error:nil], @"nil input should assert");
+    XCTAssertThrows([MMMarkdown HTMLStringWithMarkdown:nil error:nil], @"nil input should assert");
 #pragma clang diagnostic pop
 }
 

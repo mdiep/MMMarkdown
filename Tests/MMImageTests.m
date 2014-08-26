@@ -80,5 +80,13 @@
                                @"<p><img src=\"/image.jpg\" alt=\"Description\" title=\"A Title\" /></p>");
 }
 
+- (void)testReferenceImageWithNoBlankLine
+{
+    MMAssertMarkdownEqualsHTML(
+        @"![Logo][logo]\n[logo]: http://cl.ly/image/3Y013H0A2z3z/gundam-ruby.png",
+        @"<p><img src=\"http://cl.ly/image/3Y013H0A2z3z/gundam-ruby.png\" alt=\"Logo\" /></p>"
+    );
+}
+
 
 @end

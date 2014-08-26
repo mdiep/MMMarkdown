@@ -1035,28 +1035,36 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         }
         [scanner commitTransaction:NO];
         
-        MMElement *block;
+        BOOL hasElement;
+        
+        // Check for a link definition
+        [scanner beginTransaction];
+        hasElement = [self _parseLinkDefinitionWithScanner:scanner] != nil;
+        [scanner commitTransaction:NO];
+        if (hasElement)
+            break;
+        
         // Check for an underlined header
         [scanner beginTransaction];
-        block = [self _parseUnderlinedHeaderWithScanner:scanner];
+        hasElement = [self _parseUnderlinedHeaderWithScanner:scanner] != nil;
         [scanner commitTransaction:NO];
-        if (block)
+        if (hasElement)
             break;
         
         // Also check for a prefixed header
         [scanner beginTransaction];
-        block = [self _parsePrefixHeaderWithScanner:scanner];
+        hasElement = [self _parsePrefixHeaderWithScanner:scanner] != nil;
         [scanner commitTransaction:NO];
-        if (block)
+        if (hasElement)
             break;
         
         // Check for a fenced code block under GFM
         if (self.extensions & MMMarkdownExtensionsFencedCodeBlocks)
         {
             [scanner beginTransaction];
-            block = [self _parseFencedCodeBlockWithScanner:scanner];
+            hasElement = [self _parseFencedCodeBlockWithScanner:scanner] != nil;
             [scanner commitTransaction:NO];
-            if (block)
+            if (hasElement)
                 break;
         }
         

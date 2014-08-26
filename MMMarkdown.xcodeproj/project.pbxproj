@@ -12,10 +12,10 @@
 		BE1DB5D51514184000B26092 /* MMSpanTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BE1DB5D41514184000B26092 /* MMSpanTests.m */; };
 		BE1DB5DA15143F4200B26092 /* MMBlockTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BE1DB5D915143F4200B26092 /* MMBlockTests.m */; };
 		BE1DB5DD1515033000B26092 /* MMLinkTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BE1DB5DC1515032F00B26092 /* MMLinkTests.m */; };
+		BE3D319A19A3FA540062656F /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE3D319919A3FA540062656F /* XCTest.framework */; };
 		BE6CA532158179670083887C /* MMHTMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = BE6CA52F158179670083887C /* MMHTMLParser.m */; };
 		BE6CA533158179670083887C /* MMHTMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = BE6CA52F158179670083887C /* MMHTMLParser.m */; };
 		BE813DE414F893EB00EC9469 /* MMMarkdown.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813DE314F893EB00EC9469 /* MMMarkdown.m */; };
-		BE813DEC14F893EB00EC9469 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE813DEB14F893EB00EC9469 /* SenTestingKit.framework */; };
 		BE813DF014F893EB00EC9469 /* libMMMarkdown-Mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE813DD614F893EB00EC9469 /* libMMMarkdown-Mac.a */; };
 		BE813DF614F893EB00EC9469 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = BE813DF414F893EB00EC9469 /* InfoPlist.strings */; };
 		BE813DF914F893EB00EC9469 /* MMMarkdownTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813DF814F893EB00EC9469 /* MMMarkdownTests.m */; };
@@ -256,6 +256,7 @@
 		BE1DB5D41514184000B26092 /* MMSpanTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMSpanTests.m; sourceTree = "<group>"; };
 		BE1DB5D915143F4200B26092 /* MMBlockTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMBlockTests.m; sourceTree = "<group>"; };
 		BE1DB5DC1515032F00B26092 /* MMLinkTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMLinkTests.m; sourceTree = "<group>"; };
+		BE3D319919A3FA540062656F /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		BE6CA52E158179670083887C /* MMHTMLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMHTMLParser.h; sourceTree = "<group>"; };
 		BE6CA52F158179670083887C /* MMHTMLParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMHTMLParser.m; sourceTree = "<group>"; };
 		BE813DD614F893EB00EC9469 /* libMMMarkdown-Mac.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libMMMarkdown-Mac.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -263,8 +264,7 @@
 		BE813DE114F893EB00EC9469 /* MMMarkdown-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MMMarkdown-Prefix.pch"; sourceTree = "<group>"; };
 		BE813DE214F893EB00EC9469 /* MMMarkdown.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MMMarkdown.h; sourceTree = "<group>"; };
 		BE813DE314F893EB00EC9469 /* MMMarkdown.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MMMarkdown.m; sourceTree = "<group>"; };
-		BE813DEA14F893EB00EC9469 /* MMMarkdownTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MMMarkdownTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
-		BE813DEB14F893EB00EC9469 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		BE813DEA14F893EB00EC9469 /* MMMarkdownTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MMMarkdownTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE813DF314F893EB00EC9469 /* MMMarkdownTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "MMMarkdownTests-Info.plist"; sourceTree = "<group>"; };
 		BE813DF514F893EB00EC9469 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		BE813DF714F893EB00EC9469 /* MMMarkdownTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MMMarkdownTests.h; sourceTree = "<group>"; };
@@ -382,8 +382,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE3D319A19A3FA540062656F /* XCTest.framework in Frameworks */,
 				BE813E7114F941AD00EC9469 /* Foundation.framework in Frameworks */,
-				BE813DEC14F893EB00EC9469 /* SenTestingKit.framework in Frameworks */,
 				BE813DF014F893EB00EC9469 /* libMMMarkdown-Mac.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -423,7 +423,7 @@
 			isa = PBXGroup;
 			children = (
 				BE813DD614F893EB00EC9469 /* libMMMarkdown-Mac.a */,
-				BE813DEA14F893EB00EC9469 /* MMMarkdownTests.octest */,
+				BE813DEA14F893EB00EC9469 /* MMMarkdownTests.xctest */,
 				BE813E0E14F8961D00EC9469 /* libMMMarkdown-iOS.a */,
 				BE813E1314F92B6100EC9469 /* mmmarkdown */,
 			);
@@ -433,8 +433,8 @@
 		BE813DD814F893EB00EC9469 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BE3D319919A3FA540062656F /* XCTest.framework */,
 				BE813DDE14F893EB00EC9469 /* Foundation.framework */,
-				BE813DEB14F893EB00EC9469 /* SenTestingKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -631,8 +631,8 @@
 			);
 			name = MMMarkdownTests;
 			productName = MMMarkdownTests;
-			productReference = BE813DEA14F893EB00EC9469 /* MMMarkdownTests.octest */;
-			productType = "com.apple.product-type.bundle";
+			productReference = BE813DEA14F893EB00EC9469 /* MMMarkdownTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		BE813E0614F8961D00EC9469 /* MMMarkdown-iOS */ = {
 			isa = PBXNativeTarget;
@@ -892,12 +892,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_LIBRARY_DIR)/Frameworks";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Source/MMMarkdown-Prefix.pch";
 				INFOPLIST_FILE = "Tests/MMMarkdownTests-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				WRAPPER_EXTENSION = octest;
 			};
 			name = Debug;
 		};
@@ -905,12 +907,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_LIBRARY_DIR)/Frameworks";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Source/MMMarkdown-Prefix.pch";
 				INFOPLIST_FILE = "Tests/MMMarkdownTests-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				WRAPPER_EXTENSION = octest;
 			};
 			name = Release;
 		};

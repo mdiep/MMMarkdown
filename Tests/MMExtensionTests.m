@@ -28,38 +28,20 @@
 
 #define MMAssertExtendedMarkdownEqualsHTML(_extensions, markdown, html) \
     do { \
-        @try {\
-            id a1value = (markdown); \
-            id a2value = (html); \
-            \
-            NSError *error; \
-            NSString *output = [MMMarkdown HTMLStringWithMarkdown:a1value extensions:(_extensions) error:&error]; \
-            NSString *html2  = a2value;\
-            \
-            /* Add root elements for parsing */ \
-            output = [NSString stringWithFormat:@"<test>%@</test>", output]; \
-            html2  = [NSString stringWithFormat:@"<test>%@</test>", html2]; \
-            \
-            NSXMLDocument *actual   = [[NSXMLDocument alloc] initWithXMLString:output options:0 error:nil]; \
-            NSXMLDocument *expected = [[NSXMLDocument alloc] initWithXMLString:html2  options:0 error:nil]; \
-            \
-            if (actual != expected) { \
-                if ([(id)actual isEqual:(id)expected]) \
-                    continue; \
-                [self failWithException:([NSException failureInEqualityBetweenObject:actual \
-                                                                           andObject:expected \
-                                                                              inFile:[NSString stringWithUTF8String:__FILE__] \
-                                                                              atLine:__LINE__ \
-                            withDescription:@"Markdown output doesn't match expected HTML"])]; \
-            } \
-        }\
-        @catch (id anException) {\
-            [self failWithException:([NSException failureInRaise:[NSString stringWithFormat:@"(%s) == (%s)", #markdown, #html] \
-                          exception:anException \
-                             inFile:[NSString stringWithUTF8String:__FILE__] \
-                             atLine:__LINE__ \
-                    withDescription:@"Markdown output doesn't match expected HTML"])]; \
-        }\
+        id a1value = (markdown); \
+        id a2value = (html); \
+        \
+        NSError *error; \
+        NSString *output = [MMMarkdown HTMLStringWithMarkdown:a1value extensions:(_extensions) error:&error]; \
+        NSString *html2  = a2value;\
+        \
+        /* Add root elements for parsing */ \
+        output = [NSString stringWithFormat:@"<test>%@</test>", output]; \
+        html2  = [NSString stringWithFormat:@"<test>%@</test>", html2]; \
+        \
+        NSXMLDocument *actual   = [[NSXMLDocument alloc] initWithXMLString:output options:0 error:nil]; \
+        NSXMLDocument *expected = [[NSXMLDocument alloc] initWithXMLString:html2  options:0 error:nil]; \
+        XCTAssertEqualObjects(actual, expected); \
     } while(0)
 
 @interface MMGitHubTests : MMTestCase
