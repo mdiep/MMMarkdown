@@ -32,10 +32,7 @@
 
 @implementation MMBlockTests
 
-//==================================================================================================
-#pragma mark -
-#pragma mark Blockquote Tests
-//==================================================================================================
+#pragma mark - Blockquote Tests
 
 - (void)testBasicBlockquote
 {
@@ -101,10 +98,7 @@
 }
 
 
-//==================================================================================================
-#pragma mark -
-#pragma mark Code Block Tests
-//==================================================================================================
+#pragma mark - Code Block Tests
 
 - (void)testCodeBlocks_blankLinesInBetween
 {
@@ -205,10 +199,7 @@
 }
 
 
-//==================================================================================================
-#pragma mark -
-#pragma mark Prefixed Header Tests
-//==================================================================================================
+#pragma mark - Prefixed Header Tests
 
 - (void)testPrefixedHeaderWithTrailingHashes
 {
@@ -221,10 +212,7 @@
 }
 
 
-//==================================================================================================
-#pragma mark -
-#pragma mark Underlined Header Tests
-//==================================================================================================
+#pragma mark - Underlined Header Tests
 
 - (void)testUnderlinedHeaderWithEqualsSigns
 {
@@ -244,10 +232,7 @@
 }
 
 
-//==================================================================================================
-#pragma mark -
-#pragma mark Paragraph Tests
-//==================================================================================================
+#pragma mark - Paragraph Tests
 
 - (void)testParagraphs_hangingIndent
 {

@@ -32,10 +32,7 @@
 
 @implementation MMImageTests
 
-//==================================================================================================
-#pragma mark -
-#pragma mark Inline Image Tests
-//==================================================================================================
+#pragma mark - Inline Image Tests
 
 - (void)testBasicInlineImage
 {
@@ -57,10 +54,7 @@
 }
 
 
-//==================================================================================================
-#pragma mark -
-#pragma mark Reference Image Tests
-//==================================================================================================
+#pragma mark - Reference Image Tests
 
 - (void)testBasicReferenceImage
 {

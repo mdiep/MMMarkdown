@@ -205,10 +205,7 @@ static NSString * __HTMLEndTagForElement(MMElement *anElement)
 
 @implementation MMGenerator
 
-//==================================================================================================
-#pragma mark -
-#pragma mark Public Methods
-//==================================================================================================
+#pragma mark - Public Methods
 
 - (NSString *)generateHTML:(MMDocument *)aDocument
 {
@@ -237,10 +234,7 @@ static NSString * __HTMLEndTagForElement(MMElement *anElement)
 }
 
 
-//==================================================================================================
-#pragma mark -
-#pragma mark Public Methods
-//==================================================================================================
+#pragma mark - Private Methods
 
 - (void)_generateHTMLForElement:(MMElement *)anElement
                      inDocument:(MMDocument *)aDocument

@@ -32,10 +32,7 @@
 
 @implementation MMEscapingTests
 
-//==================================================================================================
-#pragma mark -
-#pragma mark Backslash Escape Tests
-//==================================================================================================
+#pragma mark - Backslash Escape Tests
 
 - (void)testBackslashEscapes
 {
@@ -62,10 +59,7 @@
 }
 
 
-//==================================================================================================
-#pragma mark -
-#pragma mark Encoded Entity Tests
-//==================================================================================================
+#pragma mark - Encoded Entity Tests
 
 - (void)testEncodeAmpersand
 {

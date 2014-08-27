@@ -50,10 +50,7 @@
 
 @implementation MMGitHubTests
 
-//==================================================================================================
-#pragma mark -
-#pragma mark MMMarkdownExtensionsUnderscoresInWords
-//==================================================================================================
+#pragma mark - MMMarkdownExtensionsUnderscoresInWords
 
 - (void)testMultipleUnderscoresInWords
 {
@@ -205,10 +202,7 @@
 }
 
 
-//==================================================================================================
-#pragma mark -
-#pragma mark MMMarkdownExtensionsAutolinkedURLs
-//==================================================================================================
+#pragma mark - MMMarkdownExtensionsAutolinkedURLs
 
 - (void)testURLAutolinkingWithStandardMarkdown
 {
@@ -317,10 +311,7 @@
 }
 
 
-//==================================================================================================
-#pragma mark -
-#pragma mark MMMarkdownExtensionsHardNewlines
-//==================================================================================================
+#pragma mark - MMMarkdownExtensionsHardNewlines
 
 - (void)testHardNewlinesWithStandardMarkdown
 {
@@ -391,10 +382,7 @@
 }
 
 
-//==================================================================================================
-#pragma mark -
-#pragma mark MMMarkdownExtensionsStrikethroughs
-//==================================================================================================
+#pragma mark - MMMarkdownExtensionsStrikethroughs
 
 - (void)testStrikethroughWithStandardMarkdown
 {
@@ -422,10 +410,8 @@
     );
 }
 
-//==================================================================================================
-#pragma mark -
-#pragma mark MMMarkdownExtensionsFencedCodeBlocks
-//==================================================================================================
+
+#pragma mark - MMMarkdownExtensionsFencedCodeBlocks
 
 - (void)testFencedCodeBlockWithStandardMarkdown
 {
@@ -486,10 +472,8 @@
     );
 }
 
-//==================================================================================================
-#pragma mark -
-#pragma mark MMMarkdownExtensionsTables
-//==================================================================================================
+
+#pragma mark - MMMarkdownExtensionsTables
 
 - (void)testTableWithStandardMarkdown
 {
@@ -601,5 +585,6 @@
                       "</table>";
     MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTables, markdown, html);
 }
+
 
 @end

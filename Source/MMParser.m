@@ -56,10 +56,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
 
 @implementation MMParser
 
-//==================================================================================================
-#pragma mark -
-#pragma mark Public Methods
-//==================================================================================================
+#pragma mark - Public Methods
 
 - (id)initWithExtensions:(MMMarkdownExtensions)extensions
 {
@@ -90,10 +87,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
 }
 
 
-//==================================================================================================
-#pragma mark -
-#pragma mark Private Methods
-//==================================================================================================
+#pragma mark - Private Methods
 
 // Add the remainder of the line as an inner range to the element.
 //

@@ -60,10 +60,7 @@ static NSString *__delimitersForCharacter(unichar character)
 
 @implementation MMScanner
 
-//==================================================================================================
-#pragma mark -
-#pragma mark Public Methods
-//==================================================================================================
+#pragma mark - Public Methods
 
 + (id)scannerWithString:(NSString *)aString
 {
@@ -416,10 +413,7 @@ static NSString *__delimitersForCharacter(unichar character)
 }
 
 
-//==================================================================================================
-#pragma mark -
-#pragma mark Public Properties
-//==================================================================================================
+#pragma mark - Public Properties
 
 - (NSUInteger)location
 {
@@ -444,10 +438,7 @@ static NSString *__delimitersForCharacter(unichar character)
 }
 
 
-//==================================================================================================
-#pragma mark -
-#pragma mark Private Methods
-//==================================================================================================
+#pragma mark - Private Methods
 
 - (NSArray *)_lineRangesForString:(NSString *)aString
 {
@@ -495,10 +486,7 @@ static NSString *__delimitersForCharacter(unichar character)
 }
 
 
-//==================================================================================================
-#pragma mark -
-#pragma mark Private Properties
-//==================================================================================================
+#pragma mark - Private Properties
 
 - (NSRange)currentLineRange
 {

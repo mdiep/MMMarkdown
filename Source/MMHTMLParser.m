@@ -31,10 +31,7 @@
 
 @implementation MMHTMLParser
 
-//==================================================================================================
-#pragma mark -
-#pragma mark Public Methods
-//==================================================================================================
+#pragma mark - Public Methods
 
 - (MMElement *)parseBlockTagWithScanner:(MMScanner *)scanner
 {
@@ -107,10 +104,7 @@
 }
 
 
-//==================================================================================================
-#pragma mark -
-#pragma mark Private Methods
-//==================================================================================================
+#pragma mark - Private Methods
 
 - (MMElement *)_parseStrictBlockTagWithScanner:(MMScanner *)scanner
 {

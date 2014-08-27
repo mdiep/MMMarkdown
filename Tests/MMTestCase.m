@@ -28,10 +28,7 @@
 
 @implementation MMTestCase
 
-//==================================================================================================
-#pragma mark -
-#pragma mark Public Methods
-//==================================================================================================
+#pragma mark - Public Methods
 
 - (NSString *)stringWithContentsOfFile:(NSString *)aString inDirectory:(NSString *)aDirectory
 {
@@ -49,5 +46,6 @@
     
     MMAssertMarkdownEqualsHTML(input, html);
 }
+
 
 @end

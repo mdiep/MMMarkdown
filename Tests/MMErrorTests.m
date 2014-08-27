@@ -32,10 +32,7 @@
 
 @implementation MMErrorTests
 
-//==================================================================================================
-#pragma mark -
-#pragma mark Tests
-//==================================================================================================
+#pragma mark - Tests
 
 - (void)testEmptyInput
 {
@@ -50,5 +47,6 @@
     XCTAssertThrows([MMMarkdown HTMLStringWithMarkdown:nil error:nil], @"nil input should assert");
 #pragma clang diagnostic pop
 }
+
 
 @end

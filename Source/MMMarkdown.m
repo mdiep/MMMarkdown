@@ -31,10 +31,7 @@
 
 @implementation MMMarkdown
 
-//==================================================================================================
-#pragma mark -
-#pragma mark Public Methods
-//==================================================================================================
+#pragma mark - Public Methods
 
 + (NSString *)HTMLStringWithMarkdown:(NSString *)string error:(__autoreleasing NSError **)error
 {
@@ -47,10 +44,7 @@
 }
 
 
-//==================================================================================================
-#pragma mark -
-#pragma mark Private Methods
-//==================================================================================================
+#pragma mark - Private Methods
 
 + (NSString *)HTMLStringWithMarkdown:(NSString *)string
                           extensions:(MMMarkdownExtensions)extensions
