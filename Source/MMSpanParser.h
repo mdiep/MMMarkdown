@@ -38,4 +38,6 @@
 
 - (NSArray *)parseSpansInBlockElement:(MMElement *)block withScanner:(MMScanner *)scanner;
 
+- (NSArray *)parseSpansInTableColumns:(NSArray *)columns withScanner:(MMScanner *)scanner;
+
 @end

@@ -257,6 +257,15 @@ static NSString * __HTMLEntityForCharacter(unichar character)
             return element;
     }
     
+    if (self.extensions & MMMarkdownExtensionsTables)
+    {
+        [scanner beginTransaction];
+        element = [self _parseTableWithScanner:scanner];
+        [scanner commitTransaction:element != nil];
+        if (element)
+            return element;
+    }
+    
     // Check horizontal rules before lists since they both start with * or -
     [scanner beginTransaction];
     element = [self _parseHorizontalRuleWithScanner:scanner];
@@ -1077,6 +1086,123 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     element.children = [self.spanParser parseSpansInBlockElement:element withScanner:innerScanner];
     
     return element;
+}
+
+- (NSArray *)_parseTableHeaderWithScanner:(MMScanner *)scanner
+{
+    NSCharacterSet *dashSet = [NSCharacterSet characterSetWithCharactersInString:@"-"];
+    
+    [scanner skipWhitespace];
+    if (scanner.nextCharacter == '|')
+        [scanner advance];
+    [scanner skipWhitespace];
+    
+    NSMutableArray *alignments = [NSMutableArray new];
+    
+    while (!scanner.atEndOfLine)
+    {
+        BOOL left = NO;
+        if (scanner.nextCharacter == ':')
+        {
+            left = YES;
+            [scanner advance];
+        }
+        
+        NSUInteger dashes = [scanner skipCharactersFromSet:dashSet];
+        if (dashes < 3)
+            return nil;
+        
+        BOOL right = NO;
+        if (scanner.nextCharacter == ':')
+        {
+            right = YES;
+            [scanner advance];
+        }
+        
+        MMTableCellAlignment alignment
+            = left && right ? MMTableCellAlignmentCenter
+            : left          ? MMTableCellAlignmentLeft
+            : right         ? MMTableCellAlignmentRight
+            : MMTableCellAlignmentNone;
+        [alignments addObject:@(alignment)];
+        
+        [scanner skipWhitespace];
+        if (scanner.nextCharacter != '|')
+            break;
+        [scanner advance];
+        [scanner skipWhitespace];
+    }
+    
+    if (!scanner.atEndOfLine)
+        return nil;
+    
+    return alignments;
+}
+
+- (MMElement *)_parseTableRowWithScanner:(MMScanner *)scanner columns:(NSArray *)columns
+{
+    NSMutableCharacterSet *trimmingSet = NSMutableCharacterSet.whitespaceCharacterSet;
+    [trimmingSet addCharactersInString:@"|"];
+    
+    NSValue   *lineRange   = [NSValue valueWithRange:scanner.currentRange];
+    MMScanner *lineScanner = [MMScanner scannerWithString:scanner.string lineRanges:@[ lineRange ]];
+    
+    [lineScanner skipCharactersFromSet:trimmingSet];
+    NSArray *cells = [self.spanParser parseSpansInTableColumns:columns withScanner:lineScanner];
+    [lineScanner skipCharactersFromSet:trimmingSet];
+    
+    if (!cells || !lineScanner.atEndOfLine)
+        return nil;
+    [scanner advanceToNextLine];
+    
+    MMElement *row = [MMElement new];
+    row.type     = MMElementTypeTableRow;
+    row.children = cells;
+    row.range    = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
+    return row;
+}
+
+- (MMElement *)_parseTableWithScanner:(MMScanner *)scanner
+{
+    // Look for the header first
+    [scanner advanceToNextLine];
+    NSArray *alignments = [self _parseTableHeaderWithScanner:scanner];
+    if (!alignments)
+        return nil;
+    
+    // Undo the outer transaction to begin at the header content again
+    [scanner commitTransaction:NO];
+    [scanner beginTransaction];
+    
+    MMElement *header = [self _parseTableRowWithScanner:scanner columns:alignments];
+    if (!header)
+        return nil;
+    
+    header.type = MMElementTypeTableHeader;
+    for (MMElement *cell in header.children)
+        cell.type = MMElementTypeTableHeaderCell;
+    
+    [scanner advanceToNextLine];
+    
+    NSMutableArray *rows = [NSMutableArray arrayWithObject:header];
+    while (!scanner.atEndOfString)
+    {
+        [scanner beginTransaction];
+        MMElement *row = [self _parseTableRowWithScanner:scanner columns:alignments];
+        [scanner commitTransaction:row != nil];
+        if (row == nil)
+            break;
+        [rows addObject:row];
+    }
+    
+    if (rows.count < 2)
+        return nil;
+    
+    MMElement *table = [MMElement new];
+    table.type     = MMElementTypeTable;
+    table.children = rows;
+    table.range    = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
+    return table;
 }
 
 - (void)_updateLinksFromDefinitionsInDocument:(MMDocument *)document

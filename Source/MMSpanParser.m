@@ -70,6 +70,37 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     return [self _parseWithScanner:scanner untilTestPasses:^{ return [scanner atEndOfString]; }];
 }
 
+- (NSArray *)parseSpansInTableColumns:(NSArray *)columns withScanner:(MMScanner *)scanner
+{
+    NSMutableArray *cells = [NSMutableArray new];
+    
+    for (NSNumber *alignment in columns)
+    {
+        [scanner skipWhitespace];
+        
+        NSUInteger startLocation = scanner.location;
+        NSArray *spans = scanner.nextCharacter == '|' ? @[] : [self _parseWithScanner:scanner untilTestPasses:^ BOOL {
+            [scanner skipWhitespace];
+            return scanner.nextCharacter == '|' || scanner.atEndOfLine;
+        }];
+        
+        if (!spans)
+            return nil;
+        
+        MMElement *cell = [MMElement new];
+        cell.type      = MMElementTypeTableRowCell;
+        cell.children  = spans;
+        cell.range     = NSMakeRange(startLocation, scanner.location-startLocation);
+        cell.alignment = alignment.integerValue;
+        [cells addObject:cell];
+        
+        if (scanner.nextCharacter == '|')
+            [scanner advance];
+    }
+    
+    return cells;
+}
+
 
 //==================================================================================================
 #pragma mark -
@@ -80,13 +111,12 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 {
     NSMutableArray *result = [NSMutableArray array];
     
-    NSCharacterSet *specialChars = [NSCharacterSet characterSetWithCharactersInString:@"\\`*_<&[! ~w:@"];
+    NSCharacterSet *specialChars = [NSCharacterSet characterSetWithCharactersInString:@"\\`*_<&[! ~w:@|"];
     NSCharacterSet *boringChars  = [specialChars invertedSet];
     
     [scanner beginTransaction];
     while (![scanner atEndOfString])
     {
-        
         MMElement *element = [self _parseNextElementWithScanner:scanner];
         if (element)
         {

@@ -486,4 +486,120 @@
     );
 }
 
+//==================================================================================================
+#pragma mark -
+#pragma mark MMMarkdownExtensionsTables
+//==================================================================================================
+
+- (void)testTableWithStandardMarkdown
+{
+    NSString *markdown = @"1|2|3\n"
+                          "---|---|---\n"
+                          "A || B|\n"
+                          "a | b | c\n";
+    NSString *html = @"<p>1|2|3\n"
+                      "---|---|---\n"
+                      "A || B|\n"
+                      "a | b | c</p>";
+    MMAssertMarkdownEqualsHTML(markdown, html);
+}
+
+- (void)testBasicTable
+{
+    NSString *markdown = @"1|2|3\n"
+                          "---|---|---\n"
+                          "A || B|\n"
+                          "a | b | c\n";
+    NSString *html = @"<table>\n"
+                      "<thead>\n"
+                      "<tr>\n"
+                      "<th>1</th>\n"
+                      "<th>2</th>\n"
+                      "<th>3</th>\n"
+                      "</tr>\n"
+                      "</thead>\n"
+                      "<tbody>\n"
+                      "<tr>\n"
+                      "<td>A</td>\n"
+                      "<td></td>\n"
+                      "<td>B</td>\n"
+                      "</tr>\n"
+                      "<tr>\n"
+                      "<td>a</td>\n"
+                      "<td>b</td>\n"
+                      "<td>c</td>\n"
+                      "</tr>\n"
+                      "</tbody>\n"
+                      "</table>";
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTables, markdown, html);
+}
+
+- (void)testTableWithSpans
+{
+    NSString *markdown = @"1|2\n"
+                          "---|---\n"
+                          "_A_ | `B` |";
+    NSString *html = @"<table>\n"
+                      "<thead>\n"
+                      "<tr>\n"
+                      "<th>1</th>\n"
+                      "<th>2</th>\n"
+                      "</tr>\n"
+                      "</thead>\n"
+                      "<tbody>\n"
+                      "<tr>\n"
+                      "<td><em>A</em></td>\n"
+                      "<td><code>B</code></td>\n"
+                      "</tr>\n"
+                      "</tbody>\n"
+                      "</table>";
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTables, markdown, html);
+}
+
+- (void)testTableWithAlignment
+{
+    NSString *markdown = @"| Left  | Center  | Right |\n"
+                          "| :----- |:----------:| -----:|\n"
+                          "| 1 | 2 | 3 |";
+    NSString *html = @"<table>\n"
+                      "<thead>\n"
+                      "<tr>\n"
+                      "<th align='left'>Left</th>\n"
+                      "<th align='center'>Center</th>\n"
+                      "<th align='right'>Right</th>\n"
+                      "</tr>\n"
+                      "</thead>\n"
+                      "<tbody>\n"
+                      "<tr>\n"
+                      "<td align='left'>1</td>\n"
+                      "<td align='center'>2</td>\n"
+                      "<td align='right'>3</td>\n"
+                      "</tr>\n"
+                      "</tbody>\n"
+                      "</table>";
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTables, markdown, html);
+}
+
+- (void)testTableWithPipesOnEnds
+{
+    NSString *markdown = @"| 1 | 2 |\n"
+                          "| --- | --- |\n"
+                          "| A | B |";
+    NSString *html = @"<table>\n"
+                      "<thead>\n"
+                      "<tr>\n"
+                      "<th>1</th>\n"
+                      "<th>2</th>\n"
+                      "</tr>\n"
+                      "</thead>\n"
+                      "<tbody>\n"
+                      "<tr>\n"
+                      "<td>A</td>\n"
+                      "<td>B</td>\n"
+                      "</tr>\n"
+                      "</tbody>\n"
+                      "</table>";
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTables, markdown, html);
+}
+
 @end

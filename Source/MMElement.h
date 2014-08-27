@@ -47,8 +47,21 @@ typedef enum
     MMElementTypeLink,
     MMElementTypeMailTo,
     MMElementTypeDefinition,
-    MMElementTypeEntity
+    MMElementTypeEntity,
+    MMElementTypeTable,
+    MMElementTypeTableHeader,
+    MMElementTypeTableHeaderCell,
+    MMElementTypeTableRow,
+    MMElementTypeTableRowCell,
 } MMElementType;
+
+typedef NS_ENUM(NSInteger, MMTableCellAlignment)
+{
+    MMTableCellAlignmentNone,
+    MMTableCellAlignmentLeft,
+    MMTableCellAlignmentCenter,
+    MMTableCellAlignmentRight,
+};
 
 @interface MMElement : NSObject
 
@@ -56,6 +69,7 @@ typedef enum
 @property (assign, nonatomic) MMElementType  type;
 @property (copy,   nonatomic) NSArray       *innerRanges;
 
+@property (assign, nonatomic) MMTableCellAlignment alignment;
 @property (assign, nonatomic) NSUInteger     level;
 @property (copy,   nonatomic) NSString      *href;
 @property (copy,   nonatomic) NSString      *title;
