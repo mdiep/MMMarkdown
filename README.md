@@ -17,6 +17,14 @@ Using MMMarkdown is simple. The main API is a single class method:
 
 The markdown string that is passed in must be non-nil.
 
+MMMarkdown also supports a number of Markdown extensions:
+
+    #import <MMMarkdown/MMMarkdown.h>
+    
+    NSString *markdown   = @"~~Mistaken~~";
+    NSString *htmlString = [MMMarkdown HTMLStringWithMarkdown:markdown extensions:MMMarkdownExtensionsGitHubFlavored error:NULL];
+    // Returns @"<p><del>Mistaken</del></p>"
+
 ## Downloading
 While the development branch (`master`) includes the headers and libraries from the latest release, it is recommended that you use the `release` branch unless you are working on MMMarkdown itself.
 
