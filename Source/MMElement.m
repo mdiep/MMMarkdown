@@ -52,6 +52,8 @@ static NSString * __MMStringFromElementType(MMElementType type)
             return @"html";
         case MMElementTypeLineBreak:
             return @"br";
+        case MMElementTypeStrikethrough:
+            return @"del";
         case MMElementTypeStrong:
             return @"strong";
         case MMElementTypeEm:

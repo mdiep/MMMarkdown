@@ -159,14 +159,42 @@ static NSString *__delimitersForCharacter(unichar character)
     return [self.string characterAtIndex:self.location];
 }
 
+- (NSString *)previousWord
+{
+    return [self previousWordWithCharactersFromSet:NSCharacterSet.alphanumericCharacterSet];
+}
+
 - (NSString *)nextWord
 {
-    NSRange result = [self.string rangeOfCharacterFromSet:[[NSCharacterSet alphanumericCharacterSet] invertedSet]
+    return [self nextWordWithCharactersFromSet:NSCharacterSet.alphanumericCharacterSet];
+}
+
+- (NSString *)previousWordWithCharactersFromSet:(NSCharacterSet *)set
+{
+    NSUInteger start = MAX(self.currentLineRange.location, self.startLocation);
+    NSUInteger end   = self.currentRange.location;
+    NSRange range = NSMakeRange(start, end-start);
+    
+    NSRange result = [self.string rangeOfCharacterFromSet:set.invertedSet
+                                                  options:NSBackwardsSearch
+                                                    range:range];
+    
+    if (result.location == NSNotFound)
+        return [self.string substringWithRange:range];
+    
+    NSUInteger wordLocation = NSMaxRange(result);
+    NSRange wordRange = NSMakeRange(wordLocation, end-wordLocation);
+    return [self.string substringWithRange:wordRange];
+}
+
+- (NSString *)nextWordWithCharactersFromSet:(NSCharacterSet *)set
+{
+    NSRange result = [self.string rangeOfCharacterFromSet:set.invertedSet
                                                   options:0
                                                     range:self.currentRange];
     
     if (result.location == NSNotFound)
-        return @"";
+        return [self.string substringWithRange:self.currentRange];
     
     NSRange wordRange = self.currentRange;
     wordRange.length = result.location - wordRange.location;

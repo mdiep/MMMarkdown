@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>DAF80987-170F-40B6-9CD4-E95AAC224DE3</string>
+	<key>IDESourceControlProjectName</key>
+	<string>MMMarkdown</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>8E756A5F3B3088D21C2995D34B375B49B53EB485</key>
+		<string>github.com:mdiep/MMMarkdown.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>MMMarkdown.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>8E756A5F3B3088D21C2995D34B375B49B53EB485</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>github.com:mdiep/MMMarkdown.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>8E756A5F3B3088D21C2995D34B375B49B53EB485</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>8E756A5F3B3088D21C2995D34B375B49B53EB485</string>
+			<key>IDESourceControlWCCName</key>
+			<string>MMMarkdown</string>
+		</dict>
+	</array>
+</dict>
+</plist>

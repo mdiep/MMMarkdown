@@ -38,17 +38,36 @@
 
 + (NSString *)HTMLStringWithMarkdown:(NSString *)string error:(__autoreleasing NSError **)error
 {
+    return [self HTMLStringWithMarkdown:string extensions:MMMarkdownExtensionsNone fromSelector:_cmd error:error];
+}
+
++ (NSString *)HTMLStringWithMarkdown:(NSString *)string extensions:(MMMarkdownExtensions)extensions error:(NSError *__autoreleasing *)error
+{
+    return [self HTMLStringWithMarkdown:string extensions:extensions fromSelector:_cmd error:error];
+}
+
+
+//==================================================================================================
+#pragma mark -
+#pragma mark Private Methods
+//==================================================================================================
+
++ (NSString *)HTMLStringWithMarkdown:(NSString *)string
+                          extensions:(MMMarkdownExtensions)extensions
+                        fromSelector:(SEL)selector
+                               error:(__autoreleasing NSError **)error
+{
     if (string == nil)
     {
         NSString *reason = [NSString stringWithFormat:@"[%@ %@]: nil argument for markdown",
-                            NSStringFromClass([self class]), NSStringFromSelector(_cmd)];
+                            NSStringFromClass([self class]), NSStringFromSelector(selector)];
         @throw [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
     }
     
     if ([string length] == 0)
         return @"";
     
-    MMParser    *parser    = [MMParser new];
+    MMParser    *parser    = [[MMParser alloc] initWithExtensions:extensions];
     MMGenerator *generator = [MMGenerator new];
     
     MMDocument *document = [parser parseMarkdown:string error:error];

@@ -49,35 +49,31 @@ static NSString * __HTMLEntityForCharacter(unichar character)
 }
 
 @interface MMParser ()
-@property (strong, nonatomic) MMHTMLParser *htmlParser;
-@property (strong, nonatomic) MMSpanParser *spanParser;
+@property (assign, nonatomic, readonly) MMMarkdownExtensions extensions;
+@property (strong, nonatomic, readonly) MMHTMLParser *htmlParser;
+@property (strong, nonatomic, readonly) MMSpanParser *spanParser;
 @end
 
 @implementation MMParser
 
 //==================================================================================================
 #pragma mark -
-#pragma mark NSObject Methods
+#pragma mark Public Methods
 //==================================================================================================
 
-- (id)init
+- (id)initWithExtensions:(MMMarkdownExtensions)extensions
 {
     self = [super init];
     
     if (self)
     {
-        self.htmlParser = [MMHTMLParser new];
-        self.spanParser = [MMSpanParser new];
+        _extensions = extensions;
+        _htmlParser = [MMHTMLParser new];
+        _spanParser = [[MMSpanParser alloc] initWithExtensions:extensions];
     }
     
     return self;
 }
-
-
-//==================================================================================================
-#pragma mark -
-#pragma mark Public Methods
-//==================================================================================================
 
 - (MMDocument *)parseMarkdown:(NSString *)markdown error:(__autoreleasing NSError **)error
 {
@@ -252,6 +248,24 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     if (element)
         return element;
     
+    if (self.extensions & MMMarkdownExtensionsFencedCodeBlocks)
+    {
+        [scanner beginTransaction];
+        element = [self _parseFencedCodeBlockWithScanner:scanner];
+        [scanner commitTransaction:element != nil];
+        if (element)
+            return element;
+    }
+    
+    if (self.extensions & MMMarkdownExtensionsTables)
+    {
+        [scanner beginTransaction];
+        element = [self _parseTableWithScanner:scanner];
+        [scanner commitTransaction:element != nil];
+        if (element)
+            return element;
+    }
+    
     // Check horizontal rules before lists since they both start with * or -
     [scanner beginTransaction];
     element = [self _parseHorizontalRuleWithScanner:scanner];
@@ -337,7 +351,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     if (element.innerRanges.count > 0)
     {
         MMScanner *innerScanner = [MMScanner scannerWithString:scanner.string lineRanges:element.innerRanges];
-        element.children = [self.spanParser parseSpansWithScanner:innerScanner];
+        element.children = [self.spanParser parseSpansInBlockElement:element withScanner:innerScanner];
     }
     
     return element;
@@ -401,7 +415,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     if (element.innerRanges.count > 0)
     {
         MMScanner *innerScanner = [MMScanner scannerWithString:scanner.string lineRanges:element.innerRanges];
-        element.children = [self.spanParser parseSpansWithScanner:innerScanner];
+        element.children = [self.spanParser parseSpansInBlockElement:element withScanner:innerScanner];
     }
     
     return element;
@@ -466,6 +480,55 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     return element;
 }
 
+- (NSArray *)_parseCodeLinesWithScanner:(MMScanner *)scanner
+{
+    NSMutableArray *children = [NSMutableArray new];
+    
+    // &, <, and > need to be escaped
+    NSCharacterSet *entities    = [NSCharacterSet characterSetWithCharactersInString:@"&<>"];
+    NSCharacterSet *nonEntities = [entities invertedSet];
+    
+    while (![scanner atEndOfString])
+    {
+        NSUInteger textLocation = scanner.location;
+        
+        [scanner skipCharactersFromSet:nonEntities];
+        
+        if (textLocation != scanner.location)
+        {
+            MMElement *text = [MMElement new];
+            text.type  = MMElementTypeNone;
+            text.range = NSMakeRange(textLocation, scanner.location-textLocation);
+            [children addObject:text];
+        }
+        
+        // Add the entity
+        if (![scanner atEndOfLine])
+        {
+            unichar    character = [scanner.string characterAtIndex:scanner.location];
+            MMElement *entity    = [MMElement new];
+            entity.type  = MMElementTypeEntity;
+            entity.range = NSMakeRange(scanner.location, 1);
+            entity.stringValue = __HTMLEntityForCharacter(character);
+            [children addObject:entity];
+            [scanner advance];
+        }
+        
+        if ([scanner atEndOfLine])
+        {
+            [scanner advanceToNextLine];
+            
+            // Add a newline
+            MMElement *newline = [MMElement new];
+            newline.type  = MMElementTypeNone;
+            newline.range = NSMakeRange(0, 0);
+            [children addObject:newline];
+        }
+    }
+    
+    return children;
+}
+
 - (MMElement *)_parseCodeBlockWithScanner:(MMScanner *)scanner
 {
     NSUInteger indentation = [scanner skipIndentationUpTo:4];
@@ -526,57 +589,42 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         [element addInnerRange:lineRange];
     }
     
-    // Add the text manually to avoid span parsing// Add the text manually here to avoid span parsing
-    for (NSValue *value in element.innerRanges)
-    {
-        NSRange range = [value rangeValue];
-        
-        // &, <, and > need to be escaped
-        NSCharacterSet *entities = [NSCharacterSet characterSetWithCharactersInString:@"&<>"];
-        while (range.length > 0)
-        {
-            NSRange result    = [scanner.string rangeOfCharacterFromSet:entities options:0 range:range];
-            NSRange textRange = result.location == NSNotFound ? range : NSMakeRange(range.location, result.location-range.location);
-            
-            // Add the text that was skipped over
-            if (textRange.length > 0)
-            {
-                MMElement *text = [MMElement new];
-                text.type  = MMElementTypeNone;
-                text.range = textRange;
-                [element addChild:text];
-            }
-            
-            // Add the entity
-            if (result.location != NSNotFound)
-            {
-                unichar    character = [scanner.string characterAtIndex:result.location];
-                MMElement *entity    = [MMElement new];
-                entity.type  = MMElementTypeEntity;
-                entity.range = result;
-                entity.stringValue = __HTMLEntityForCharacter(character);
-                [element addChild:entity];
-            }
-            
-            // Adjust the range
-            if (result.location != NSNotFound)
-            {
-                range = NSMakeRange(NSMaxRange(result), NSMaxRange(range)-NSMaxRange(result));
-            }
-            else
-            {
-                range = NSMakeRange(NSMaxRange(textRange), NSMaxRange(range)-NSMaxRange(textRange));
-            }
-        }
-        
-        // Add a newline
-        MMElement *newline = [MMElement new];
-        newline.type  = MMElementTypeNone;
-        newline.range = NSMakeRange(0, 0);
-        [element addChild:newline];
-    }
-    element.innerRanges = nil;
     element.range = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
+    
+    if (element.innerRanges.count > 0)
+    {
+        MMScanner *innerScanner = [MMScanner scannerWithString:scanner.string lineRanges:element.innerRanges];
+        element.children = [self _parseCodeLinesWithScanner:innerScanner];
+    }
+    
+    return element;
+}
+
+- (MMElement *)_parseFencedCodeBlockWithScanner:(MMScanner *)scanner
+{
+    if (![scanner matchString:@"```"])
+        return nil;
+    
+    // skip additional backticks and language
+    [scanner advanceToNextLine];
+    
+    MMElement *element = [MMElement new];
+    element.type  = MMElementTypeCodeBlock;
+    
+    // block ends when it hints a line starting with ``` or the end of the string
+    while (![scanner matchString:@"```"] && ![scanner atEndOfString])
+    {
+        [element addInnerRange:scanner.currentRange];
+        [scanner advanceToNextLine];
+    }
+    
+    [scanner advanceToNextLine];
+    
+    if (element.innerRanges.count > 0)
+    {
+        MMScanner *innerScanner = [MMScanner scannerWithString:scanner.string lineRanges:element.innerRanges];
+        element.children = [self _parseCodeLinesWithScanner:innerScanner];
+    }
     
     return element;
 }
@@ -804,7 +852,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
             }
             else
             {
-                element.children = [self.spanParser parseSpansWithScanner:preListScanner];
+                element.children = [self.spanParser parseSpansInBlockElement:element withScanner:preListScanner];
             }
             
             element.children = [element.children arrayByAddingObjectsFromArray:[self _parseElementsWithScanner:postListScanner]];
@@ -818,7 +866,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
             }
             else
             {
-                element.children = [self.spanParser parseSpansWithScanner:innerScanner];
+                element.children = [self.spanParser parseSpansInBlockElement:element withScanner:innerScanner];
             }
         }
     }
@@ -998,7 +1046,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         
         BOOL hasElement;
         
-        // Check for a link definitoin
+        // Check for a link definition
         [scanner beginTransaction];
         hasElement = [self _parseLinkDefinitionWithScanner:scanner] != nil;
         [scanner commitTransaction:NO];
@@ -1019,15 +1067,142 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         if (hasElement)
             break;
         
+        // Check for a fenced code block under GFM
+        if (self.extensions & MMMarkdownExtensionsFencedCodeBlocks)
+        {
+            [scanner beginTransaction];
+            hasElement = [self _parseFencedCodeBlockWithScanner:scanner] != nil;
+            [scanner commitTransaction:NO];
+            if (hasElement)
+                break;
+        }
+        
         [self _addTextLineToElement:element withScanner:scanner];
     }
     
     element.range = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
     
     MMScanner *innerScanner = [MMScanner scannerWithString:scanner.string lineRanges:element.innerRanges];
-    element.children = [self.spanParser parseSpansWithScanner:innerScanner];
+    element.children = [self.spanParser parseSpansInBlockElement:element withScanner:innerScanner];
     
     return element;
+}
+
+- (NSArray *)_parseTableHeaderWithScanner:(MMScanner *)scanner
+{
+    NSCharacterSet *dashSet = [NSCharacterSet characterSetWithCharactersInString:@"-"];
+    
+    [scanner skipWhitespace];
+    if (scanner.nextCharacter == '|')
+        [scanner advance];
+    [scanner skipWhitespace];
+    
+    NSMutableArray *alignments = [NSMutableArray new];
+    
+    while (!scanner.atEndOfLine)
+    {
+        BOOL left = NO;
+        if (scanner.nextCharacter == ':')
+        {
+            left = YES;
+            [scanner advance];
+        }
+        
+        NSUInteger dashes = [scanner skipCharactersFromSet:dashSet];
+        if (dashes < 3)
+            return nil;
+        
+        BOOL right = NO;
+        if (scanner.nextCharacter == ':')
+        {
+            right = YES;
+            [scanner advance];
+        }
+        
+        MMTableCellAlignment alignment
+            = left && right ? MMTableCellAlignmentCenter
+            : left          ? MMTableCellAlignmentLeft
+            : right         ? MMTableCellAlignmentRight
+            : MMTableCellAlignmentNone;
+        [alignments addObject:@(alignment)];
+        
+        [scanner skipWhitespace];
+        if (scanner.nextCharacter != '|')
+            break;
+        [scanner advance];
+        [scanner skipWhitespace];
+    }
+    
+    if (!scanner.atEndOfLine)
+        return nil;
+    
+    return alignments;
+}
+
+- (MMElement *)_parseTableRowWithScanner:(MMScanner *)scanner columns:(NSArray *)columns
+{
+    NSMutableCharacterSet *trimmingSet = NSMutableCharacterSet.whitespaceCharacterSet;
+    [trimmingSet addCharactersInString:@"|"];
+    
+    NSValue   *lineRange   = [NSValue valueWithRange:scanner.currentRange];
+    MMScanner *lineScanner = [MMScanner scannerWithString:scanner.string lineRanges:@[ lineRange ]];
+    
+    [lineScanner skipCharactersFromSet:trimmingSet];
+    NSArray *cells = [self.spanParser parseSpansInTableColumns:columns withScanner:lineScanner];
+    [lineScanner skipCharactersFromSet:trimmingSet];
+    
+    if (!cells || !lineScanner.atEndOfLine)
+        return nil;
+    [scanner advanceToNextLine];
+    
+    MMElement *row = [MMElement new];
+    row.type     = MMElementTypeTableRow;
+    row.children = cells;
+    row.range    = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
+    return row;
+}
+
+- (MMElement *)_parseTableWithScanner:(MMScanner *)scanner
+{
+    // Look for the header first
+    [scanner advanceToNextLine];
+    NSArray *alignments = [self _parseTableHeaderWithScanner:scanner];
+    if (!alignments)
+        return nil;
+    
+    // Undo the outer transaction to begin at the header content again
+    [scanner commitTransaction:NO];
+    [scanner beginTransaction];
+    
+    MMElement *header = [self _parseTableRowWithScanner:scanner columns:alignments];
+    if (!header)
+        return nil;
+    
+    header.type = MMElementTypeTableHeader;
+    for (MMElement *cell in header.children)
+        cell.type = MMElementTypeTableHeaderCell;
+    
+    [scanner advanceToNextLine];
+    
+    NSMutableArray *rows = [NSMutableArray arrayWithObject:header];
+    while (!scanner.atEndOfString)
+    {
+        [scanner beginTransaction];
+        MMElement *row = [self _parseTableRowWithScanner:scanner columns:alignments];
+        [scanner commitTransaction:row != nil];
+        if (row == nil)
+            break;
+        [rows addObject:row];
+    }
+    
+    if (rows.count < 2)
+        return nil;
+    
+    MMElement *table = [MMElement new];
+    table.type     = MMElementTypeTable;
+    table.children = rows;
+    table.range    = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
+    return table;
 }
 
 - (void)_updateLinksFromDefinitionsInDocument:(MMDocument *)document

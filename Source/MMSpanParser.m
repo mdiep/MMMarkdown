@@ -33,11 +33,13 @@
 static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 
 @interface MMSpanParser ()
-@property (strong, nonatomic) MMHTMLParser *htmlParser;
+@property (assign, nonatomic, readonly) MMMarkdownExtensions extensions;
+@property (strong, nonatomic, readonly) MMHTMLParser *htmlParser;
 
 @property (strong, nonatomic) NSMutableArray *elements;
 @property (strong, nonatomic) NSMutableArray *openElements;
 
+@property (strong, nonatomic) MMElement *blockElement;
 @property (assign, nonatomic) BOOL parseLinks;
 @end
 
@@ -45,31 +47,58 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 
 //==================================================================================================
 #pragma mark -
-#pragma mark NSObject Methods
+#pragma mark Public Methods
 //==================================================================================================
 
-- (id)init
+- (id)initWithExtensions:(MMMarkdownExtensions)extensions
 {
     self = [super init];
     
     if (self)
     {
-        self.htmlParser = [MMHTMLParser new];
+        _extensions = extensions;
+        _htmlParser = [MMHTMLParser new];
         self.parseLinks = YES;
     }
     
     return self;
 }
 
-
-//==================================================================================================
-#pragma mark -
-#pragma mark Public Methods
-//==================================================================================================
-
-- (NSArray *)parseSpansWithScanner:(MMScanner *)scanner
+- (NSArray *)parseSpansInBlockElement:(MMElement *)block withScanner:(MMScanner *)scanner
 {
+    self.blockElement = block;
     return [self _parseWithScanner:scanner untilTestPasses:^{ return [scanner atEndOfString]; }];
+}
+
+- (NSArray *)parseSpansInTableColumns:(NSArray *)columns withScanner:(MMScanner *)scanner
+{
+    NSMutableArray *cells = [NSMutableArray new];
+    
+    for (NSNumber *alignment in columns)
+    {
+        [scanner skipWhitespace];
+        
+        NSUInteger startLocation = scanner.location;
+        NSArray *spans = scanner.nextCharacter == '|' ? @[] : [self _parseWithScanner:scanner untilTestPasses:^ BOOL {
+            [scanner skipWhitespace];
+            return scanner.nextCharacter == '|' || scanner.atEndOfLine;
+        }];
+        
+        if (!spans)
+            return nil;
+        
+        MMElement *cell = [MMElement new];
+        cell.type      = MMElementTypeTableRowCell;
+        cell.children  = spans;
+        cell.range     = NSMakeRange(startLocation, scanner.location-startLocation);
+        cell.alignment = alignment.integerValue;
+        [cells addObject:cell];
+        
+        if (scanner.nextCharacter == '|')
+            [scanner advance];
+    }
+    
+    return cells;
 }
 
 
@@ -78,121 +107,141 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 #pragma mark Private Methods
 //==================================================================================================
 
-- (MMElement *)_parseNextElementWithScanner:(MMScanner *)scanner
-{
-    // 1) Check for a text segment
-    
-    NSCharacterSet *specialChars = [NSCharacterSet characterSetWithCharactersInString:@"\\`*_<&[! "];
-    NSCharacterSet *boringChars  = [specialChars invertedSet];
-    NSUInteger skipped = [scanner skipCharactersFromSet:boringChars];
-    if (skipped > 0)
-    {
-        MMElement *text = [MMElement new];
-        text.type  = MMElementTypeNone;
-        text.range = NSMakeRange(scanner.location-skipped, skipped);
-        return text;
-    }
-    
-    // 2) Check for a newline
-    if ([scanner atEndOfLine])
-    {
-        // TODO: Add a line break?
-        
-        // Add a newline
-        MMElement *newline = [MMElement new];
-        newline.type  = MMElementTypeNone;
-        newline.range = NSMakeRange(0, 0);
-        
-        [scanner advanceToNextLine];
-        
-        return newline;
-    }
-    
-    // 3) Check for a span element
-    
-    MMElement *span = [self _parseSpanWithScanner:scanner];
-    if (span)
-    {
-        return span;
-    }
-    
-    // 4) Check for an entity
-    
-    MMElement *entity = [self _parseEntityWithScanner:scanner];
-    if (entity)
-    {
-        return entity;
-    }
-    
-    // 5) Check for a backslash
-    if ([scanner nextCharacter] == '\\')
-    {
-        // If the next character isn't one that can be escaped, then let the backslash pass through
-        // unchanged. Otherwise, skip the backslash and return the escaped character.
-        
-        [scanner beginTransaction];
-        [scanner advance]; // skip over the backslash
-        
-        NSCharacterSet *escapedChars = [NSCharacterSet characterSetWithCharactersInString:ESCAPABLE_CHARS];
-        if ([escapedChars characterIsMember:[scanner nextCharacter]])
-        {
-            [scanner commitTransaction:YES];
-        }
-        else
-        {
-            [scanner commitTransaction:NO];
-        }
-        
-        // Then fall through to (6) below.
-    }
-    
-    // 6) Otherwise, return the character
-    MMElement *character = [MMElement new];
-    character.type = MMElementTypeNone;
-    character.range = NSMakeRange(scanner.location, 1);
-    
-    [scanner advance];
-    
-    return character;
-}
-
 - (NSArray *)_parseWithScanner:(MMScanner *)scanner untilTestPasses:(BOOL (^)())test
 {
     NSMutableArray *result = [NSMutableArray array];
     
+    NSCharacterSet *specialChars = [NSCharacterSet characterSetWithCharactersInString:@"\\`*_<&[! ~w:@|"];
+    NSCharacterSet *boringChars  = [specialChars invertedSet];
+    
+    [scanner beginTransaction];
     while (![scanner atEndOfString])
     {
         MMElement *element = [self _parseNextElementWithScanner:scanner];
         if (element)
         {
+            if (scanner.startLocation != element.range.location)
+            {
+                MMElement *text = [MMElement new];
+                text.type  = MMElementTypeNone;
+                text.range = NSMakeRange(scanner.startLocation, element.range.location-scanner.startLocation);
+                [result addObject:text];
+            }
+            
             [result addObject:element];
+            
+            [scanner commitTransaction:YES];
+            [scanner beginTransaction];
+        }
+        else if ([scanner atEndOfLine])
+        {
+            // This is done here (and not in _parseNextElementWithScanner:)
+            // because it can result in 2 elements.
+            
+            if (scanner.startLocation != scanner.location)
+            {
+                MMElement *text = [MMElement new];
+                text.type  = MMElementTypeNone;
+                text.range = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
+                [result addObject:text];
+            }
+            
+            if (self.extensions & MMMarkdownExtensionsHardNewlines && self.blockElement.type == MMElementTypeParagraph)
+            {
+                MMElement *lineBreak = [MMElement new];
+                lineBreak.range = NSMakeRange(scanner.location, 1);
+                lineBreak.type  = MMElementTypeLineBreak;
+                [result addObject:lineBreak];
+            }
+            
+            // Add a newline
+            MMElement *newline = [MMElement new];
+            newline.range        = NSMakeRange(scanner.location, 1);
+            newline.type        = MMElementTypeEntity;
+            newline.stringValue = @"\n";
+            [result addObject:newline];
+            
+            [scanner advanceToNextLine];
+            [scanner commitTransaction:YES];
+            [scanner beginTransaction];
+        }
+        else if ([scanner skipCharactersFromSet:boringChars])
+        {
+        }
+        else
+        {
+            [scanner advance];
         }
         
         // Check for the end character
         [scanner beginTransaction];
+        NSUInteger location = scanner.location;
         if (test())
         {
             [scanner commitTransaction:YES];
+            
+            if (scanner.startLocation != location)
+            {
+                MMElement *text = [MMElement new];
+                text.type  = MMElementTypeNone;
+                text.range = NSMakeRange(scanner.startLocation, location-scanner.startLocation);
+                [result addObject:text];
+            }
+            
+            [scanner commitTransaction:YES];
+            
             return result;
         }
         [scanner commitTransaction:NO];
     }
+    [scanner commitTransaction:NO];
     
     return nil;
 }
        
-- (MMElement *)_parseSpanWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseNextElementWithScanner:(MMScanner *)scanner
 {
     MMElement *element;
     
+    if (self.extensions & MMMarkdownExtensionsStrikethroughs)
+    {
+        [scanner beginTransaction];
+        element = [self _parseStrikethroughWithScanner:scanner];
+        [scanner commitTransaction:element != nil];
+        if (element)
+            return element;
+    }
+    
+    // URL Autolinking
+    if (self.parseLinks && self.extensions & MMMarkdownExtensionsAutolinkedURLs)
+    {
+        [scanner beginTransaction];
+        element = [self _parseAutolinkEmailAddressWithScanner:scanner];
+        [scanner commitTransaction:element != nil];
+        if (element)
+            return element;
+        
+        [scanner beginTransaction];
+        element = [self _parseAutolinkURLWithScanner:scanner];
+        [scanner commitTransaction:element != nil];
+        if (element)
+            return element;
+        
+        [scanner beginTransaction];
+        element = [self _parseAutolinkWWWURLWithScanner:scanner];
+        [scanner commitTransaction:element != nil];
+        if (element)
+            return element;
+    }
+    
     [scanner beginTransaction];
-    element = [self _parseStrongWithScanner:scanner];
+    element = [self _parseBackslashWithScanner:scanner];
     [scanner commitTransaction:element != nil];
     if (element)
         return element;
     
     [scanner beginTransaction];
-    element = [self _parseEmWithScanner:scanner];
+    element = [self _parseEmAndStrongWithScanner:scanner];
     [scanner commitTransaction:element != nil];
     if (element)
         return element;
@@ -248,22 +297,209 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     if (element)
         return element;
     
+    [scanner beginTransaction];
+    element = [self _parseAmpersandWithScanner:scanner];
+    [scanner commitTransaction:element != nil];
+    if (element)
+        return element;
+    
+    [scanner beginTransaction];
+    element = [self _parseLeftAngleBracketWithScanner:scanner];
+    [scanner commitTransaction:element != nil];
+    if (element)
+        return element;
+    
     return nil;
 }
 
-- (MMElement *)_parseStrongWithScanner:(MMScanner *)scanner
+- (BOOL)_parseAutolinkDomainWithScanner:(MMScanner *)scanner
 {
-    // Must have 2 *s or _s
-    unichar character = [scanner nextCharacter];
-    if (!(character == '*' || character == '_'))
+    NSCharacterSet        *alphanumerics = NSCharacterSet.alphanumericCharacterSet;
+    NSMutableCharacterSet *domainChars   = [alphanumerics mutableCopy];
+    [domainChars addCharactersInString:@"-:"];
+    
+    // Domain should be at least one alphanumeric
+    if (![alphanumerics characterIsMember:scanner.nextCharacter])
+        return NO;
+    [scanner skipCharactersFromSet:domainChars];
+    
+    // Dot between domain and TLD
+    if (scanner.nextCharacter != '.')
+        return NO;
+    [scanner advance];
+    
+    // TLD must be at least 1 character
+    if ([scanner skipCharactersFromSet:domainChars] == 0)
+        return NO;
+    
+    return YES;
+}
+
+- (void)_parseAutolinkPathWithScanner:(MMScanner *)scanner
+{
+    NSCharacterSet        *alphanumerics = NSCharacterSet.alphanumericCharacterSet;
+    NSMutableCharacterSet *boringChars = [alphanumerics mutableCopy];
+    [boringChars addCharactersInString:@",_-/:?&;%~!#"];
+    
+    NSUInteger parenLevel = 0;
+    while (1)
+    {
+        if ([scanner skipCharactersFromSet:boringChars] > 0)
+        {
+            continue;
+        }
+        else if (scanner.nextCharacter == '\\')
+        {
+            [scanner advance];
+            if (scanner.nextCharacter == '(' || scanner.nextCharacter == ')')
+                [scanner advance];
+        }
+        else if (scanner.nextCharacter == '(')
+        {
+            parenLevel++;
+            [scanner advance];
+        }
+        else if (scanner.nextCharacter == ')' && parenLevel > 0)
+        {
+            parenLevel--;
+            [scanner advance];
+        }
+        else if (scanner.nextCharacter == '.')
+        {
+            // Can't end on a '.'
+            [scanner beginTransaction];
+            [scanner advance];
+            if ([boringChars characterIsMember:scanner.nextCharacter])
+            {
+                [scanner commitTransaction:YES];
+            }
+            else
+            {
+                [scanner commitTransaction:NO];
+                break;
+            }
+        }
+        else
+        {
+            break;
+        }
+    }
+}
+
+- (MMElement *)_parseAutolinkEmailAddressWithScanner:(MMScanner *)scanner
+{
+    if (scanner.nextCharacter != '@')
         return nil;
     
-    for (NSUInteger idx=0; idx<2; idx++)
-    {
-        if ([scanner nextCharacter] != character)
-            return nil;
-        [scanner advance];
-    }
+    NSCharacterSet *alphanumerics = NSCharacterSet.alphanumericCharacterSet;
+    NSMutableCharacterSet *localChars  = [alphanumerics mutableCopy];
+    [localChars addCharactersInString:@"._-+"];
+    NSMutableCharacterSet *domainChars = [alphanumerics mutableCopy];
+    [domainChars addCharactersInString:@"._-"];
+    
+    // Look for the previous word outside of the current transaction
+    [scanner commitTransaction:NO];
+    NSString *localPart = [scanner previousWordWithCharactersFromSet:localChars];
+    [scanner beginTransaction];
+    
+    if (localPart.length == 0)
+        return nil;
+    
+    // '@'
+    [scanner advance];
+    
+    NSString *domainPart = [scanner nextWordWithCharactersFromSet:localChars];
+    
+    // Must end on a letter or number
+    NSRange lastAlphanum = [domainPart rangeOfCharacterFromSet:alphanumerics options:NSBackwardsSearch];
+    if (lastAlphanum.location == NSNotFound)
+        return nil;
+    domainPart = [domainPart substringToIndex:NSMaxRange(lastAlphanum)];
+    
+    // Must contain at least one .
+    if ([domainPart rangeOfString:@"."].location == NSNotFound)
+        return nil;
+    
+    scanner.location += domainPart.length;
+    
+    NSUInteger startLocation = scanner.startLocation - localPart.length;
+    NSRange range = NSMakeRange(startLocation, scanner.location-startLocation);
+    
+    MMElement *element = [MMElement new];
+    element.type  = MMElementTypeMailTo;
+    element.range = range;
+    element.href  = [scanner.string substringWithRange:range];
+    
+    return element;
+}
+
+- (MMElement *)_parseAutolinkURLWithScanner:(MMScanner *)scanner
+{
+    if (scanner.nextCharacter != ':')
+        return nil;
+    
+    NSArray  *protocols    = @[ @"https", @"http", @"ftp" ];
+    
+    // Look for the previous word outside of the current transaction
+    [scanner commitTransaction:NO];
+    NSString *previousWord = scanner.previousWord;
+    [scanner beginTransaction];
+    
+    if (![protocols containsObject:previousWord.lowercaseString])
+        return nil;
+    
+    if (![scanner matchString:@"://"])
+        return nil;
+    
+    if (![self _parseAutolinkDomainWithScanner:scanner])
+        return nil;
+    [self _parseAutolinkPathWithScanner:scanner];
+    
+    NSUInteger startLocation = scanner.startLocation - previousWord.length;
+    NSRange   range = NSMakeRange(startLocation, scanner.location-startLocation);
+    
+    MMElement *element = [MMElement new];
+    element.type  = MMElementTypeLink;
+    element.range = range;
+    element.href  = [scanner.string substringWithRange:range];
+    
+    MMElement *text = [MMElement new];
+    text.type  = MMElementTypeNone;
+    text.range = range;
+    [element addChild:text];
+    
+    return element;
+}
+
+- (MMElement *)_parseAutolinkWWWURLWithScanner:(MMScanner *)scanner
+{
+    if (![scanner matchString:@"www."])
+        return nil;
+    
+    if (![self _parseAutolinkDomainWithScanner:scanner])
+        return nil;
+    [self _parseAutolinkPathWithScanner:scanner];
+    
+    NSRange   range = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
+    NSString *link  = [scanner.string substringWithRange:range];
+    
+    MMElement *element = [MMElement new];
+    element.type     = MMElementTypeLink;
+    element.range    = range;
+    element.href     = [@"http://" stringByAppendingString:link];
+    
+    MMElement *text = [MMElement new];
+    text.type  = MMElementTypeNone;
+    text.range = range;
+    [element addChild:text];
+    
+    return element;
+}
+
+- (MMElement *)_parseStrikethroughWithScanner:(MMScanner *)scanner
+{
+    if (![scanner matchString:@"~~"])
+        return nil;
     
     NSCharacterSet  *whitespaceSet = [NSCharacterSet whitespaceCharacterSet];
     NSArray         *children      = [self _parseWithScanner:scanner untilTestPasses:^{
@@ -275,13 +511,8 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
         if ([whitespaceSet characterIsMember:[scanner previousCharacter]])
             return NO;
         
-        // Must have 2 *s or _s
-        for (NSUInteger idx=0; idx<2; idx++)
-        {
-            if ([scanner nextCharacter] != character)
-                return NO;
-            [scanner advance];
-        }
+        if (![scanner matchString:@"~~"])
+            return NO;
         
         return YES;
     }];
@@ -290,53 +521,118 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
         return nil;
     
     MMElement *element = [MMElement new];
-    element.type     = MMElementTypeStrong;
+    element.type     = MMElementTypeStrikethrough;
     element.range    = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
     element.children = children;
     
     return element;
 }
 
-- (MMElement *)_parseEmWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseEmAndStrongWithScanner:(MMScanner *)scanner
 {
-    // Must have 1 * or _
+    NSCharacterSet *alphanumericSet = NSCharacterSet.alphanumericCharacterSet;
+    if (self.extensions & MMMarkdownExtensionsUnderscoresInWords)
+    {
+        // GFM doesn't italicize parts of words
+        
+        [scanner commitTransaction:NO];
+        // Look for the previous char outside of the current transaction
+        unichar prevChar = scanner.previousCharacter;
+        unichar nextChar = scanner.nextCharacter;
+        [scanner beginTransaction];
+        
+        BOOL isWordChar    = [alphanumericSet characterIsMember:prevChar];
+        BOOL isAnotherChar = prevChar == nextChar;
+        if (isWordChar || isAnotherChar)
+            return nil;
+    }
+    
+    // Must have 1-3 *s or _s
     unichar character = [scanner nextCharacter];
     if (!(character == '*' || character == '_'))
         return nil;
-    [scanner advance];
     
-    // Can't be at the end of a line or before a space
-    if ([[NSCharacterSet whitespaceAndNewlineCharacterSet] characterIsMember:[scanner nextCharacter]])
+    NSUInteger numberOfChars = 0;
+    while (scanner.nextCharacter == character)
+    {
+        numberOfChars++;
+        [scanner advance];
+    }
+    
+    if (numberOfChars > 3)
         return nil;
     
-    NSCharacterSet  *whitespaceSet = [NSCharacterSet whitespaceCharacterSet];
-    NSArray         *children      = [self _parseWithScanner:scanner untilTestPasses:^{
+    NSCharacterSet *whitespaceSet = NSCharacterSet.whitespaceCharacterSet;
+    __block NSUInteger remainingChars = numberOfChars;
+    BOOL (^findEnd)(void) = ^{
         // Can't be at the beginning of the line
-        if ([scanner atBeginningOfLine])
+        if (scanner.atBeginningOfLine)
             return NO;
         
         // Must follow the end of a word
-        if ([whitespaceSet characterIsMember:[scanner previousCharacter]])
+        if ([whitespaceSet characterIsMember:scanner.previousCharacter])
             return NO;
         
-        // Must have a * or _
-        if ([scanner nextCharacter] != character)
+        // Must have 1-3 *s or _s
+        NSUInteger numberOfEndChars = 0;
+        while (scanner.nextCharacter == character && numberOfEndChars < remainingChars)
+        {
+            numberOfEndChars++;
+            [scanner advance];
+        }
+        
+        if (numberOfEndChars == 0 || (numberOfEndChars != remainingChars && remainingChars != 3))
             return NO;
-        [scanner advance];
+        
+        if (self.extensions & MMMarkdownExtensionsUnderscoresInWords)
+        {
+            // GFM doesn't italicize parts of words
+            unichar nextChar = scanner.nextCharacter;
+            
+            BOOL isWordChar = [alphanumericSet characterIsMember:nextChar];
+            if (isWordChar)
+                return NO;
+        }
+        
+        remainingChars -= numberOfEndChars;
         
         return YES;
-    }];
+    };
     
+    NSArray *children = [self _parseWithScanner:scanner untilTestPasses:findEnd];
     if (!children)
         return nil;
     
+    BOOL isEm = (numberOfChars == 1) || (numberOfChars == 3 && (remainingChars == 0 || remainingChars == 2));
+    NSUInteger startLocation = scanner.startLocation + remainingChars;
     MMElement *element = [MMElement new];
-    element.type      = MMElementTypeEm;
-    element.range     = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
-    element.children  = children;
+    element.type     = isEm ? MMElementTypeEm : MMElementTypeStrong;
+    element.range    = NSMakeRange(startLocation, scanner.location-startLocation);
+    element.children = children;
+    
+    if (numberOfChars == 3 && remainingChars == 0)
+    {
+        NSArray *outerChildren = @[ element ];
+        element = [MMElement new];
+        element.type     = MMElementTypeStrong;
+        element.range    = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
+        element.children = outerChildren;
+    }
+    else if (remainingChars > 0)
+    {
+        NSMutableArray *outerChildren = [[self _parseWithScanner:scanner untilTestPasses:findEnd] mutableCopy];
+        if (!outerChildren)
+            return nil;
+        
+        [outerChildren insertObject:element atIndex:0];
+        
+        element = [MMElement new];
+        element.type     = !isEm ? MMElementTypeEm : MMElementTypeStrong;
+        element.range    = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
+        element.children = outerChildren;
+    }
     
     return element;
-    
 }
 
 - (MMElement *)_parseCodeSpanWithScanner:(MMScanner *)scanner
@@ -460,18 +756,9 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 
 - (MMElement *)_parseLineBreakWithScanner:(MMScanner *)scanner
 {
-    // A line break is made up of 2 spaces. Since 1 is left on the line, match it against the
-    // previous character instead of the next one.
-    if ([scanner previousCharacter] != ' ')
+    NSCharacterSet *spaces = [NSCharacterSet characterSetWithCharactersInString:@" "];
+    if ([scanner skipCharactersFromSet:spaces] < 2)
         return nil;
-    if ([scanner nextCharacter] != ' ')
-        return nil;
-    
-    [scanner advance];
-    while ([scanner nextCharacter] == ' ')
-    {
-        [scanner advance];
-    }
     
     if (![scanner atEndOfLine])
         return nil;
@@ -480,9 +767,11 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     if ([scanner atEndOfString])
         return nil;
     
+    NSUInteger startLocation = scanner.startLocation + 1;
+    
     MMElement *element = [MMElement new];
     element.type  = MMElementTypeLineBreak;
-    element.range = NSMakeRange(scanner.location, scanner.location-scanner.startLocation);
+    element.range = NSMakeRange(startLocation, scanner.location-startLocation);
     
     return element;
 }
@@ -856,6 +1145,12 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     {
         element.type = MMElementTypeImage;
         
+        // Adjust the range to include the !
+        NSRange range = element.range;
+        range.location -= 1;
+        range.length += 1;
+        element.range = range;
+        
         NSMutableString *altText = [NSMutableString new];
         for (NSValue *value in element.innerRanges)
         {
@@ -895,6 +1190,28 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     return element;
 }
 
+- (MMElement *)_parseBackslashWithScanner:(MMScanner *)scanner
+{
+    if (scanner.nextCharacter != '\\')
+        return nil;
+    [scanner advance];
+    
+    NSCharacterSet *escapable = [NSCharacterSet characterSetWithCharactersInString:ESCAPABLE_CHARS];
+    if (![escapable characterIsMember:scanner.nextCharacter])
+        return nil;
+    
+    // Return the character
+    
+    MMElement *character = [MMElement new];
+    character.type  = MMElementTypeEntity;
+    character.range = NSMakeRange(scanner.location-1, 2);
+    character.stringValue = [scanner.string substringWithRange:NSMakeRange(scanner.location, 1)];
+    
+    [scanner advance];
+    
+    return character;
+}
+
 - (MMElement *)_parseLeftAngleBracketWithScanner:(MMScanner *)scanner
 {
     if ([scanner nextCharacter] != '<')
@@ -914,25 +1231,6 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     element.stringValue = @"&lt;";
     
     return element;
-}
-
-- (MMElement *)_parseEntityWithScanner:(MMScanner *)scanner
-{
-    MMElement *element;
-    
-    [scanner beginTransaction];
-    element = [self _parseAmpersandWithScanner:scanner];
-    [scanner commitTransaction:element != nil];
-    if (element)
-        return element;
-    
-    [scanner beginTransaction];
-    element = [self _parseLeftAngleBracketWithScanner:scanner];
-    [scanner commitTransaction:element != nil];
-    if (element)
-        return element;
-    
-    return nil;
 }
 
 - (NSString *)_stringWithBackslashEscapesRemoved:(NSString *)string

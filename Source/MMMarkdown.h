@@ -26,6 +26,24 @@
 #import <Foundation/Foundation.h>
 
 
+typedef NS_OPTIONS(NSUInteger, MMMarkdownExtensions)
+{
+    MMMarkdownExtensionsNone = 0,
+    
+    MMMarkdownExtensionsAutolinkedURLs      = 1 << 0,
+//    MMMarkdownExtensionsCrossReferences     = 1 << 1,
+//    MMMarkdownExtensionsCustomAttributes    = 1 << 2,
+    MMMarkdownExtensionsFencedCodeBlocks    = 1 << 3,
+//    MMMarkdownExtensionsFootnotes           = 1 << 4,
+    MMMarkdownExtensionsHardNewlines        = 1 << 5,
+    MMMarkdownExtensionsStrikethroughs      = 1 << 6,
+//    MMMarkdownExtensionsTableCaptions       = 1 << 7,
+    MMMarkdownExtensionsTables              = 1 << 8,
+    MMMarkdownExtensionsUnderscoresInWords  = 1 << 9,
+    
+    MMMarkdownExtensionsGitHubFlavored = MMMarkdownExtensionsAutolinkedURLs|MMMarkdownExtensionsFencedCodeBlocks|MMMarkdownExtensionsHardNewlines|MMMarkdownExtensionsStrikethroughs|MMMarkdownExtensionsTables|MMMarkdownExtensionsUnderscoresInWords,
+};
+
 @interface MMMarkdown : NSObject
 
 /*! Converts a Markdown string to HTML.
@@ -35,5 +53,14 @@
  * @return An HTML string.
  */
 + (NSString *)HTMLStringWithMarkdown:(NSString *)string error:(__autoreleasing NSError **)error __attribute__((nonnull(1)));
+
+/*! Converts a Markdown string to HTML.
+ *
+ * @param string     A Markdown string. Must not be nil.
+ * @param extensions The extensions to enable.
+ * @param error      Out parameter used if an error occurs while parsing the Markdown. May be NULL.
+ * @return An HTML string.
+ */
++ (NSString *)HTMLStringWithMarkdown:(NSString *)string extensions:(MMMarkdownExtensions)extensions error:(__autoreleasing NSError **)error __attribute__((nonnull(1)));
 
 @end

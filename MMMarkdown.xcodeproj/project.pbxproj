@@ -112,6 +112,7 @@
 		BEAAEC2A1554E8F100EF1EA0 /* Tight blocks.html in CopyFiles */ = {isa = PBXBuildFile; fileRef = BEAAEBBE1554E77600EF1EA0 /* Tight blocks.html */; };
 		BEAAEC2B1554E8F100EF1EA0 /* Tight blocks.text in CopyFiles */ = {isa = PBXBuildFile; fileRef = BEAAEBBF1554E77600EF1EA0 /* Tight blocks.text */; };
 		BEAAEC2E1554E93800EF1EA0 /* MMPHPMarkdownTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BEAAEC2D1554E93700EF1EA0 /* MMPHPMarkdownTests.m */; };
+		BEABD17117B2BA3700511479 /* MMExtensionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BEABD17017B2BA3700511479 /* MMExtensionTests.m */; };
 		BEDDD54A1544E42200EA7D65 /* MMHTMLTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BEDDD5491544E42200EA7D65 /* MMHTMLTests.m */; };
 		BEF3421E150CEA6D00BFA0E2 /* MMSpanParser.m in Sources */ = {isa = PBXBuildFile; fileRef = BEF3421B150CEA6D00BFA0E2 /* MMSpanParser.m */; };
 		BEF3421F150CEA6D00BFA0E2 /* MMSpanParser.m in Sources */ = {isa = PBXBuildFile; fileRef = BEF3421B150CEA6D00BFA0E2 /* MMSpanParser.m */; };
@@ -363,6 +364,7 @@
 		BEAAEBBE1554E77600EF1EA0 /* Tight blocks.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "Tight blocks.html"; sourceTree = "<group>"; };
 		BEAAEBBF1554E77600EF1EA0 /* Tight blocks.text */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Tight blocks.text"; sourceTree = "<group>"; };
 		BEAAEC2D1554E93700EF1EA0 /* MMPHPMarkdownTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMPHPMarkdownTests.m; sourceTree = "<group>"; };
+		BEABD17017B2BA3700511479 /* MMExtensionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMExtensionTests.m; sourceTree = "<group>"; };
 		BEDDD5491544E42200EA7D65 /* MMHTMLTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMHTMLTests.m; sourceTree = "<group>"; };
 		BEF3421A150CEA6D00BFA0E2 /* MMSpanParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMSpanParser.h; sourceTree = "<group>"; };
 		BEF3421B150CEA6D00BFA0E2 /* MMSpanParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMSpanParser.m; sourceTree = "<group>"; };
@@ -470,6 +472,7 @@
 				BE1DB5D915143F4200B26092 /* MMBlockTests.m */,
 				BEAAEB5E154A49B500EF1EA0 /* MMErrorTests.m */,
 				BE813E9D1503C14200EC9469 /* MMEscapingTests.m */,
+				BEABD17017B2BA3700511479 /* MMExtensionTests.m */,
 				BEDDD5491544E42200EA7D65 /* MMHTMLTests.m */,
 				BEAAEB421549DD1700EF1EA0 /* MMImageTests.m */,
 				BE1DB5DC1515032F00B26092 /* MMLinkTests.m */,
@@ -751,6 +754,7 @@
 				BEAAEB431549DD1700EF1EA0 /* MMImageTests.m in Sources */,
 				BEAAEB62154A4A1D00EF1EA0 /* MMErrorTests.m in Sources */,
 				BEAAEC2E1554E93800EF1EA0 /* MMPHPMarkdownTests.m in Sources */,
+				BEABD17117B2BA3700511479 /* MMExtensionTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

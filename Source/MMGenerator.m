@@ -100,6 +100,8 @@ static NSString * __HTMLStartTagForElement(MMElement *anElement)
             return @"<br />";
         case MMElementTypeHorizontalRule:
             return @"\n<hr />\n";
+        case MMElementTypeStrikethrough:
+            return @"<del>";
         case MMElementTypeStrong:
             return @"<strong>";
         case MMElementTypeEm:
@@ -130,6 +132,22 @@ static NSString * __HTMLStartTagForElement(MMElement *anElement)
                     __obfuscatedEmailAddress(anElement.href)];
         case MMElementTypeEntity:
             return anElement.stringValue;
+        case MMElementTypeTable:
+            return @"<table>";
+        case MMElementTypeTableHeader:
+            return @"<thead><tr>";
+        case MMElementTypeTableHeaderCell:
+            return anElement.alignment == MMTableCellAlignmentCenter ? @"<th align='center'>"
+                 : anElement.alignment == MMTableCellAlignmentLeft   ? @"<th align='left'>"
+                 : anElement.alignment == MMTableCellAlignmentRight  ? @"<th align='right'>"
+                 : @"<th>";
+        case MMElementTypeTableRow:
+            return @"<tr>";
+        case MMElementTypeTableRowCell:
+            return anElement.alignment == MMTableCellAlignmentCenter ? @"<td align='center'>"
+                 : anElement.alignment == MMTableCellAlignmentLeft   ? @"<td align='left'>"
+                 : anElement.alignment == MMTableCellAlignmentRight  ? @"<td align='right'>"
+                 : @"<td>";
         default:
             return nil;
     }
@@ -153,6 +171,8 @@ static NSString * __HTMLEndTagForElement(MMElement *anElement)
             return @"</blockquote>\n";
         case MMElementTypeCodeBlock:
             return @"</code></pre>\n";
+        case MMElementTypeStrikethrough:
+            return @"</del>";
         case MMElementTypeStrong:
             return @"</strong>";
         case MMElementTypeEm:
@@ -161,6 +181,16 @@ static NSString * __HTMLEndTagForElement(MMElement *anElement)
             return @"</code>";
         case MMElementTypeLink:
             return @"</a>";
+        case MMElementTypeTable:
+            return @"</tbody></table>";
+        case MMElementTypeTableHeader:
+            return @"</tr></thead><tbody>";
+        case MMElementTypeTableHeaderCell:
+            return @"</th>";
+        case MMElementTypeTableRow:
+            return @"</tr>";
+        case MMElementTypeTableRowCell:
+            return @"</td>";
         default:
             return nil;
     }

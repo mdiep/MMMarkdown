@@ -54,7 +54,12 @@
 
 - (unichar)previousCharacter;
 - (unichar)nextCharacter;
+
+- (NSString *)previousWord;
 - (NSString *)nextWord;
+
+- (NSString *)previousWordWithCharactersFromSet:(NSCharacterSet *)set;
+- (NSString *)nextWordWithCharactersFromSet:(NSCharacterSet *)set;
 
 - (void)advance;
 - (void)advanceToNextLine;
