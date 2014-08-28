@@ -46,20 +46,29 @@ typedef NS_OPTIONS(NSUInteger, MMMarkdownExtensions)
 
 @interface MMMarkdown : NSObject
 
-/*! Converts a Markdown string to HTML.
- *
- * @param string A Markdown string. Must not be nil.
- * @param error  Out parameter used if an error occurs while parsing the Markdown. May be NULL.
- * @return An HTML string.
+/*!
+ Convert a Markdown string to HTML.
+ 
+ @param string
+    A Markdown string. Must not be nil.
+ @param error
+    Out parameter used if an error occurs while parsing the Markdown. May be NULL.
+ @result
+    Returns an HTML string.
  */
 + (NSString *)HTMLStringWithMarkdown:(NSString *)string error:(__autoreleasing NSError **)error __attribute__((nonnull(1)));
 
-/*! Converts a Markdown string to HTML.
- *
- * @param string     A Markdown string. Must not be nil.
- * @param extensions The extensions to enable.
- * @param error      Out parameter used if an error occurs while parsing the Markdown. May be NULL.
- * @return An HTML string.
+/*!
+ Convert a Markdown string to HTML.
+ 
+ @param string
+    A Markdown string. Must not be nil.
+ @param extensions
+    The extensions to enable.
+ @param error
+    Out parameter used if an error occurs while parsing the Markdown. May be NULL.
+ @result
+    Returns an HTML string.
  */
 + (NSString *)HTMLStringWithMarkdown:(NSString *)string extensions:(MMMarkdownExtensions)extensions error:(__autoreleasing NSError **)error __attribute__((nonnull(1)));
 
