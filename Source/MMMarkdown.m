@@ -31,10 +31,7 @@
 
 @implementation MMMarkdown
 
-//==================================================================================================
-#pragma mark -
-#pragma mark Public Methods
-//==================================================================================================
+#pragma mark - Public Methods
 
 + (NSString *)HTMLStringWithMarkdown:(NSString *)string error:(__autoreleasing NSError **)error
 {
@@ -47,10 +44,7 @@
 }
 
 
-//==================================================================================================
-#pragma mark -
-#pragma mark Private Methods
-//==================================================================================================
+#pragma mark - Private Methods
 
 + (NSString *)HTMLStringWithMarkdown:(NSString *)string
                           extensions:(MMMarkdownExtensions)extensions
@@ -60,11 +54,11 @@
     if (string == nil)
     {
         NSString *reason = [NSString stringWithFormat:@"[%@ %@]: nil argument for markdown",
-                            NSStringFromClass([self class]), NSStringFromSelector(selector)];
+                            NSStringFromClass(self.class), NSStringFromSelector(selector)];
         @throw [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
     }
     
-    if ([string length] == 0)
+    if (string.length == 0)
         return @"";
     
     MMParser    *parser    = [[MMParser alloc] initWithExtensions:extensions];

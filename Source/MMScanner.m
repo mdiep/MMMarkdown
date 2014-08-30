@@ -60,14 +60,11 @@ static NSString *__delimitersForCharacter(unichar character)
 
 @implementation MMScanner
 
-//==================================================================================================
-#pragma mark -
-#pragma mark Public Methods
-//==================================================================================================
+#pragma mark - Public Methods
 
 + (id)scannerWithString:(NSString *)aString
 {
-    return [[[self class] alloc] initWithString:aString];
+    return [[self.class alloc] initWithString:aString];
 }
 
 - (id)initWithString:(NSString *)aString
@@ -78,7 +75,7 @@ static NSString *__delimitersForCharacter(unichar character)
 
 + (id)scannerWithString:(NSString *)aString lineRanges:(NSArray *)theLineRanges
 {
-    return [[[self class] alloc] initWithString:aString lineRanges:theLineRanges];
+    return [[self.class alloc] initWithString:aString lineRanges:theLineRanges];
 }
 
 - (id)initWithString:(NSString *)aString lineRanges:(NSArray *)theLineRanges
@@ -141,12 +138,12 @@ static NSString *__delimitersForCharacter(unichar character)
 
 - (BOOL)atEndOfString
 {
-    return [self atEndOfLine] && self.rangeIndex == self.lineRanges.count - 1;
+    return self.atEndOfLine && self.rangeIndex == self.lineRanges.count - 1;
 }
 
 - (unichar)previousCharacter
 {
-    if ([self atBeginningOfLine])
+    if (self.atBeginningOfLine)
         return '\0';
     
     return [self.string characterAtIndex:self.location - 1];
@@ -154,7 +151,7 @@ static NSString *__delimitersForCharacter(unichar character)
 
 - (unichar)nextCharacter
 {
-    if ([self atEndOfLine])
+    if (self.atEndOfLine)
         return '\n';
     return [self.string characterAtIndex:self.location];
 }
@@ -204,7 +201,7 @@ static NSString *__delimitersForCharacter(unichar character)
 
 - (void)advance
 {
-    if ([self atEndOfLine])
+    if (self.atEndOfLine)
         return;
     self.location += 1;
 }
@@ -301,9 +298,9 @@ static NSString *__delimitersForCharacter(unichar character)
     NSUInteger skipped = 0;
     [self beginTransaction];
     
-    while (![self atEndOfLine] && skipped < maxSpacesToSkip)
+    while (!self.atEndOfLine && skipped < maxSpacesToSkip)
     {
-        unichar character = [self nextCharacter];
+        unichar character = self.nextCharacter;
         
         if (character == ' ')
             skipped += 1;
@@ -341,7 +338,7 @@ static NSString *__delimitersForCharacter(unichar character)
     
     while (nestingLevel > 0)
     {
-        if ([self atEndOfLine])
+        if (self.atEndOfLine)
         {
             [self commitTransaction:NO];
             return 0;
@@ -349,7 +346,7 @@ static NSString *__delimitersForCharacter(unichar character)
         
         [self skipCharactersFromSet:boringChars];
         
-        unichar nextChar = [self nextCharacter];
+        unichar nextChar = self.nextCharacter;
         [self advance];
         
         if (nextChar == openDelimiter)
@@ -392,12 +389,12 @@ static NSString *__delimitersForCharacter(unichar character)
 
 - (NSUInteger)skipWhitespaceAndNewlines
 {
-    NSCharacterSet *whitespaceSet = [NSCharacterSet whitespaceCharacterSet];
+    NSCharacterSet *whitespaceSet = NSCharacterSet.whitespaceCharacterSet;
     NSUInteger      length = 0;
     
     while (!self.atEndOfString)
     {
-        if ([self atEndOfLine])
+        if (self.atEndOfLine)
         {
             [self advanceToNextLine];
             length++;
@@ -416,10 +413,7 @@ static NSString *__delimitersForCharacter(unichar character)
 }
 
 
-//==================================================================================================
-#pragma mark -
-#pragma mark Public Properties
-//==================================================================================================
+#pragma mark - Public Properties
 
 - (NSUInteger)location
 {
@@ -444,10 +438,7 @@ static NSString *__delimitersForCharacter(unichar character)
 }
 
 
-//==================================================================================================
-#pragma mark -
-#pragma mark Private Methods
-//==================================================================================================
+#pragma mark - Private Methods
 
 - (NSArray *)_lineRangesForString:(NSString *)aString
 {
@@ -495,14 +486,11 @@ static NSString *__delimitersForCharacter(unichar character)
 }
 
 
-//==================================================================================================
-#pragma mark -
-#pragma mark Private Properties
-//==================================================================================================
+#pragma mark - Private Properties
 
 - (NSRange)currentLineRange
 {
-    return [[self.lineRanges objectAtIndex:self.rangeIndex] rangeValue];
+    return [self.lineRanges[self.rangeIndex] rangeValue];
 }
 
 

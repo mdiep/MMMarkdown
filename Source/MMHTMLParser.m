@@ -31,10 +31,7 @@
 
 @implementation MMHTMLParser
 
-//==================================================================================================
-#pragma mark -
-#pragma mark Public Methods
-//==================================================================================================
+#pragma mark - Public Methods
 
 - (MMElement *)parseBlockTagWithScanner:(MMScanner *)scanner
 {
@@ -53,9 +50,9 @@
         return nil;
     
     NSCharacterSet *setToSkip = [[NSCharacterSet characterSetWithCharactersInString:@"-"] invertedSet];
-    while (![scanner atEndOfString])
+    while (!scanner.atEndOfString)
     {
-        if ([scanner atEndOfLine])
+        if (scanner.atEndOfLine)
             [scanner advanceToNextLine];
         else
         {
@@ -77,11 +74,11 @@
 
 - (MMElement *)parseInlineTagWithScanner:(MMScanner *)scanner
 {
-    if ([scanner nextCharacter] != '<')
+    if (scanner.nextCharacter != '<')
         return nil;
     [scanner advance];
     
-    if ([scanner nextCharacter] == '/')
+    if (scanner.nextCharacter == '/')
         [scanner advance];
     
     NSRange tagNameRange = [self _parseNameWithScanner:scanner];
@@ -91,10 +88,10 @@
     [self _parseAttributesWithScanner:scanner];
     [scanner skipWhitespace];
     
-    if ([scanner nextCharacter] == '/')
+    if (scanner.nextCharacter == '/')
         [scanner advance];
     
-    if ([scanner nextCharacter] != '>')
+    if (scanner.nextCharacter != '>')
         return nil;
     [scanner advance];
     
@@ -107,15 +104,12 @@
 }
 
 
-//==================================================================================================
-#pragma mark -
-#pragma mark Private Methods
-//==================================================================================================
+#pragma mark - Private Methods
 
 - (MMElement *)_parseStrictBlockTagWithScanner:(MMScanner *)scanner
 {
     // which starts with a '<'
-    if ([scanner nextCharacter] != '<')
+    if (scanner.nextCharacter != '<')
         return nil;
     [scanner advance];
     
@@ -132,18 +126,18 @@
     [self _parseAttributesWithScanner:scanner];
     [scanner skipWhitespace];
     
-    if ([scanner nextCharacter] != '>')
+    if (scanner.nextCharacter != '>')
         return nil;
     [scanner advance];
     
     NSCharacterSet *boringChars = [[NSCharacterSet characterSetWithCharactersInString:@"<"] invertedSet];
     while (1)
     {
-        if ([scanner atEndOfString])
+        if (scanner.atEndOfString)
             return nil;
         
         [scanner skipCharactersFromSet:boringChars];
-        if ([scanner atEndOfLine])
+        if (scanner.atEndOfLine)
         {
             [scanner advanceToNextLine];
             continue;
@@ -212,7 +206,7 @@
 - (MMElement *)_parseLenientBlockTagWithScanner:(MMScanner *)scanner
 {
     // which starts with a '<'
-    if ([scanner nextCharacter] != '<')
+    if (scanner.nextCharacter != '<')
         return nil;
     [scanner advance];
     
@@ -221,12 +215,12 @@
                             @"blockquote", @"pre", @"table", @"dl", @"ol", @"ul",
                             @"script", @"noscript", @"form", @"fieldset", @"iframe",
                             @"math", @"ins", @"del", nil];
-    NSString *tagName = [scanner nextWord];
+    NSString *tagName = scanner.nextWord;
     if (![htmlBlockTags containsObject:tagName])
         return nil;
     
     // Skip lines until we come across a blank line
-    while (![scanner atEndOfLine])
+    while (!scanner.atEndOfLine)
     {
         [scanner advanceToNextLine];
     }
@@ -256,15 +250,15 @@
         return NO;
     [scanner advance];
     
-    while ([scanner nextCharacter] != nextChar)
+    while (scanner.nextCharacter != nextChar)
     {
-        if ([scanner atEndOfLine])
+        if (scanner.atEndOfLine)
         {
             [scanner advanceToNextLine];
             continue;
         }
         
-        if ([scanner atEndOfString])
+        if (scanner.atEndOfString)
             return NO;
         
         [scanner advance];
@@ -297,7 +291,7 @@
         [scanner beginTransaction];
         [scanner skipWhitespace];
         
-        if ([scanner nextCharacter] == '=')
+        if (scanner.nextCharacter == '=')
         {
             [scanner commitTransaction:YES];
             [scanner advance];

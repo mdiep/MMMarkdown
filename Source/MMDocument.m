@@ -36,14 +36,11 @@
     NSMutableArray *_elements;
 }
 
-//==================================================================================================
-#pragma mark -
-#pragma mark Public Methods
-//==================================================================================================
+#pragma mark - Public Methods
 
 + (id)documentWithMarkdown:(NSString *)markdown
 {
-    return [[[self class] alloc] initWithMarkdown:markdown];
+    return [[self.class alloc] initWithMarkdown:markdown];
 }
 
 - (id)initWithMarkdown:(NSString *)markdown
@@ -60,10 +57,7 @@
 }
 
 
-//==================================================================================================
-#pragma mark -
-#pragma mark Private Methods
-//==================================================================================================
+#pragma mark - Private Methods
 
 - (void)addElement:(MMElement *)anElement
 {
