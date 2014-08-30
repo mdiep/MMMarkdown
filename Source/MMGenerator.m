@@ -56,7 +56,7 @@ static NSString *__obfuscatedEmailAddress(NSString *anAddress)
     NSString *(^decimal)(unichar c) = ^(unichar c){ return [NSString stringWithFormat:@"&#%d;", c];  };
     NSString *(^hex)(unichar c)     = ^(unichar c){ return [NSString stringWithFormat:@"&#x%x;", c]; };
     NSString *(^raw)(unichar c)     = ^(unichar c){ return [NSString stringWithCharacters:&c length:1]; };
-    NSArray *encoders = [NSArray arrayWithObjects:decimal, hex, raw, nil];
+    NSArray *encoders = @[ decimal, hex, raw ];
     
     for (NSUInteger idx=0; idx<anAddress.length; idx++)
     {
@@ -70,7 +70,7 @@ static NSString *__obfuscatedEmailAddress(NSString *anAddress)
         else
         {
             int r = arc4random_uniform(100);
-            encoder = [encoders objectAtIndex:(r >= 90) ? 2 : (r >= 45) ? 1 : 0];
+            encoder = encoders[(r >= 90) ? 2 : (r >= 45) ? 1 : 0];
         }
         [result appendString:encoder(character)];
     }

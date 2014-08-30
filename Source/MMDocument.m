@@ -40,7 +40,7 @@
 
 + (id)documentWithMarkdown:(NSString *)markdown
 {
-    return [[[self class] alloc] initWithMarkdown:markdown];
+    return [[self.class alloc] initWithMarkdown:markdown];
 }
 
 - (id)initWithMarkdown:(NSString *)markdown

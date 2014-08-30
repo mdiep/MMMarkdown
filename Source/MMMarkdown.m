@@ -54,11 +54,11 @@
     if (string == nil)
     {
         NSString *reason = [NSString stringWithFormat:@"[%@ %@]: nil argument for markdown",
-                            NSStringFromClass([self class]), NSStringFromSelector(selector)];
+                            NSStringFromClass(self.class), NSStringFromSelector(selector)];
         @throw [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
     }
     
-    if ([string length] == 0)
+    if (string.length == 0)
         return @"";
     
     MMParser    *parser    = [[MMParser alloc] initWithExtensions:extensions];

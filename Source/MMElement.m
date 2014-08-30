@@ -104,7 +104,7 @@ static NSString * __MMStringFromElementType(MMElementType type)
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"<%@: %p; type=%@; range=%@>",
-            NSStringFromClass([self class]), self, __MMStringFromElementType(self.type), NSStringFromRange(self.range)];
+            NSStringFromClass(self.class), self, __MMStringFromElementType(self.type), NSStringFromRange(self.range)];
             
 }
 

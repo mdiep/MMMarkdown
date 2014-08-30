@@ -64,7 +64,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 - (NSArray *)parseSpansInBlockElement:(MMElement *)block withScanner:(MMScanner *)scanner
 {
     self.blockElement = block;
-    return [self _parseWithScanner:scanner untilTestPasses:^{ return [scanner atEndOfString]; }];
+    return [self _parseWithScanner:scanner untilTestPasses:^{ return scanner.atEndOfString; }];
 }
 
 - (NSArray *)parseSpansInTableColumns:(NSArray *)columns withScanner:(MMScanner *)scanner
@@ -109,7 +109,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     NSCharacterSet *boringChars  = [specialChars invertedSet];
     
     [scanner beginTransaction];
-    while (![scanner atEndOfString])
+    while (!scanner.atEndOfString)
     {
         MMElement *element = [self _parseNextElementWithScanner:scanner];
         if (element)
@@ -127,7 +127,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
             [scanner commitTransaction:YES];
             [scanner beginTransaction];
         }
-        else if ([scanner atEndOfLine])
+        else if (scanner.atEndOfLine)
         {
             // This is done here (and not in _parseNextElementWithScanner:)
             // because it can result in 2 elements.
@@ -150,7 +150,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
             
             // Add a newline
             MMElement *newline = [MMElement new];
-            newline.range        = NSMakeRange(scanner.location, 1);
+            newline.range       = NSMakeRange(scanner.location, 1);
             newline.type        = MMElementTypeEntity;
             newline.stringValue = @"\n";
             [result addObject:newline];
@@ -495,14 +495,14 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     if (![scanner matchString:@"~~"])
         return nil;
     
-    NSCharacterSet  *whitespaceSet = [NSCharacterSet whitespaceCharacterSet];
+    NSCharacterSet  *whitespaceSet = NSCharacterSet.whitespaceCharacterSet;
     NSArray         *children      = [self _parseWithScanner:scanner untilTestPasses:^{
         // Can't be at the beginning of the line
-        if ([scanner atBeginningOfLine])
+        if (scanner.atBeginningOfLine)
             return NO;
         
         // Must follow the end of a word
-        if ([whitespaceSet characterIsMember:[scanner previousCharacter]])
+        if ([whitespaceSet characterIsMember:scanner.previousCharacter])
             return NO;
         
         if (![scanner matchString:@"~~"])
@@ -542,7 +542,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     }
     
     // Must have 1-3 *s or _s
-    unichar character = [scanner nextCharacter];
+    unichar character = scanner.nextCharacter;
     if (!(character == '*' || character == '_'))
         return nil;
     
@@ -631,7 +631,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 
 - (MMElement *)_parseCodeSpanWithScanner:(MMScanner *)scanner
 {
-    if ([scanner nextCharacter] != '`')
+    if (scanner.nextCharacter != '`')
         return nil;
     [scanner advance];
     
@@ -640,21 +640,21 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     
     // Check for more `s
     NSUInteger level = 1;
-    while ([scanner nextCharacter] == '`')
+    while (scanner.nextCharacter == '`')
     {
         level++;
         [scanner advance];
     }
     
     // skip leading whitespace
-    [scanner skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet]];
+    [scanner skipCharactersFromSet:NSCharacterSet.whitespaceCharacterSet];
     
     // Skip to the next '`'
     NSCharacterSet *boringChars  = [[NSCharacterSet characterSetWithCharactersInString:@"`&<>"] invertedSet];
     NSUInteger      textLocation = scanner.location;
     while (1)
     {
-        if ([scanner atEndOfString])
+        if (scanner.atEndOfString)
             return nil;
         
         // Skip other characters
@@ -670,7 +670,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
         }
         
         // Check for closing `s
-        if ([scanner nextCharacter] == '`')
+        if (scanner.nextCharacter == '`')
         {
             // Set the text location to catch the ` in case it isn't the closing `s
             textLocation = scanner.location;
@@ -678,7 +678,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
             NSUInteger idx;
             for (idx=0; idx<level; idx++)
             {
-                if ([scanner nextCharacter] != '`')
+                if (scanner.nextCharacter != '`')
                     break;
                 [scanner advance];
             }
@@ -688,7 +688,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
                 continue;
         }
         
-        unichar nextChar = [scanner nextCharacter];
+        unichar nextChar = scanner.nextCharacter;
         // Check for entities
         if (nextChar == '&')
         {
@@ -718,7 +718,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
             [scanner advance];
         }
         // Or did we hit the end of the line?
-        else if ([scanner atEndOfLine])
+        else if (scanner.atEndOfLine)
         {
             textLocation = scanner.location;
             [scanner advanceToNextLine];
@@ -733,7 +733,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     {
         MMElement *lastText = element.children.lastObject;
         unichar lastCharacter = [scanner.string characterAtIndex:NSMaxRange(lastText.range)-1];
-        while ([[NSCharacterSet whitespaceCharacterSet] characterIsMember:lastCharacter])
+        while ([NSCharacterSet.whitespaceCharacterSet characterIsMember:lastCharacter])
         {
             NSRange range = lastText.range;
             range.length -= 1;
@@ -754,11 +754,11 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     if ([scanner skipCharactersFromSet:spaces] < 2)
         return nil;
     
-    if (![scanner atEndOfLine])
+    if (!scanner.atEndOfLine)
         return nil;
     
     // Don't ever add a line break to the last line
-    if ([scanner atEndOfString])
+    if (scanner.atEndOfString)
         return nil;
     
     NSUInteger startLocation = scanner.startLocation + 1;
@@ -773,7 +773,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 - (MMElement *)_parseAutomaticLinkWithScanner:(MMScanner *)scanner
 {
     // Leading <
-    if ([scanner nextCharacter] != '<')
+    if (scanner.nextCharacter != '<')
         return nil;
     [scanner advance];
     
@@ -781,7 +781,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     
     // Find the trailing >
     [scanner skipCharactersFromSet:[[NSCharacterSet characterSetWithCharactersInString:@">"] invertedSet]];
-    if ([scanner atEndOfLine])
+    if (scanner.atEndOfLine)
         return nil;
     [scanner advance];
     
@@ -850,7 +850,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 - (MMElement *)_parseAutomaticEmailLinkWithScanner:(MMScanner *)scanner
 {
     // Leading <
-    if ([scanner nextCharacter] != '<')
+    if (scanner.nextCharacter != '<')
         return nil;
     [scanner advance];
     
@@ -858,7 +858,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     
     // Find the trailing >
     [scanner skipCharactersFromSet:[[NSCharacterSet characterSetWithCharactersInString:@">"] invertedSet]];
-    if ([scanner atEndOfLine])
+    if (scanner.atEndOfLine)
         return nil;
     [scanner advance];
     
@@ -889,7 +889,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     NSCharacterSet *boringChars;
     NSUInteger      level;
     
-    if ([scanner nextCharacter] != '[')
+    if (scanner.nextCharacter != '[')
         return nil;
     [scanner advance];
     
@@ -898,10 +898,10 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     NSRange textRange = scanner.currentRange;
     while (level > 0)
     {
-        if ([scanner atEndOfString])
+        if (scanner.atEndOfString)
             return nil;
         
-        if ([scanner atEndOfLine])
+        if (scanner.atEndOfLine)
         {
             if (textRange.length > 0)
             {
@@ -913,7 +913,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
         
         [scanner skipCharactersFromSet:boringChars];
         
-        unichar character = [scanner nextCharacter];
+        unichar character = scanner.nextCharacter;
         if (character == '[')
         {
             level += 1;
@@ -953,7 +953,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
         return nil;
     
     // Find the ()
-    if ([scanner nextCharacter] != '(')
+    if (scanner.nextCharacter != '(')
         return nil;
     [scanner advance];
     
@@ -964,11 +964,11 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     while (level > 0)
     {
         [scanner skipCharactersFromSet:boringChars];
-        if ([scanner atEndOfLine])
+        if (scanner.atEndOfLine)
             return nil;
         urlEnd = scanner.location;
         
-        unichar character = [scanner nextCharacter];
+        unichar character = scanner.nextCharacter;
         if (character == '(')
         {
             level += 1;
@@ -982,7 +982,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
             [scanner advance]; // skip over the backslash
             // skip over the next character below
         }
-        else if ([[NSCharacterSet whitespaceCharacterSet] characterIsMember:character])
+        else if ([NSCharacterSet.whitespaceCharacterSet characterIsMember:character])
         {
             if (level != 1)
                 return nil;
@@ -999,10 +999,10 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     if (level == 1)
     {
         // skip the whitespace
-        [scanner skipCharactersFromSet:[NSCharacterSet whitespaceCharacterSet]];
+        [scanner skipCharactersFromSet:NSCharacterSet.whitespaceCharacterSet];
         
         // make sure there's a "
-        if ([scanner nextCharacter] != '"')
+        if (scanner.nextCharacter != '"')
             return nil;
         [scanner advance];
         
@@ -1012,11 +1012,11 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
         {
             [scanner skipCharactersFromSet:boringChars];
             
-            if ([scanner atEndOfLine])
+            if (scanner.atEndOfLine)
                 return nil;
             
             [scanner advance];
-            if ([scanner nextCharacter] == ')')
+            if (scanner.nextCharacter == ')')
             {
                 titleEnd = scanner.location - 1;
                 [scanner advance];
@@ -1057,10 +1057,10 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
         return nil;
     
     // Skip optional whitespace
-    if ([scanner nextCharacter] == ' ')
+    if (scanner.nextCharacter == ' ')
         [scanner advance];
     // or possible newline
-    else if ([scanner atEndOfLine])
+    else if (scanner.atEndOfLine)
         [scanner advanceToNextLine];
     
     // Look for the second []
@@ -1116,7 +1116,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     MMElement *element;
     
     // An image starts with a !, but then is a link
-    if ([scanner nextCharacter] != '!')
+    if (scanner.nextCharacter != '!')
         return nil;
     [scanner advance];
     
@@ -1159,17 +1159,17 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 
 - (MMElement *)_parseAmpersandWithScanner:(MMScanner *)scanner
 {
-    if ([scanner nextCharacter] != '&')
+    if (scanner.nextCharacter != '&')
         return nil;
     [scanner advance];
     
     // check if this is an html entity
     [scanner beginTransaction];
     
-    if ([scanner nextCharacter] == '#')
+    if (scanner.nextCharacter == '#')
         [scanner advance];
-    [scanner skipCharactersFromSet:[NSCharacterSet alphanumericCharacterSet]];
-    if ([scanner nextCharacter] == ';')
+    [scanner skipCharactersFromSet:NSCharacterSet.alphanumericCharacterSet];
+    if (scanner.nextCharacter == ';')
     {
         [scanner commitTransaction:NO];
         return nil;
@@ -1208,13 +1208,13 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 
 - (MMElement *)_parseLeftAngleBracketWithScanner:(MMScanner *)scanner
 {
-    if ([scanner nextCharacter] != '<')
+    if (scanner.nextCharacter != '<')
         return nil;
     [scanner advance];
     
     // Can't be followed by a letter, /, ?, $, or !
-    unichar nextChar = [scanner nextCharacter];
-    if ([[NSCharacterSet letterCharacterSet] characterIsMember:nextChar])
+    unichar nextChar = scanner.nextCharacter;
+    if ([NSCharacterSet.letterCharacterSet characterIsMember:nextChar])
         return nil;
     if ([[NSCharacterSet characterSetWithCharactersInString:@"/?$!"] characterIsMember:nextChar])
         return nil;
