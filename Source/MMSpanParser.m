@@ -1100,7 +1100,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
         element = [self _parseReferenceLinkWithScanner:scanner];
     }
     
-    if (element != nil)
+    if (element != nil && element.innerRanges.count > 0)
     {
         self.parseLinks = NO;
         MMScanner *innerScanner = [MMScanner scannerWithString:scanner.string lineRanges:element.innerRanges];

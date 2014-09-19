@@ -95,6 +95,11 @@
     MMAssertMarkdownEqualsHTML(@"[URL](/url/)", @"<p><a href=\"/url/\">URL</a></p>");
 }
 
+- (void)testInlineLinkWithEmptyContent
+{
+    MMAssertMarkdownEqualsHTML(@"[](/url)", @"<p><a href=\"/url\"></a></p>");
+}
+
 - (void)testInlineLinkWithSpans
 {
     MMAssertMarkdownEqualsHTML(@"[***A Title***](/the-url/)", @"<p><a href=\"/the-url/\"><strong><em>A Title</em></strong></a></p>");
