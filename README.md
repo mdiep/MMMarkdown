@@ -25,9 +25,6 @@ MMMarkdown also supports a number of Markdown extensions:
     NSString *htmlString = [MMMarkdown HTMLStringWithMarkdown:markdown extensions:MMMarkdownExtensionsGitHubFlavored error:NULL];
     // Returns @"<p><del>Mistaken</del></p>"
 
-## Downloading
-While the development branch (`master`) includes the headers and libraries from the latest release, it is recommended that you use the `release` branch unless you are working on MMMarkdown itself.
-
 ## Setup
 Adding MMMarkdown to your Mac or iOS project is easy.
 
