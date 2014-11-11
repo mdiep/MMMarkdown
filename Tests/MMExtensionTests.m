@@ -310,6 +310,15 @@
     );
 }
 
+- (void)testURLAutolinkingWithPlus
+{
+    MMAssertExtendedMarkdownEqualsHTML(
+        MMMarkdownExtensionsAutolinkedURLs,
+        @"https://plus.google.com/+AlanCoxLinux/posts/a2jAP7Pz1gj",
+        @"<p><a href=\"https://plus.google.com/+AlanCoxLinux/posts/a2jAP7Pz1gj\">https://plus.google.com/+AlanCoxLinux/posts/a2jAP7Pz1gj</a></p>"
+    );
+}
+
 
 #pragma mark - MMMarkdownExtensionsHardNewlines
 
