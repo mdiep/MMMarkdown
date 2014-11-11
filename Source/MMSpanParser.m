@@ -333,7 +333,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 {
     NSCharacterSet        *alphanumerics = NSCharacterSet.alphanumericCharacterSet;
     NSMutableCharacterSet *boringChars = [alphanumerics mutableCopy];
-    [boringChars addCharactersInString:@",_-/:?&;%~!#"];
+    [boringChars addCharactersInString:@",_-/:?&;%~!#+"];
     
     NSUInteger parenLevel = 0;
     while (1)
