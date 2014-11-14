@@ -1071,6 +1071,14 @@ static NSString * __HTMLEntityForCharacter(unichar character)
                 break;
         }
         
+        // Check for a list item
+        [scanner beginTransaction];
+        [scanner skipIndentationUpTo:4];
+        hasElement = [self _parseListMarkerWithScanner:scanner];
+        [scanner commitTransaction:NO];
+        if (hasElement)
+            break;
+        
         [self _addTextLineToElement:element withScanner:scanner];
     }
     

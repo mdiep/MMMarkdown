@@ -60,10 +60,16 @@
     [self runTestWithName:@"Blockquotes with code blocks"];
 }
 
+#if 0
+/*
+ This tests that a * won't start a list item on the line after a paragraph. But
+ GitHub and CommonMark both treat this as a list item.
+ */
 - (void)testHardWrappedParagraphsWithListLikeLines
 {
     [self runTestWithName:@"Hard-wrapped paragraphs with list-like lines"];
 }
+#endif
 
 - (void)testHorizontalRules
 {

@@ -190,6 +190,17 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
+- (void)testListImmediatelyAfterParagraph
+{
+    NSString *markdown = @"A\n"
+                          " * 1\n"
+                          " * 2\n";
+    NSString *html = @"<p>A</p>\n"
+                      "<ul><li>1</li>\n"
+                      "<li>2</li></ul>\n";
+    MMAssertMarkdownEqualsHTML(markdown, html);
+}
+
 - (void)testInlineListItems
 {
     NSString *markdown = @"* # A\n"
