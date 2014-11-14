@@ -150,10 +150,23 @@
     [self runTestWithName:@"MD5 Hashes"];
 }
 
+#if 0
+/*
+ * PHP-Markdown thinks that this:
+ *
+ *    **[**Link**](url)**
+ *
+ * should become this:
+ *
+ *    <strong><a href="url"><strong>Link</strong></a></strong>
+ *
+ * But I don't think strongs should be allowed inside strongs.
+ */
 - (void)testNesting
 {
     [self runTestWithName:@"Nesting"];
 }
+#endif
 
 - (void)testParensInURL
 {
@@ -165,10 +178,21 @@
     [self runTestWithName:@"PHP-Specific Bugs"];
 }
 
+#if 0
+/*
+ * PHP-Markdown thinks that this:
+ *
+ * A
+ *  - 1
+ *  - 2
+ *
+ * shouldn't have a list, but I disagree.
+ */
 - (void)testTightBlocks
 {
     [self runTestWithName:@"Tight blocks"];
 }
+#endif
 
 
 @end
