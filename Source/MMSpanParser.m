@@ -40,7 +40,9 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 @property (strong, nonatomic) NSMutableArray *openElements;
 
 @property (strong, nonatomic) MMElement *blockElement;
+@property (assign, nonatomic) BOOL parseEm;
 @property (assign, nonatomic) BOOL parseLinks;
+@property (assign, nonatomic) BOOL parseStrong;
 @end
 
 @implementation MMSpanParser
@@ -55,7 +57,9 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     {
         _extensions = extensions;
         _htmlParser = [MMHTMLParser new];
-        self.parseLinks = YES;
+        self.parseEm     = YES;
+        self.parseLinks  = YES;
+        self.parseStrong = YES;
     }
     
     return self;
@@ -532,18 +536,20 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
         [scanner commitTransaction:NO];
         // Look for the previous char outside of the current transaction
         unichar prevChar = scanner.previousCharacter;
-        unichar nextChar = scanner.nextCharacter;
         [scanner beginTransaction];
         
-        BOOL isWordChar    = [alphanumericSet characterIsMember:prevChar];
-        BOOL isAnotherChar = prevChar == nextChar;
-        if (isWordChar || isAnotherChar)
+        BOOL isWordChar = [alphanumericSet characterIsMember:prevChar];
+        if (isWordChar)
             return nil;
     }
     
     // Must have 1-3 *s or _s
     unichar character = scanner.nextCharacter;
     if (!(character == '*' || character == '_'))
+        return nil;
+    
+    // Must not be preceded by one of the same
+    if (scanner.previousCharacter == character)
         return nil;
     
     NSUInteger numberOfChars = 0;
@@ -556,9 +562,15 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     if (numberOfChars > 3)
         return nil;
     
+    BOOL parseEm     = numberOfChars == 1 || numberOfChars == 3;
+    BOOL parseStrong = numberOfChars == 2 || numberOfChars == 3;
+    
+    if ((parseEm && !self.parseEm) || (parseStrong && !self.parseStrong))
+        return nil;
+    
     NSCharacterSet *whitespaceSet = NSCharacterSet.whitespaceCharacterSet;
     __block NSUInteger remainingChars = numberOfChars;
-    BOOL (^findEnd)(void) = ^{
+    BOOL (^atEnd)(void) = ^{
         // Can't be at the beginning of the line
         if (scanner.atBeginningOfLine)
             return NO;
@@ -593,11 +605,20 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
         return YES;
     };
     
-    NSArray *children = [self _parseWithScanner:scanner untilTestPasses:findEnd];
+    if (parseEm)
+        self.parseEm = NO;
+    if (parseStrong)
+        self.parseStrong = NO;
+    NSArray *children = [self _parseWithScanner:scanner untilTestPasses:atEnd];
+    if (parseEm && (!children || remainingChars != 1))
+        self.parseEm = YES;
+    if (parseStrong && (!children || remainingChars != 2))
+        self.parseStrong = YES;
+    
     if (!children)
         return nil;
     
-    BOOL isEm = (numberOfChars == 1) || (numberOfChars == 3 && (remainingChars == 0 || remainingChars == 2));
+    BOOL isEm = (numberOfChars == 1) || (numberOfChars == 3 && remainingChars != 1);
     NSUInteger startLocation = scanner.startLocation + remainingChars;
     MMElement *element = [MMElement new];
     element.type     = isEm ? MMElementTypeEm : MMElementTypeStrong;
@@ -614,7 +635,11 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     }
     else if (remainingChars > 0)
     {
-        NSMutableArray *outerChildren = [[self _parseWithScanner:scanner untilTestPasses:findEnd] mutableCopy];
+        NSMutableArray *outerChildren = [[self _parseWithScanner:scanner untilTestPasses:atEnd] mutableCopy];
+        if (parseEm)
+            self.parseEm = YES;
+        if (parseStrong)
+            self.parseStrong = YES;
         if (!outerChildren)
             return nil;
         

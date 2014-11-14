@@ -107,6 +107,13 @@
     MMAssertMarkdownEqualsHTML(@"un_frigging_believable", @"<p>un<em>frigging</em>believable</p>");
 }
 
+- (void)testEmWithLotsOfAsterisks
+{
+    NSString *markdown = @"*A *B *C *D *E *F *G *H *I *J *K *L *M *N *O *P *Q *R *S *T *U *V *W *X *Y *Z";
+    NSString *HTML = [NSString stringWithFormat:@"<p>%@</p>", markdown];
+    MMAssertMarkdownEqualsHTML(markdown, HTML);
+}
+
 - (void)testStrong
 {
     MMAssertMarkdownEqualsHTML(@"**foo**", @"<p><strong>foo</strong></p>");
@@ -159,15 +166,15 @@
 {
     MMAssertMarkdownEqualsHTML(
         @"*A *B* C*",
-        @"<p><em>A <em>B</em> C</em></p>"
+        @"<p><em>A *B</em> C*</p>"
     );
     MMAssertMarkdownEqualsHTML(
         @"*A _B_ C*",
-        @"<p><em>A <em>B</em> C</em></p>"
+        @"<p><em>A _B_ C</em></p>"
     );
     MMAssertMarkdownEqualsHTML(
         @"_A *B* C_",
-        @"<p><em>A <em>B</em> C</em></p>"
+        @"<p><em>A *B* C</em></p>"
     );
 }
 
@@ -175,15 +182,15 @@
 {
     MMAssertMarkdownEqualsHTML(
         @"**A **B** C**",
-        @"<p><strong>A <strong>B</strong> C</strong></p>"
+        @"<p><strong>A **B</strong> C**</p>"
     );
     MMAssertMarkdownEqualsHTML(
         @"**A __B__ C**",
-        @"<p><strong>A <strong>B</strong> C</strong></p>"
+        @"<p><strong>A __B__ C</strong></p>"
     );
     MMAssertMarkdownEqualsHTML(
         @"__A **B** C__",
-        @"<p><strong>A <strong>B</strong> C</strong></p>"
+        @"<p><strong>A **B** C</strong></p>"
     );
 }
 
