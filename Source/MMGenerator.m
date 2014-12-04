@@ -80,6 +80,11 @@ static NSString *__obfuscatedEmailAddress(NSString *anAddress)
 
 static NSString * __HTMLStartTagForElement(MMElement *anElement)
 {
+  NSString *codeTag = @"<pre><code>";
+    if(anElement.language)
+    {
+      codeTag = [NSString stringWithFormat:@"<pre><code class=\"%@\">", anElement.language];
+    }
     switch (anElement.type)
     {
         case MMElementTypeHeader:
@@ -95,7 +100,7 @@ static NSString * __HTMLStartTagForElement(MMElement *anElement)
         case MMElementTypeBlockquote:
             return @"<blockquote>\n";
         case MMElementTypeCodeBlock:
-            return @"<pre><code>";
+            return codeTag;
         case MMElementTypeLineBreak:
             return @"<br />";
         case MMElementTypeHorizontalRule:

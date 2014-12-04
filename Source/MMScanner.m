@@ -494,4 +494,14 @@ static NSString *__delimitersForCharacter(unichar character)
 }
 
 
+- (NSString *)fencedCodeBlockLanguage
+{
+  NSString *w = [self nextWord];
+  if([w isEqualToString:@""])
+  {
+    w = nil;
+  }
+  return w;
+}
+
 @end

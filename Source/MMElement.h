@@ -79,6 +79,8 @@ typedef NS_ENUM(NSInteger, MMTableCellAlignment)
 @property (assign, nonatomic) MMElement *parent;
 @property (copy,   nonatomic) NSArray   *children;
 
+@property (nonatomic, copy) NSString *language;
+
 - (void)addInnerRange:(NSRange)aRange;
 - (void)removeLastInnerRange;
 

@@ -116,6 +116,7 @@
 		BEDDD54A1544E42200EA7D65 /* MMHTMLTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BEDDD5491544E42200EA7D65 /* MMHTMLTests.m */; };
 		BEF3421E150CEA6D00BFA0E2 /* MMSpanParser.m in Sources */ = {isa = PBXBuildFile; fileRef = BEF3421B150CEA6D00BFA0E2 /* MMSpanParser.m */; };
 		BEF3421F150CEA6D00BFA0E2 /* MMSpanParser.m in Sources */ = {isa = PBXBuildFile; fileRef = BEF3421B150CEA6D00BFA0E2 /* MMSpanParser.m */; };
+		E19881B8F2D929519730CF9A /* MMHTMLCode.m in Sources */ = {isa = PBXBuildFile; fileRef = E19885D041AB55E2D8DF44E1 /* MMHTMLCode.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -368,6 +369,7 @@
 		BEDDD5491544E42200EA7D65 /* MMHTMLTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMHTMLTests.m; sourceTree = "<group>"; };
 		BEF3421A150CEA6D00BFA0E2 /* MMSpanParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMSpanParser.h; sourceTree = "<group>"; };
 		BEF3421B150CEA6D00BFA0E2 /* MMSpanParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMSpanParser.m; sourceTree = "<group>"; };
+		E19885D041AB55E2D8DF44E1 /* MMHTMLCode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMHTMLCode.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -485,6 +487,7 @@
 				BE813E971502E78700EC9469 /* MMTestCase.m */,
 				BE813DF314F893EB00EC9469 /* MMMarkdownTests-Info.plist */,
 				BE813DF414F893EB00EC9469 /* InfoPlist.strings */,
+				E19885D041AB55E2D8DF44E1 /* MMHTMLCode.m */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -755,6 +758,7 @@
 				BEAAEB62154A4A1D00EF1EA0 /* MMErrorTests.m in Sources */,
 				BEAAEC2E1554E93800EF1EA0 /* MMPHPMarkdownTests.m in Sources */,
 				BEABD17117B2BA3700511479 /* MMExtensionTests.m in Sources */,
+				E19881B8F2D929519730CF9A /* MMHTMLCode.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

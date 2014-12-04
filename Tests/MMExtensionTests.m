@@ -465,11 +465,8 @@
 
 - (void)testFencedCodeBlockWithLanguage
 {
-    MMAssertExtendedMarkdownEqualsHTML(
-        MMMarkdownExtensionsFencedCodeBlocks,
-        @"```objc\nblah\n```",
-        @"<pre><code>blah\n</code></pre>"
-    );
+  MMAssertMarkdownEqualsStringWithGithub(@"```objc\nhello\nworld\n```", @"<pre><code class=\"objc\">hello\nworld\n"
+          "</code></pre>\n");
 }
 
 - (void)testFencedCodeBlockInsideBlockquote

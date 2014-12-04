@@ -48,6 +48,19 @@
         XCTAssertEqualObjects(actual, expected); \
     } while(0)
 
+#define MMAssertMarkdownEqualsStringWithGithub(markdown, string) \
+    do { \
+        id a1value = (markdown); \
+        id a2value = (string); \
+        \
+        NSError *error; \
+        NSString *actual   = [MMMarkdown HTMLStringWithMarkdown:a1value extensions:MMMarkdownExtensionsGitHubFlavored error:&error]; \
+        NSString *expected = a2value; \
+        XCTAssertEqualObjects(actual, expected); \
+    } while(0)
+
+
+
 #define MMAssertMarkdownEqualsString(markdown, string) \
     do { \
         id a1value = (markdown); \
@@ -58,6 +71,7 @@
         NSString *expected = a2value; \
         XCTAssertEqualObjects(actual, expected); \
     } while(0)
+
 
 @interface MMTestCase : XCTestCase
 
