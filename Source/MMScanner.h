@@ -76,5 +76,4 @@
 - (NSUInteger)skipWhitespace;
 - (NSUInteger)skipWhitespaceAndNewlines;
 
-- (NSString *)fencedCodeBlockLanguage;
 @end

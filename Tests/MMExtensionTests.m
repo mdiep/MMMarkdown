@@ -465,7 +465,7 @@
 
 - (void)testFencedCodeBlockWithLanguage
 {
-  MMAssertMarkdownEqualsStringWithGithub(@"```objc\nhello\nworld\n```", @"<pre><code class=\"objc\">hello\nworld\n"
+  MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsFencedCodeBlocks, @"```objc\nhello\nworld\n```", @"<pre><code class=\"objc\">hello\nworld\n"
           "</code></pre>\n");
 }
 
@@ -591,6 +591,5 @@
                       "</table>";
     MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTables, markdown, html);
 }
-
 
 @end

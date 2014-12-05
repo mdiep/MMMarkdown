@@ -600,7 +600,8 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         return nil;
     
     // skip additional backticks and language
-    NSString *language = [scanner fencedCodeBlockLanguage];
+    NSString *language = [scanner nextWord];
+    language = [language isEqualToString:@""]? nil: language;
     [scanner advanceToNextLine];
     
     MMElement *element = [MMElement new];

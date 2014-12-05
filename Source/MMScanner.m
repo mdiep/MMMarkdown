@@ -493,15 +493,4 @@ static NSString *__delimitersForCharacter(unichar character)
     return [self.lineRanges[self.rangeIndex] rangeValue];
 }
 
-
-- (NSString *)fencedCodeBlockLanguage
-{
-  NSString *w = [self nextWord];
-  if([w isEqualToString:@""])
-  {
-    w = nil;
-  }
-  return w;
-}
-
 @end
