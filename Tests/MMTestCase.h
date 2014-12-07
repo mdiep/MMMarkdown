@@ -48,7 +48,6 @@
         XCTAssertEqualObjects(actual, expected); \
     } while(0)
 
-
 #define MMAssertMarkdownEqualsString(markdown, string) \
     do { \
         id a1value = (markdown); \
@@ -59,7 +58,6 @@
         NSString *expected = a2value; \
         XCTAssertEqualObjects(actual, expected); \
     } while(0)
-
 
 @interface MMTestCase : XCTestCase
 

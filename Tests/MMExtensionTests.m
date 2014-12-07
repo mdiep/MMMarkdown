@@ -465,8 +465,12 @@
 
 - (void)testFencedCodeBlockWithLanguage
 {
-  MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsFencedCodeBlocks, @"```objc\nhello\nworld\n```", @"<pre><code class=\"objc\">hello\nworld\n"
-          "</code></pre>\n");
+    MMAssertExtendedMarkdownEqualsHTML(
+        MMMarkdownExtensionsFencedCodeBlocks,
+        @"```objc\nhello\nworld\n```",
+        @"<pre><code class=\"objc\">hello\nworld\n"
+        "</code></pre>\n"
+    );
 }
 
 - (void)testFencedCodeBlockInsideBlockquote
@@ -477,7 +481,6 @@
         @"<blockquote><pre><code>test\n</code></pre></blockquote>"
     );
 }
-
 
 #pragma mark - MMMarkdownExtensionsTables
 

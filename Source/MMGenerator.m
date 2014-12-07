@@ -95,7 +95,7 @@ static NSString * __HTMLStartTagForElement(MMElement *anElement)
         case MMElementTypeBlockquote:
             return @"<blockquote>\n";
         case MMElementTypeCodeBlock:
-          return anElement.language? [NSString stringWithFormat:@"<pre><code class=\"%@\">", anElement.language]: @"<pre><code>";
+          return anElement.language ? [NSString stringWithFormat:@"<pre><code class=\"%@\">", anElement.language] : @"<pre><code>";
         case MMElementTypeLineBreak:
             return @"<br />";
         case MMElementTypeHorizontalRule:

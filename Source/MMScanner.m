@@ -485,7 +485,6 @@ static NSString *__delimitersForCharacter(unichar character)
     return result.location;
 }
 
-
 #pragma mark - Private Properties
 
 - (NSRange)currentLineRange
