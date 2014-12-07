@@ -467,8 +467,9 @@
 {
     MMAssertExtendedMarkdownEqualsHTML(
         MMMarkdownExtensionsFencedCodeBlocks,
-        @"```objc\nblah\n```",
-        @"<pre><code>blah\n</code></pre>"
+        @"```objc\nhello\nworld\n```",
+        @"<pre><code class=\"objc\">hello\nworld\n"
+        "</code></pre>\n"
     );
 }
 
@@ -480,7 +481,6 @@
         @"<blockquote><pre><code>test\n</code></pre></blockquote>"
     );
 }
-
 
 #pragma mark - MMMarkdownExtensionsTables
 
@@ -594,6 +594,5 @@
                       "</table>";
     MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTables, markdown, html);
 }
-
 
 @end

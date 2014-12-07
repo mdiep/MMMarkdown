@@ -485,13 +485,11 @@ static NSString *__delimitersForCharacter(unichar character)
     return result.location;
 }
 
-
 #pragma mark - Private Properties
 
 - (NSRange)currentLineRange
 {
     return [self.lineRanges[self.rangeIndex] rangeValue];
 }
-
 
 @end
