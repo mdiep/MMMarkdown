@@ -1,5 +1,8 @@
 # MMMarkdown Release Notes
 
+## 0.4
+This release adds support for GitHub-flavored Markdown and extensions. It also includes bug fixes, updated Xcode project settings, and more modernization. 
+
 ## 0.3
 This release adds an HTML parser, which is needed to properly handle HTML inside Markdown. It also removes the precompiled libraries in favor of including the project.
 
