@@ -39,6 +39,11 @@
     MMAssertMarkdownEqualsHTML(@"A <i>test</i> with HTML.", @"<p>A <i>test</i> with HTML.</p>");
 }
 
+- (void)testInlineHTMLWithUnterminatedQuote
+{
+    MMAssertMarkdownEqualsString(@"<p style=\"", @"<p>&lt;p style=\"</p>\n");
+}
+
 - (void)testInlineHTMLWithSpansInAttribute
 {
     MMAssertMarkdownEqualsHTML(@"<a href=\"#\" title=\"*blah*\">foo</a>",

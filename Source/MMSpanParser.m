@@ -1237,13 +1237,6 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
         return nil;
     [scanner advance];
     
-    // Can't be followed by a letter, /, ?, $, or !
-    unichar nextChar = scanner.nextCharacter;
-    if ([NSCharacterSet.letterCharacterSet characterIsMember:nextChar])
-        return nil;
-    if ([[NSCharacterSet characterSetWithCharactersInString:@"/?$!"] characterIsMember:nextChar])
-        return nil;
-    
     MMElement *element = [MMElement new];
     element.type  = MMElementTypeEntity;
     element.range = NSMakeRange(scanner.location-1, 1);

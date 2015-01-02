@@ -218,6 +218,18 @@
     NSString *tagName = scanner.nextWord;
     if (![htmlBlockTags containsObject:tagName])
         return nil;
+    scanner.location += tagName.length;
+    
+    // Find a '>'
+    while (scanner.nextCharacter != '>')
+    {
+        if (scanner.atEndOfString)
+            return nil;
+        else if (scanner.atEndOfLine)
+            [scanner advanceToNextLine];
+        else
+            [scanner advance];
+    }
     
     // Skip lines until we come across a blank line
     while (!scanner.atEndOfLine)
@@ -252,16 +264,12 @@
     
     while (scanner.nextCharacter != nextChar)
     {
-        if (scanner.atEndOfLine)
-        {
-            [scanner advanceToNextLine];
-            continue;
-        }
-        
         if (scanner.atEndOfString)
             return NO;
-        
-        [scanner advance];
+        else if (scanner.atEndOfLine)
+            [scanner advanceToNextLine];
+        else
+            [scanner advance];
     }
     
     // skip over the closing quotation mark
