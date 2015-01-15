@@ -68,6 +68,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 - (NSArray *)parseSpansInBlockElement:(MMElement *)block withScanner:(MMScanner *)scanner
 {
     self.blockElement = block;
+    [scanner skipWhitespace];
     return [self _parseWithScanner:scanner untilTestPasses:^{ return scanner.atEndOfString; }];
 }
 
