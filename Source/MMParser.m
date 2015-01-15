@@ -1008,12 +1008,6 @@ static NSString * __HTMLEntityForCharacter(unichar character)
 
 - (MMElement *)_parseParagraphWithScanner:(MMScanner *)scanner
 {
-    NSCharacterSet *spaceCharacterSet = [NSCharacterSet characterSetWithCharactersInString:@" "];
-    [scanner skipCharactersFromSet:spaceCharacterSet max:3];
-    
-    if ([NSCharacterSet.whitespaceAndNewlineCharacterSet characterIsMember:scanner.nextCharacter])
-        return nil;
-    
     MMElement *element = [MMElement new];
     element.type  = MMElementTypeParagraph;
     
@@ -1086,6 +1080,9 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     }
     
     element.range = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
+    
+    if (element.innerRanges.count == 0)
+        return nil;
     
     MMScanner *innerScanner = [MMScanner scannerWithString:scanner.string lineRanges:element.innerRanges];
     element.children = [self.spanParser parseSpansInBlockElement:element withScanner:innerScanner];

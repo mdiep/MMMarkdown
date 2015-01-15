@@ -211,6 +211,11 @@
     MMAssertMarkdownEqualsHTML(@"A\n# Example", @"<p>A</p>\n<h1>Example</h1>");
 }
 
+- (void)testPrefixedHeaderWithLeadingSpaces
+{
+    MMAssertMarkdownEqualsHTML(@" #H", @"<p>#H</p>");
+}
+
 
 #pragma mark - Underlined Header Tests
 
@@ -267,6 +272,11 @@
                       "<p>B</p>\n"
                       "</blockquote>";
     MMAssertMarkdownEqualsHTML(@"A\n> B", html);
+}
+
+- (void)testParagraphWithLeadingSpaces
+{
+    MMAssertMarkdownEqualsHTML(@"   A", @"<p>A</p>");
 }
 
 
