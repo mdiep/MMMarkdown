@@ -1,5 +1,8 @@
 # MMMarkdown Release Notes
 
+## 0.4.1
+Fix an exception when whitespace preceded what would otherwise be a header (#47).
+
 ## 0.4
 This release adds support for GitHub-flavored Markdown and extensions. It also includes bug fixes, updated Xcode project settings, and more modernization. 
 
