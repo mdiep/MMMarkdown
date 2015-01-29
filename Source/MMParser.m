@@ -609,8 +609,19 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     element.language = language;
 
     // block ends when it hints a line starting with ``` or the end of the string
-    while (![scanner matchString:@"```"] && !scanner.atEndOfString)
+    while (!scanner.atEndOfString)
     {
+        [scanner beginTransaction];
+        if ([scanner matchString:@"```"])
+        {
+            [scanner skipWhitespace];
+            if (scanner.atEndOfLine)
+            {
+                [scanner commitTransaction:YES];
+                break;
+            }
+        }
+        [scanner commitTransaction:NO];
         [element addInnerRange:scanner.currentRange];
         [scanner advanceToNextLine];
     }

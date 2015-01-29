@@ -482,6 +482,15 @@
     );
 }
 
+- (void)testFencedCodeBlockFollowedByNonWhitespace
+{
+    MMAssertExtendedMarkdownEqualsHTML(
+        MMMarkdownExtensionsFencedCodeBlocks,
+        @"```\n\n```xxx\n\n```\n",
+        @"<pre><code>\n```xxx\n</code></pre>"
+    );
+}
+
 #pragma mark - MMMarkdownExtensionsTables
 
 - (void)testTableWithStandardMarkdown
