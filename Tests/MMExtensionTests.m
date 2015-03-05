@@ -473,6 +473,36 @@
     );
 }
 
+- (void)testFencedCodeBlockWithSpaceBeforeLanguage
+{
+    MMAssertExtendedMarkdownEqualsHTML(
+        MMMarkdownExtensionsFencedCodeBlocks,
+        @"``` objc\nhello\nworld\n```",
+        @"<pre><code class=\"objc\">hello\nworld\n"
+        "</code></pre>\n"
+    );
+}
+
+- (void)testFencedCodeBlockWithSpaceAfterLanguage
+{
+    MMAssertExtendedMarkdownEqualsHTML(
+        MMMarkdownExtensionsFencedCodeBlocks,
+        @"```objc \nhello\nworld\n```",
+        @"<pre><code class=\"objc\">hello\nworld\n"
+        "</code></pre>\n"
+    );
+}
+
+- (void)testFencedCodeBlockWithSpaceInLanguageName
+{
+    MMAssertExtendedMarkdownEqualsHTML(
+        MMMarkdownExtensionsFencedCodeBlocks,
+        @"```a b\nhello\nworld\n```",
+        @"<p>```a b\nhello\nworld</p>\n<pre><code></code></pre>\n"
+    );
+    
+}
+
 - (void)testFencedCodeBlockInsideBlockquote
 {
     MMAssertExtendedMarkdownEqualsHTML(
