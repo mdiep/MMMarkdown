@@ -600,13 +600,17 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         return nil;
     
     // skip additional backticks and language
+    [scanner skipWhitespace];
     NSString *language = [scanner nextWord];
-    language = [language isEqual:@""] ? nil : language;
+    scanner.location += language.length;
+    [scanner skipWhitespace];
+    if (!scanner.atEndOfLine)
+        return nil;
     [scanner advanceToNextLine];
     
     MMElement *element = [MMElement new];
     element.type  = MMElementTypeCodeBlock;
-    element.language = language;
+    element.language = (language.length == 0 ? nil : language);
 
     // block ends when it hints a line starting with ``` or the end of the string
     while (!scanner.atEndOfString)
