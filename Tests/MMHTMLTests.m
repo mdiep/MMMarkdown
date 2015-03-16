@@ -231,5 +231,12 @@
     MMAssertMarkdownEqualsHTML(@"<!------> *hello*-->", @"<!------> *hello*-->");
 }
 
+# pragma mark MathJax tests
+
+- (void)testMathJaxBlock
+{
+    // Mathjax uses $$ and $ for math environments. _ and ^ for sub and super scripts. MMMarkdown should not 'eat' these
+    MMAssertMarkdownEqualsHTML(@"When $x = a_{0} \\times b^{a4}$ then: $$b = c$$", @"<p>When $x = a_{0} \\times b^{a4}$ then: $$b = c$$</p>");
+}
 
 @end
