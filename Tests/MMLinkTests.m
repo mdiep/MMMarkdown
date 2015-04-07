@@ -174,6 +174,14 @@
     MMAssertMarkdownEqualsHTML(@"An empty [ by itself", @"<p>An empty [ by itself</p>");
 }
 
+- (void)testInlineLinkWithImage
+{
+    MMAssertMarkdownEqualsHTML(
+        @"[![Image](http://example.com/image.jpg)](http://www.example.com)",
+        @"<p><a href=\"http://www.example.com\"><img src=\"http://example.com/image.jpg\" alt=\"Image\" /></a></p>"
+    );
+}
+
 
 #pragma mark - Reference Link Tests
 
