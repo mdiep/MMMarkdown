@@ -201,6 +201,15 @@
     );
 }
 
+- (void)testAsterisksInsideWord
+{
+    MMAssertExtendedMarkdownEqualsHTML(
+        MMMarkdownExtensionsUnderscoresInWords,
+        @"t*es*t",
+        @"<p>t<em>es</em>t</p>"
+    );
+}
+
 
 #pragma mark - MMMarkdownExtensionsAutolinkedURLs
 
