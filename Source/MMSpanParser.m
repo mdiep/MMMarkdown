@@ -534,8 +534,13 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 
 - (MMElement *)_parseEmAndStrongWithScanner:(MMScanner *)scanner
 {
+    // Must have 1-3 *s or _s
+    unichar character = scanner.nextCharacter;
+    if (!(character == '*' || character == '_'))
+        return nil;
+    
     NSCharacterSet *alphanumericSet = NSCharacterSet.alphanumericCharacterSet;
-    if (self.extensions & MMMarkdownExtensionsUnderscoresInWords)
+    if (self.extensions & MMMarkdownExtensionsUnderscoresInWords && character == '_')
     {
         // GFM doesn't italicize parts of words
         
@@ -548,11 +553,6 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
         if (isWordChar)
             return nil;
     }
-    
-    // Must have 1-3 *s or _s
-    unichar character = scanner.nextCharacter;
-    if (!(character == '*' || character == '_'))
-        return nil;
     
     // Must not be preceded by one of the same
     if (scanner.previousCharacter == character)
@@ -596,7 +596,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
         if (numberOfEndChars == 0 || (numberOfEndChars != remainingChars && remainingChars != 3))
             return NO;
         
-        if (self.extensions & MMMarkdownExtensionsUnderscoresInWords)
+        if (self.extensions & MMMarkdownExtensionsUnderscoresInWords && character == '_')
         {
             // GFM doesn't italicize parts of words
             unichar nextChar = scanner.nextCharacter;
