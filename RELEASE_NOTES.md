@@ -1,4 +1,6 @@
 # MMMarkdown Release Notes
+## 0.4.3
+ - #60: UnderscoresInWords should only affect underscores
 
 ## 0.4.2
  - #51: Fenced code blocks shouldn't allow non-whitespace characters after trailing delimiter
