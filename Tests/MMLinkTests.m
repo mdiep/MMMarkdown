@@ -182,6 +182,11 @@
     );
 }
 
+- (void)testInlineLinkWithPadding
+{
+    MMAssertMarkdownEqualsHTML(@"[test]( http://www.test.com )", @"<p><a href=\"http://www.test.com\">test</a></p>");
+}
+
 
 #pragma mark - Reference Link Tests
 
