@@ -1101,6 +1101,8 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     
     // Look for the second []
     NSArray *idRanges = [self _parseLinkTextBodyWithScanner:scanner];
+    if (!idRanges)
+        return nil;
     if (!idRanges.count)
     {
         idRanges = element.innerRanges;
