@@ -328,6 +328,15 @@
     );
 }
 
+- (void)testURLAutolinkingWithEqualsSign
+{
+    MMAssertExtendedMarkdownEqualsHTML(
+        MMMarkdownExtensionsAutolinkedURLs,
+        @"http://www.test.com/?a=b",
+        @"<p><a href=\"http://www.test.com/?a=b\">http://www.test.com/?a=b</a></p>"
+    );
+}
+
 
 #pragma mark - MMMarkdownExtensionsHardNewlines
 
