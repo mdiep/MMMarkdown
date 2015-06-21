@@ -13,9 +13,6 @@
 		BE6CA533158179670083887C /* MMHTMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = BE6CA52F158179670083887C /* MMHTMLParser.m */; };
 		BE813DE414F893EB00EC9469 /* MMMarkdown.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813DE314F893EB00EC9469 /* MMMarkdown.m */; };
 		BE813E0814F8961D00EC9469 /* MMMarkdown.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813DE314F893EB00EC9469 /* MMMarkdown.m */; };
-		BE813E1514F92B6100EC9469 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE813DDE14F893EB00EC9469 /* Foundation.framework */; };
-		BE813E1814F92B6200EC9469 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E1714F92B6100EC9469 /* main.m */; };
-		BE813E2014F92BF600EC9469 /* libMMMarkdown-Mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE813DD614F893EB00EC9469 /* libMMMarkdown-Mac.a */; };
 		BE813E7614F959BC00EC9469 /* MMElement.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E7314F959BC00EC9469 /* MMElement.m */; };
 		BE813E7714F959BC00EC9469 /* MMElement.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E7314F959BC00EC9469 /* MMElement.m */; };
 		BE813E7C14F95B2A00EC9469 /* MMParser.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E7914F95B2A00EC9469 /* MMParser.m */; };
@@ -166,15 +163,6 @@
 			name = "Copy Public Headers";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		BE813E1114F92B6100EC9469 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-		};
 		BED7618E1B37787800687B36 /* Copy MarkdownTest_1.0 Files */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -283,9 +271,6 @@
 		BE813DF714F893EB00EC9469 /* MMMarkdownTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MMMarkdownTests.h; sourceTree = "<group>"; };
 		BE813DF814F893EB00EC9469 /* MMMarkdownTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MMMarkdownTests.m; sourceTree = "<group>"; };
 		BE813E0E14F8961D00EC9469 /* libMMMarkdown-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libMMMarkdown-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		BE813E1314F92B6100EC9469 /* mmmarkdown */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mmmarkdown; sourceTree = BUILT_PRODUCTS_DIR; };
-		BE813E1714F92B6100EC9469 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		BE813E1A14F92B6200EC9469 /* mmmarkdown-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "mmmarkdown-Prefix.pch"; sourceTree = "<group>"; };
 		BE813E2214F93D8700EC9469 /* MarkdownTest.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = MarkdownTest.pl; sourceTree = "<group>"; };
 		BE813E2414F93D8700EC9469 /* Amps and angle encoding.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "Amps and angle encoding.html"; sourceTree = "<group>"; };
 		BE813E2514F93D8700EC9469 /* Amps and angle encoding.text */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Amps and angle encoding.text"; sourceTree = "<group>"; };
@@ -402,15 +387,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		BE813E1014F92B6100EC9469 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				BE813E2014F92BF600EC9469 /* libMMMarkdown-Mac.a in Frameworks */,
-				BE813E1514F92B6100EC9469 /* Foundation.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		BED761531B374D6700687B36 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -433,7 +409,6 @@
 			isa = PBXGroup;
 			children = (
 				BE813DDF14F893EB00EC9469 /* Source */,
-				BE813E1614F92B6100EC9469 /* CLI */,
 				BE813DF114F893EB00EC9469 /* Tests */,
 				BE813DD814F893EB00EC9469 /* Frameworks */,
 				BE813DD714F893EB00EC9469 /* Products */,
@@ -446,7 +421,6 @@
 			children = (
 				BE813DD614F893EB00EC9469 /* libMMMarkdown-Mac.a */,
 				BE813E0E14F8961D00EC9469 /* libMMMarkdown-iOS.a */,
-				BE813E1314F92B6100EC9469 /* mmmarkdown */,
 				BED761571B374D6700687B36 /* MMMarkdown.framework */,
 				BED761611B374D6700687B36 /* MMMarkdownTests.xctest */,
 			);
@@ -509,15 +483,6 @@
 				BED761671B374D6700687B36 /* Info.plist */,
 			);
 			path = Tests;
-			sourceTree = "<group>";
-		};
-		BE813E1614F92B6100EC9469 /* CLI */ = {
-			isa = PBXGroup;
-			children = (
-				BE813E1714F92B6100EC9469 /* main.m */,
-				BE813E1A14F92B6200EC9469 /* mmmarkdown-Prefix.pch */,
-			);
-			path = CLI;
 			sourceTree = "<group>";
 		};
 		BE813E2114F93D8700EC9469 /* MarkdownTest_1.0 */ = {
@@ -672,23 +637,6 @@
 			productReference = BE813E0E14F8961D00EC9469 /* libMMMarkdown-iOS.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		BE813E1214F92B6100EC9469 /* mmmarkdown */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = BE813E1D14F92B6200EC9469 /* Build configuration list for PBXNativeTarget "mmmarkdown" */;
-			buildPhases = (
-				BE813E0F14F92B6100EC9469 /* Sources */,
-				BE813E1014F92B6100EC9469 /* Frameworks */,
-				BE813E1114F92B6100EC9469 /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = mmmarkdown;
-			productName = mmmarkdown;
-			productReference = BE813E1314F92B6100EC9469 /* mmmarkdown */;
-			productType = "com.apple.product-type.tool";
-		};
 		BED761561B374D6700687B36 /* MMMarkdown */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = BED7616E1B374D6700687B36 /* Build configuration list for PBXNativeTarget "MMMarkdown" */;
@@ -757,7 +705,6 @@
 			targets = (
 				BE813DD514F893EB00EC9469 /* MMMarkdown-Mac */,
 				BE813E0614F8961D00EC9469 /* MMMarkdown-iOS */,
-				BE813E1214F92B6100EC9469 /* mmmarkdown */,
 				BED761561B374D6700687B36 /* MMMarkdown */,
 				BED761601B374D6700687B36 /* MMMarkdownTests */,
 			);
@@ -809,14 +756,6 @@
 				BE813E9514FACF0D00EC9469 /* MMScanner.m in Sources */,
 				BEF3421F150CEA6D00BFA0E2 /* MMSpanParser.m in Sources */,
 				BE6CA533158179670083887C /* MMHTMLParser.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		BE813E0F14F92B6100EC9469 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				BE813E1814F92B6200EC9469 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -981,28 +920,6 @@
 			};
 			name = Release;
 		};
-		BE813E1E14F92B6200EC9469 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "CLI/mmmarkdown-Prefix.pch";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-			};
-			name = Debug;
-		};
-		BE813E1F14F92B6200EC9469 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "CLI/mmmarkdown-Prefix.pch";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-			};
-			name = Release;
-		};
 		BED7616A1B374D6700687B36 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1147,15 +1064,6 @@
 			buildConfigurations = (
 				BE813E0C14F8961D00EC9469 /* Debug */,
 				BE813E0D14F8961D00EC9469 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		BE813E1D14F92B6200EC9469 /* Build configuration list for PBXNativeTarget "mmmarkdown" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				BE813E1E14F92B6200EC9469 /* Debug */,
-				BE813E1F14F92B6200EC9469 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

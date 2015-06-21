@@ -4,4 +4,7 @@
    <FileRef
       location = "group:MMMarkdown.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:CLI/mmmarkdown.xcodeproj">
+   </FileRef>
 </Workspace>
