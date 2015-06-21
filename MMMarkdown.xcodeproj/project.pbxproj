@@ -17,7 +17,6 @@
 		BE6CA533158179670083887C /* MMHTMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = BE6CA52F158179670083887C /* MMHTMLParser.m */; };
 		BE813DE414F893EB00EC9469 /* MMMarkdown.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813DE314F893EB00EC9469 /* MMMarkdown.m */; };
 		BE813DF014F893EB00EC9469 /* libMMMarkdown-Mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BE813DD614F893EB00EC9469 /* libMMMarkdown-Mac.a */; };
-		BE813DF614F893EB00EC9469 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = BE813DF414F893EB00EC9469 /* InfoPlist.strings */; };
 		BE813DF914F893EB00EC9469 /* MMMarkdownTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813DF814F893EB00EC9469 /* MMMarkdownTests.m */; };
 		BE813E0814F8961D00EC9469 /* MMMarkdown.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813DE314F893EB00EC9469 /* MMMarkdown.m */; };
 		BE813E1514F92B6100EC9469 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE813DDE14F893EB00EC9469 /* Foundation.framework */; };
@@ -114,7 +113,6 @@
 		BEAAEC2E1554E93800EF1EA0 /* MMPHPMarkdownTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BEAAEC2D1554E93700EF1EA0 /* MMPHPMarkdownTests.m */; };
 		BEABD17117B2BA3700511479 /* MMExtensionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BEABD17017B2BA3700511479 /* MMExtensionTests.m */; };
 		BED761621B374D6700687B36 /* MMMarkdown.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BED761571B374D6700687B36 /* MMMarkdown.framework */; };
-		BED761691B374D6700687B36 /* MMMarkdownTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BED761681B374D6700687B36 /* MMMarkdownTests.m */; };
 		BED761701B374E9C00687B36 /* MMMarkdown.h in Headers */ = {isa = PBXBuildFile; fileRef = BE813DE214F893EB00EC9469 /* MMMarkdown.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BED761711B374E9C00687B36 /* MMMarkdown.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813DE314F893EB00EC9469 /* MMMarkdown.m */; };
 		BED761721B374E9C00687B36 /* MMMarkdown-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = BE813DE114F893EB00EC9469 /* MMMarkdown-Prefix.pch */; };
@@ -133,6 +131,90 @@
 		BED7617F1B374E9C00687B36 /* MMScanner.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E9114FACF0C00EC9469 /* MMScanner.m */; };
 		BED761801B374E9C00687B36 /* MMSpanParser.h in Headers */ = {isa = PBXBuildFile; fileRef = BEF3421A150CEA6D00BFA0E2 /* MMSpanParser.h */; };
 		BED761811B374E9C00687B36 /* MMSpanParser.m in Sources */ = {isa = PBXBuildFile; fileRef = BEF3421B150CEA6D00BFA0E2 /* MMSpanParser.m */; };
+		BED761821B37783100687B36 /* MMBlockTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BE1DB5D915143F4200B26092 /* MMBlockTests.m */; };
+		BED761831B37783100687B36 /* MMErrorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BEAAEB5E154A49B500EF1EA0 /* MMErrorTests.m */; };
+		BED761841B37783100687B36 /* MMEscapingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E9D1503C14200EC9469 /* MMEscapingTests.m */; };
+		BED761851B37783100687B36 /* MMExtensionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BEABD17017B2BA3700511479 /* MMExtensionTests.m */; };
+		BED761861B37783100687B36 /* MMHTMLTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BEDDD5491544E42200EA7D65 /* MMHTMLTests.m */; };
+		BED761871B37783100687B36 /* MMImageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BEAAEB421549DD1700EF1EA0 /* MMImageTests.m */; };
+		BED761881B37783100687B36 /* MMLinkTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BE1DB5DC1515032F00B26092 /* MMLinkTests.m */; };
+		BED761891B37783100687B36 /* MMListTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E9A15031B4000EC9469 /* MMListTests.m */; };
+		BED7618A1B37783100687B36 /* MMSpanTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BE1DB5D41514184000B26092 /* MMSpanTests.m */; };
+		BED7618B1B37783100687B36 /* MMMarkdownTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813DF814F893EB00EC9469 /* MMMarkdownTests.m */; };
+		BED7618C1B37783100687B36 /* MMPHPMarkdownTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BEAAEC2D1554E93700EF1EA0 /* MMPHPMarkdownTests.m */; };
+		BED7618D1B37783100687B36 /* MMTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813E971502E78700EC9469 /* MMTestCase.m */; };
+		BED7618F1B3778B000687B36 /* Amps and angle encoding.html in Copy MarkdownTest_1.0 Files */ = {isa = PBXBuildFile; fileRef = BE813E2414F93D8700EC9469 /* Amps and angle encoding.html */; };
+		BED761901B3778B000687B36 /* Amps and angle encoding.text in Copy MarkdownTest_1.0 Files */ = {isa = PBXBuildFile; fileRef = BE813E2514F93D8700EC9469 /* Amps and angle encoding.text */; };
+		BED761911B3778B000687B36 /* Auto links.html in Copy MarkdownTest_1.0 Files */ = {isa = PBXBuildFile; fileRef = BE813E2614F93D8700EC9469 /* Auto links.html */; };
+		BED761921B3778B000687B36 /* Auto links.text in Copy MarkdownTest_1.0 Files */ = {isa = PBXBuildFile; fileRef = BE813E2714F93D8700EC9469 /* Auto links.text */; };
+		BED761931B3778B000687B36 /* Backslash escapes.html in Copy MarkdownTest_1.0 Files */ = {isa = PBXBuildFile; fileRef = BE813E2814F93D8700EC9469 /* Backslash escapes.html */; };
+		BED761941B3778B000687B36 /* Backslash escapes.text in Copy MarkdownTest_1.0 Files */ = {isa = PBXBuildFile; fileRef = BE813E2914F93D8700EC9469 /* Backslash escapes.text */; };
+		BED761951B3778B000687B36 /* Blockquotes with code blocks.html in Copy MarkdownTest_1.0 Files */ = {isa = PBXBuildFile; fileRef = BE813E2A14F93D8700EC9469 /* Blockquotes with code blocks.html */; };
+		BED761961B3778B000687B36 /* Blockquotes with code blocks.text in Copy MarkdownTest_1.0 Files */ = {isa = PBXBuildFile; fileRef = BE813E2B14F93D8700EC9469 /* Blockquotes with code blocks.text */; };
+		BED761971B3778B000687B36 /* Hard-wrapped paragraphs with list-like lines.html in Copy MarkdownTest_1.0 Files */ = {isa = PBXBuildFile; fileRef = BE813E2C14F93D8700EC9469 /* Hard-wrapped paragraphs with list-like lines.html */; };
+		BED761981B3778B000687B36 /* Hard-wrapped paragraphs with list-like lines.text in Copy MarkdownTest_1.0 Files */ = {isa = PBXBuildFile; fileRef = BE813E2D14F93D8700EC9469 /* Hard-wrapped paragraphs with list-like lines.text */; };
+		BED761991B3778B000687B36 /* Horizontal rules.html in Copy MarkdownTest_1.0 Files */ = {isa = PBXBuildFile; fileRef = BE813E2E14F93D8700EC9469 /* Horizontal rules.html */; };
+		BED7619A1B3778B000687B36 /* Horizontal rules.text in Copy MarkdownTest_1.0 Files */ = {isa = PBXBuildFile; fileRef = BE813E2F14F93D8700EC9469 /* Horizontal rules.text */; };
+		BED7619B1B3778B000687B36 /* Inline HTML (Advanced).html in Copy MarkdownTest_1.0 Files */ = {isa = PBXBuildFile; fileRef = BE813E3014F93D8700EC9469 /* Inline HTML (Advanced).html */; };
+		BED7619C1B3778B000687B36 /* Inline HTML (Advanced).text in Copy MarkdownTest_1.0 Files */ = {isa = PBXBuildFile; fileRef = BE813E3114F93D8700EC9469 /* Inline HTML (Advanced).text */; };
+		BED7619D1B3778B000687B36 /* Inline HTML (Simple).html in Copy MarkdownTest_1.0 Files */ = {isa = PBXBuildFile; fileRef = BE813E3214F93D8700EC9469 /* Inline HTML (Simple).html */; };
+		BED7619E1B3778B000687B36 /* Inline HTML (Simple).text in Copy MarkdownTest_1.0 Files */ = {isa = PBXBuildFile; fileRef = BE813E3314F93D8700EC9469 /* Inline HTML (Simple).text */; };
+		BED7619F1B3778B000687B36 /* Inline HTML comments.html in Copy MarkdownTest_1.0 Files */ = {isa = PBXBuildFile; fileRef = BE813E3414F93D8700EC9469 /* Inline HTML comments.html */; };
+		BED761A01B3778B000687B36 /* Inline HTML comments.text in Copy MarkdownTest_1.0 Files */ = {isa = PBXBuildFile; fileRef = BE813E3514F93D8700EC9469 /* Inline HTML comments.text */; };
+		BED761A11B3778B000687B36 /* Links, inline style.html in Copy MarkdownTest_1.0 Files */ = {isa = PBXBuildFile; fileRef = BE813E3614F93D8700EC9469 /* Links, inline style.html */; };
+		BED761A21B3778B000687B36 /* Links, inline style.text in Copy MarkdownTest_1.0 Files */ = {isa = PBXBuildFile; fileRef = BE813E3714F93D8700EC9469 /* Links, inline style.text */; };
+		BED761A31B3778B000687B36 /* Links, reference style.html in Copy MarkdownTest_1.0 Files */ = {isa = PBXBuildFile; fileRef = BE813E3814F93D8700EC9469 /* Links, reference style.html */; };
+		BED761A41B3778B000687B36 /* Links, reference style.text in Copy MarkdownTest_1.0 Files */ = {isa = PBXBuildFile; fileRef = BE813E3914F93D8700EC9469 /* Links, reference style.text */; };
+		BED761A51B3778B000687B36 /* Literal quotes in titles.html in Copy MarkdownTest_1.0 Files */ = {isa = PBXBuildFile; fileRef = BE813E3A14F93D8700EC9469 /* Literal quotes in titles.html */; };
+		BED761A61B3778B000687B36 /* Literal quotes in titles.text in Copy MarkdownTest_1.0 Files */ = {isa = PBXBuildFile; fileRef = BE813E3B14F93D8700EC9469 /* Literal quotes in titles.text */; };
+		BED761A71B3778B000687B36 /* Markdown Documentation - Basics.html in Copy MarkdownTest_1.0 Files */ = {isa = PBXBuildFile; fileRef = BE813E3C14F93D8700EC9469 /* Markdown Documentation - Basics.html */; };
+		BED761A81B3778B000687B36 /* Markdown Documentation - Basics.text in Copy MarkdownTest_1.0 Files */ = {isa = PBXBuildFile; fileRef = BE813E3D14F93D8700EC9469 /* Markdown Documentation - Basics.text */; };
+		BED761A91B3778B000687B36 /* Markdown Documentation - Syntax.html in Copy MarkdownTest_1.0 Files */ = {isa = PBXBuildFile; fileRef = BE813E3E14F93D8700EC9469 /* Markdown Documentation - Syntax.html */; };
+		BED761AA1B3778B000687B36 /* Markdown Documentation - Syntax.text in Copy MarkdownTest_1.0 Files */ = {isa = PBXBuildFile; fileRef = BE813E3F14F93D8700EC9469 /* Markdown Documentation - Syntax.text */; };
+		BED761AB1B3778B000687B36 /* Nested blockquotes.html in Copy MarkdownTest_1.0 Files */ = {isa = PBXBuildFile; fileRef = BE813E4014F93D8700EC9469 /* Nested blockquotes.html */; };
+		BED761AC1B3778B000687B36 /* Nested blockquotes.text in Copy MarkdownTest_1.0 Files */ = {isa = PBXBuildFile; fileRef = BE813E4114F93D8700EC9469 /* Nested blockquotes.text */; };
+		BED761AD1B3778B000687B36 /* Ordered and unordered lists.html in Copy MarkdownTest_1.0 Files */ = {isa = PBXBuildFile; fileRef = BE813E4214F93D8700EC9469 /* Ordered and unordered lists.html */; };
+		BED761AE1B3778B000687B36 /* Ordered and unordered lists.text in Copy MarkdownTest_1.0 Files */ = {isa = PBXBuildFile; fileRef = BE813E4314F93D8700EC9469 /* Ordered and unordered lists.text */; };
+		BED761AF1B3778B000687B36 /* Strong and em together.html in Copy MarkdownTest_1.0 Files */ = {isa = PBXBuildFile; fileRef = BE813E4414F93D8700EC9469 /* Strong and em together.html */; };
+		BED761B01B3778B000687B36 /* Strong and em together.text in Copy MarkdownTest_1.0 Files */ = {isa = PBXBuildFile; fileRef = BE813E4514F93D8700EC9469 /* Strong and em together.text */; };
+		BED761B11B3778B000687B36 /* Tabs.html in Copy MarkdownTest_1.0 Files */ = {isa = PBXBuildFile; fileRef = BE813E4614F93D8700EC9469 /* Tabs.html */; };
+		BED761B21B3778B000687B36 /* Tabs.text in Copy MarkdownTest_1.0 Files */ = {isa = PBXBuildFile; fileRef = BE813E4714F93D8700EC9469 /* Tabs.text */; };
+		BED761B31B3778B000687B36 /* Tidyness.html in Copy MarkdownTest_1.0 Files */ = {isa = PBXBuildFile; fileRef = BE813E4814F93D8700EC9469 /* Tidyness.html */; };
+		BED761B41B3778B000687B36 /* Tidyness.text in Copy MarkdownTest_1.0 Files */ = {isa = PBXBuildFile; fileRef = BE813E4914F93D8700EC9469 /* Tidyness.text */; };
+		BED761B61B3778D400687B36 /* Backslash escapes.html in Copy php-markdown Files */ = {isa = PBXBuildFile; fileRef = BEAAEB9E1554E77600EF1EA0 /* Backslash escapes.html */; };
+		BED761B71B3778D400687B36 /* Backslash escapes.text in Copy php-markdown Files */ = {isa = PBXBuildFile; fileRef = BEAAEB9F1554E77600EF1EA0 /* Backslash escapes.text */; };
+		BED761B81B3778D400687B36 /* Code block in a list item.html in Copy php-markdown Files */ = {isa = PBXBuildFile; fileRef = BEAAEBA01554E77600EF1EA0 /* Code block in a list item.html */; };
+		BED761B91B3778D400687B36 /* Code block in a list item.text in Copy php-markdown Files */ = {isa = PBXBuildFile; fileRef = BEAAEBA11554E77600EF1EA0 /* Code block in a list item.text */; };
+		BED761BA1B3778D400687B36 /* Code Spans.html in Copy php-markdown Files */ = {isa = PBXBuildFile; fileRef = BEAAEBA21554E77600EF1EA0 /* Code Spans.html */; };
+		BED761BB1B3778D400687B36 /* Code Spans.text in Copy php-markdown Files */ = {isa = PBXBuildFile; fileRef = BEAAEBA31554E77600EF1EA0 /* Code Spans.text */; };
+		BED761BC1B3778D400687B36 /* Email auto links.html in Copy php-markdown Files */ = {isa = PBXBuildFile; fileRef = BEAAEBA41554E77600EF1EA0 /* Email auto links.html */; };
+		BED761BD1B3778D400687B36 /* Email auto links.text in Copy php-markdown Files */ = {isa = PBXBuildFile; fileRef = BEAAEBA51554E77600EF1EA0 /* Email auto links.text */; };
+		BED761BE1B3778D400687B36 /* Emphasis.html in Copy php-markdown Files */ = {isa = PBXBuildFile; fileRef = BEAAEBA61554E77600EF1EA0 /* Emphasis.html */; };
+		BED761BF1B3778D400687B36 /* Emphasis.text in Copy php-markdown Files */ = {isa = PBXBuildFile; fileRef = BEAAEBA71554E77600EF1EA0 /* Emphasis.text */; };
+		BED761C01B3778D400687B36 /* Headers.html in Copy php-markdown Files */ = {isa = PBXBuildFile; fileRef = BEAAEBA81554E77600EF1EA0 /* Headers.html */; };
+		BED761C11B3778D400687B36 /* Headers.text in Copy php-markdown Files */ = {isa = PBXBuildFile; fileRef = BEAAEBA91554E77600EF1EA0 /* Headers.text */; };
+		BED761C21B3778D400687B36 /* Images (Untitled).html in Copy php-markdown Files */ = {isa = PBXBuildFile; fileRef = BEAAEBAA1554E77600EF1EA0 /* Images (Untitled).html */; };
+		BED761C31B3778D400687B36 /* Images (Untitled).text in Copy php-markdown Files */ = {isa = PBXBuildFile; fileRef = BEAAEBAB1554E77600EF1EA0 /* Images (Untitled).text */; };
+		BED761C41B3778D400687B36 /* Inline HTML (Simple).html in Copy php-markdown Files */ = {isa = PBXBuildFile; fileRef = BEAAEBAC1554E77600EF1EA0 /* Inline HTML (Simple).html */; };
+		BED761C51B3778D400687B36 /* Inline HTML (Simple).text in Copy php-markdown Files */ = {isa = PBXBuildFile; fileRef = BEAAEBAD1554E77600EF1EA0 /* Inline HTML (Simple).text */; };
+		BED761C61B3778D400687B36 /* Inline HTML (Span).html in Copy php-markdown Files */ = {isa = PBXBuildFile; fileRef = BEAAEBAE1554E77600EF1EA0 /* Inline HTML (Span).html */; };
+		BED761C71B3778D400687B36 /* Inline HTML (Span).text in Copy php-markdown Files */ = {isa = PBXBuildFile; fileRef = BEAAEBAF1554E77600EF1EA0 /* Inline HTML (Span).text */; };
+		BED761C81B3778D400687B36 /* Inline HTML comments.html in Copy php-markdown Files */ = {isa = PBXBuildFile; fileRef = BEAAEBB01554E77600EF1EA0 /* Inline HTML comments.html */; };
+		BED761C91B3778D400687B36 /* Inline HTML comments.text in Copy php-markdown Files */ = {isa = PBXBuildFile; fileRef = BEAAEBB11554E77600EF1EA0 /* Inline HTML comments.text */; };
+		BED761CA1B3778D400687B36 /* Ins & del.html in Copy php-markdown Files */ = {isa = PBXBuildFile; fileRef = BEAAEBB21554E77600EF1EA0 /* Ins & del.html */; };
+		BED761CB1B3778D400687B36 /* Ins & del.text in Copy php-markdown Files */ = {isa = PBXBuildFile; fileRef = BEAAEBB31554E77600EF1EA0 /* Ins & del.text */; };
+		BED761CC1B3778D400687B36 /* Links, inline style.html in Copy php-markdown Files */ = {isa = PBXBuildFile; fileRef = BEAAEBB41554E77600EF1EA0 /* Links, inline style.html */; };
+		BED761CD1B3778D400687B36 /* Links, inline style.text in Copy php-markdown Files */ = {isa = PBXBuildFile; fileRef = BEAAEBB51554E77600EF1EA0 /* Links, inline style.text */; };
+		BED761CE1B3778D400687B36 /* MD5 Hashes.html in Copy php-markdown Files */ = {isa = PBXBuildFile; fileRef = BEAAEBB61554E77600EF1EA0 /* MD5 Hashes.html */; };
+		BED761CF1B3778D400687B36 /* MD5 Hashes.text in Copy php-markdown Files */ = {isa = PBXBuildFile; fileRef = BEAAEBB71554E77600EF1EA0 /* MD5 Hashes.text */; };
+		BED761D01B3778D400687B36 /* Nesting.html in Copy php-markdown Files */ = {isa = PBXBuildFile; fileRef = BEAAEBB81554E77600EF1EA0 /* Nesting.html */; };
+		BED761D11B3778D400687B36 /* Nesting.text in Copy php-markdown Files */ = {isa = PBXBuildFile; fileRef = BEAAEBB91554E77600EF1EA0 /* Nesting.text */; };
+		BED761D21B3778D400687B36 /* Parens in URL.html in Copy php-markdown Files */ = {isa = PBXBuildFile; fileRef = BEAAEBBA1554E77600EF1EA0 /* Parens in URL.html */; };
+		BED761D31B3778D400687B36 /* Parens in URL.text in Copy php-markdown Files */ = {isa = PBXBuildFile; fileRef = BEAAEBBB1554E77600EF1EA0 /* Parens in URL.text */; };
+		BED761D41B3778D400687B36 /* PHP-Specific Bugs.html in Copy php-markdown Files */ = {isa = PBXBuildFile; fileRef = BEAAEBBC1554E77600EF1EA0 /* PHP-Specific Bugs.html */; };
+		BED761D51B3778D400687B36 /* PHP-Specific Bugs.text in Copy php-markdown Files */ = {isa = PBXBuildFile; fileRef = BEAAEBBD1554E77600EF1EA0 /* PHP-Specific Bugs.text */; };
+		BED761D61B3778D400687B36 /* Tight blocks.html in Copy php-markdown Files */ = {isa = PBXBuildFile; fileRef = BEAAEBBE1554E77600EF1EA0 /* Tight blocks.html */; };
+		BED761D71B3778D400687B36 /* Tight blocks.text in Copy php-markdown Files */ = {isa = PBXBuildFile; fileRef = BEAAEBBF1554E77600EF1EA0 /* Tight blocks.text */; };
 		BEDDD54A1544E42200EA7D65 /* MMHTMLTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BEDDD5491544E42200EA7D65 /* MMHTMLTests.m */; };
 		BEF3421E150CEA6D00BFA0E2 /* MMSpanParser.m in Sources */ = {isa = PBXBuildFile; fileRef = BEF3421B150CEA6D00BFA0E2 /* MMSpanParser.m */; };
 		BEF3421F150CEA6D00BFA0E2 /* MMSpanParser.m in Sources */ = {isa = PBXBuildFile; fileRef = BEF3421B150CEA6D00BFA0E2 /* MMSpanParser.m */; };
@@ -277,6 +359,98 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BED7618E1B37787800687B36 /* Copy MarkdownTest_1.0 Files */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = MarkdownTest_1.0;
+			dstSubfolderSpec = 7;
+			files = (
+				BED7618F1B3778B000687B36 /* Amps and angle encoding.html in Copy MarkdownTest_1.0 Files */,
+				BED761901B3778B000687B36 /* Amps and angle encoding.text in Copy MarkdownTest_1.0 Files */,
+				BED761911B3778B000687B36 /* Auto links.html in Copy MarkdownTest_1.0 Files */,
+				BED761921B3778B000687B36 /* Auto links.text in Copy MarkdownTest_1.0 Files */,
+				BED761931B3778B000687B36 /* Backslash escapes.html in Copy MarkdownTest_1.0 Files */,
+				BED761941B3778B000687B36 /* Backslash escapes.text in Copy MarkdownTest_1.0 Files */,
+				BED761951B3778B000687B36 /* Blockquotes with code blocks.html in Copy MarkdownTest_1.0 Files */,
+				BED761961B3778B000687B36 /* Blockquotes with code blocks.text in Copy MarkdownTest_1.0 Files */,
+				BED761971B3778B000687B36 /* Hard-wrapped paragraphs with list-like lines.html in Copy MarkdownTest_1.0 Files */,
+				BED761981B3778B000687B36 /* Hard-wrapped paragraphs with list-like lines.text in Copy MarkdownTest_1.0 Files */,
+				BED761991B3778B000687B36 /* Horizontal rules.html in Copy MarkdownTest_1.0 Files */,
+				BED7619A1B3778B000687B36 /* Horizontal rules.text in Copy MarkdownTest_1.0 Files */,
+				BED7619B1B3778B000687B36 /* Inline HTML (Advanced).html in Copy MarkdownTest_1.0 Files */,
+				BED7619C1B3778B000687B36 /* Inline HTML (Advanced).text in Copy MarkdownTest_1.0 Files */,
+				BED7619D1B3778B000687B36 /* Inline HTML (Simple).html in Copy MarkdownTest_1.0 Files */,
+				BED7619E1B3778B000687B36 /* Inline HTML (Simple).text in Copy MarkdownTest_1.0 Files */,
+				BED7619F1B3778B000687B36 /* Inline HTML comments.html in Copy MarkdownTest_1.0 Files */,
+				BED761A01B3778B000687B36 /* Inline HTML comments.text in Copy MarkdownTest_1.0 Files */,
+				BED761A11B3778B000687B36 /* Links, inline style.html in Copy MarkdownTest_1.0 Files */,
+				BED761A21B3778B000687B36 /* Links, inline style.text in Copy MarkdownTest_1.0 Files */,
+				BED761A31B3778B000687B36 /* Links, reference style.html in Copy MarkdownTest_1.0 Files */,
+				BED761A41B3778B000687B36 /* Links, reference style.text in Copy MarkdownTest_1.0 Files */,
+				BED761A51B3778B000687B36 /* Literal quotes in titles.html in Copy MarkdownTest_1.0 Files */,
+				BED761A61B3778B000687B36 /* Literal quotes in titles.text in Copy MarkdownTest_1.0 Files */,
+				BED761A71B3778B000687B36 /* Markdown Documentation - Basics.html in Copy MarkdownTest_1.0 Files */,
+				BED761A81B3778B000687B36 /* Markdown Documentation - Basics.text in Copy MarkdownTest_1.0 Files */,
+				BED761A91B3778B000687B36 /* Markdown Documentation - Syntax.html in Copy MarkdownTest_1.0 Files */,
+				BED761AA1B3778B000687B36 /* Markdown Documentation - Syntax.text in Copy MarkdownTest_1.0 Files */,
+				BED761AB1B3778B000687B36 /* Nested blockquotes.html in Copy MarkdownTest_1.0 Files */,
+				BED761AC1B3778B000687B36 /* Nested blockquotes.text in Copy MarkdownTest_1.0 Files */,
+				BED761AD1B3778B000687B36 /* Ordered and unordered lists.html in Copy MarkdownTest_1.0 Files */,
+				BED761AE1B3778B000687B36 /* Ordered and unordered lists.text in Copy MarkdownTest_1.0 Files */,
+				BED761AF1B3778B000687B36 /* Strong and em together.html in Copy MarkdownTest_1.0 Files */,
+				BED761B01B3778B000687B36 /* Strong and em together.text in Copy MarkdownTest_1.0 Files */,
+				BED761B11B3778B000687B36 /* Tabs.html in Copy MarkdownTest_1.0 Files */,
+				BED761B21B3778B000687B36 /* Tabs.text in Copy MarkdownTest_1.0 Files */,
+				BED761B31B3778B000687B36 /* Tidyness.html in Copy MarkdownTest_1.0 Files */,
+				BED761B41B3778B000687B36 /* Tidyness.text in Copy MarkdownTest_1.0 Files */,
+			);
+			name = "Copy MarkdownTest_1.0 Files";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BED761B51B3778C100687B36 /* Copy php-markdown Files */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "php-markdown";
+			dstSubfolderSpec = 7;
+			files = (
+				BED761B61B3778D400687B36 /* Backslash escapes.html in Copy php-markdown Files */,
+				BED761B71B3778D400687B36 /* Backslash escapes.text in Copy php-markdown Files */,
+				BED761B81B3778D400687B36 /* Code block in a list item.html in Copy php-markdown Files */,
+				BED761B91B3778D400687B36 /* Code block in a list item.text in Copy php-markdown Files */,
+				BED761BA1B3778D400687B36 /* Code Spans.html in Copy php-markdown Files */,
+				BED761BB1B3778D400687B36 /* Code Spans.text in Copy php-markdown Files */,
+				BED761BC1B3778D400687B36 /* Email auto links.html in Copy php-markdown Files */,
+				BED761BD1B3778D400687B36 /* Email auto links.text in Copy php-markdown Files */,
+				BED761BE1B3778D400687B36 /* Emphasis.html in Copy php-markdown Files */,
+				BED761BF1B3778D400687B36 /* Emphasis.text in Copy php-markdown Files */,
+				BED761C01B3778D400687B36 /* Headers.html in Copy php-markdown Files */,
+				BED761C11B3778D400687B36 /* Headers.text in Copy php-markdown Files */,
+				BED761C21B3778D400687B36 /* Images (Untitled).html in Copy php-markdown Files */,
+				BED761C31B3778D400687B36 /* Images (Untitled).text in Copy php-markdown Files */,
+				BED761C41B3778D400687B36 /* Inline HTML (Simple).html in Copy php-markdown Files */,
+				BED761C51B3778D400687B36 /* Inline HTML (Simple).text in Copy php-markdown Files */,
+				BED761C61B3778D400687B36 /* Inline HTML (Span).html in Copy php-markdown Files */,
+				BED761C71B3778D400687B36 /* Inline HTML (Span).text in Copy php-markdown Files */,
+				BED761C81B3778D400687B36 /* Inline HTML comments.html in Copy php-markdown Files */,
+				BED761C91B3778D400687B36 /* Inline HTML comments.text in Copy php-markdown Files */,
+				BED761CA1B3778D400687B36 /* Ins & del.html in Copy php-markdown Files */,
+				BED761CB1B3778D400687B36 /* Ins & del.text in Copy php-markdown Files */,
+				BED761CC1B3778D400687B36 /* Links, inline style.html in Copy php-markdown Files */,
+				BED761CD1B3778D400687B36 /* Links, inline style.text in Copy php-markdown Files */,
+				BED761CE1B3778D400687B36 /* MD5 Hashes.html in Copy php-markdown Files */,
+				BED761CF1B3778D400687B36 /* MD5 Hashes.text in Copy php-markdown Files */,
+				BED761D01B3778D400687B36 /* Nesting.html in Copy php-markdown Files */,
+				BED761D11B3778D400687B36 /* Nesting.text in Copy php-markdown Files */,
+				BED761D21B3778D400687B36 /* Parens in URL.html in Copy php-markdown Files */,
+				BED761D31B3778D400687B36 /* Parens in URL.text in Copy php-markdown Files */,
+				BED761D41B3778D400687B36 /* PHP-Specific Bugs.html in Copy php-markdown Files */,
+				BED761D51B3778D400687B36 /* PHP-Specific Bugs.text in Copy php-markdown Files */,
+				BED761D61B3778D400687B36 /* Tight blocks.html in Copy php-markdown Files */,
+				BED761D71B3778D400687B36 /* Tight blocks.text in Copy php-markdown Files */,
+			);
+			name = "Copy php-markdown Files";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -292,8 +466,6 @@
 		BE813DE214F893EB00EC9469 /* MMMarkdown.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MMMarkdown.h; sourceTree = "<group>"; };
 		BE813DE314F893EB00EC9469 /* MMMarkdown.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MMMarkdown.m; sourceTree = "<group>"; };
 		BE813DEA14F893EB00EC9469 /* MMMarkdownTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MMMarkdownTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		BE813DF314F893EB00EC9469 /* MMMarkdownTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "MMMarkdownTests-Info.plist"; sourceTree = "<group>"; };
-		BE813DF514F893EB00EC9469 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		BE813DF714F893EB00EC9469 /* MMMarkdownTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MMMarkdownTests.h; sourceTree = "<group>"; };
 		BE813DF814F893EB00EC9469 /* MMMarkdownTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MMMarkdownTests.m; sourceTree = "<group>"; };
 		BE813E0E14F8961D00EC9469 /* libMMMarkdown-iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libMMMarkdown-iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -395,8 +567,7 @@
 		BED761571B374D6700687B36 /* MMMarkdown.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MMMarkdown.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BED7615A1B374D6700687B36 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BED761611B374D6700687B36 /* MMMarkdownTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MMMarkdownTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		BED761671B374D6700687B36 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		BED761681B374D6700687B36 /* MMMarkdownTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MMMarkdownTests.m; sourceTree = "<group>"; };
+		BED761671B374D6700687B36 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../MMMarkdownTests/Info.plist; sourceTree = "<group>"; };
 		BEDDD5491544E42200EA7D65 /* MMHTMLTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMHTMLTests.m; sourceTree = "<group>"; };
 		BEF3421A150CEA6D00BFA0E2 /* MMSpanParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMSpanParser.h; sourceTree = "<group>"; };
 		BEF3421B150CEA6D00BFA0E2 /* MMSpanParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMSpanParser.m; sourceTree = "<group>"; };
@@ -460,7 +631,6 @@
 				BE813DDF14F893EB00EC9469 /* Source */,
 				BE813E1614F92B6100EC9469 /* CLI */,
 				BE813DF114F893EB00EC9469 /* Tests */,
-				BED761651B374D6700687B36 /* MMMarkdownTests */,
 				BE813DD814F893EB00EC9469 /* Frameworks */,
 				BE813DD714F893EB00EC9469 /* Products */,
 			);
@@ -534,8 +704,7 @@
 				BEAAEC2D1554E93700EF1EA0 /* MMPHPMarkdownTests.m */,
 				BE813E961502E78700EC9469 /* MMTestCase.h */,
 				BE813E971502E78700EC9469 /* MMTestCase.m */,
-				BE813DF314F893EB00EC9469 /* MMMarkdownTests-Info.plist */,
-				BE813DF414F893EB00EC9469 /* InfoPlist.strings */,
+				BED761671B374D6700687B36 /* Info.plist */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -642,23 +811,6 @@
 				BEAAEBBF1554E77600EF1EA0 /* Tight blocks.text */,
 			);
 			path = "php-markdown";
-			sourceTree = "<group>";
-		};
-		BED761651B374D6700687B36 /* MMMarkdownTests */ = {
-			isa = PBXGroup;
-			children = (
-				BED761681B374D6700687B36 /* MMMarkdownTests.m */,
-				BED761661B374D6700687B36 /* Supporting Files */,
-			);
-			path = MMMarkdownTests;
-			sourceTree = "<group>";
-		};
-		BED761661B374D6700687B36 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				BED761671B374D6700687B36 /* Info.plist */,
-			);
-			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -781,6 +933,8 @@
 				BED7615D1B374D6700687B36 /* Sources */,
 				BED7615E1B374D6700687B36 /* Frameworks */,
 				BED7615F1B374D6700687B36 /* Resources */,
+				BED7618E1B37787800687B36 /* Copy MarkdownTest_1.0 Files */,
+				BED761B51B3778C100687B36 /* Copy php-markdown Files */,
 			);
 			buildRules = (
 			);
@@ -835,7 +989,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BE813DF614F893EB00EC9469 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -948,7 +1101,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BED761691B374D6700687B36 /* MMMarkdownTests.m in Sources */,
+				BED761861B37783100687B36 /* MMHTMLTests.m in Sources */,
+				BED7618D1B37783100687B36 /* MMTestCase.m in Sources */,
+				BED7618A1B37783100687B36 /* MMSpanTests.m in Sources */,
+				BED761891B37783100687B36 /* MMListTests.m in Sources */,
+				BED761881B37783100687B36 /* MMLinkTests.m in Sources */,
+				BED761831B37783100687B36 /* MMErrorTests.m in Sources */,
+				BED761841B37783100687B36 /* MMEscapingTests.m in Sources */,
+				BED761871B37783100687B36 /* MMImageTests.m in Sources */,
+				BED761821B37783100687B36 /* MMBlockTests.m in Sources */,
+				BED7618C1B37783100687B36 /* MMPHPMarkdownTests.m in Sources */,
+				BED7618B1B37783100687B36 /* MMMarkdownTests.m in Sources */,
+				BED761851B37783100687B36 /* MMExtensionTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -966,17 +1130,6 @@
 			targetProxy = BED761631B374D6700687B36 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		BE813DF414F893EB00EC9469 /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				BE813DF514F893EB00EC9469 /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		BE813DFA14F893EB00EC9469 /* Debug */ = {
