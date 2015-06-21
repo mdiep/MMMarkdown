@@ -601,8 +601,12 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     
     // skip additional backticks and language
     [scanner skipWhitespace];
-    NSString *language = [scanner nextWord];
+    
+    NSMutableCharacterSet *languageNameSet = NSMutableCharacterSet.alphanumericCharacterSet;
+    [languageNameSet addCharactersInString:@"-_"];
+    NSString *language = [scanner nextWordWithCharactersFromSet:languageNameSet];
     scanner.location += language.length;
+    
     [scanner skipWhitespace];
     if (!scanner.atEndOfLine)
         return nil;
