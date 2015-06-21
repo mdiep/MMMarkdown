@@ -485,8 +485,8 @@
 {
     MMAssertExtendedMarkdownEqualsHTML(
         MMMarkdownExtensionsFencedCodeBlocks,
-        @"```objc\nhello\nworld\n```",
-        @"<pre><code class=\"objc\">hello\nworld\n"
+        @"```objective-c\nhello\nworld\n```",
+        @"<pre><code class=\"objective-c\">hello\nworld\n"
         "</code></pre>\n"
     );
 }
