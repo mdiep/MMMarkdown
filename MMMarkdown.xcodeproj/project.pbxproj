@@ -591,9 +591,9 @@
 			productReference = BE813E0E14F8961D00EC9469 /* libMMMarkdown-iOS.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		BED761561B374D6700687B36 /* MMMarkdown */ = {
+		BED761561B374D6700687B36 /* MMMarkdown (OS X) */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = BED7616E1B374D6700687B36 /* Build configuration list for PBXNativeTarget "MMMarkdown" */;
+			buildConfigurationList = BED7616E1B374D6700687B36 /* Build configuration list for PBXNativeTarget "MMMarkdown (OS X)" */;
 			buildPhases = (
 				BED761521B374D6700687B36 /* Sources */,
 				BED761531B374D6700687B36 /* Frameworks */,
@@ -604,7 +604,7 @@
 			);
 			dependencies = (
 			);
-			name = MMMarkdown;
+			name = "MMMarkdown (OS X)";
 			productName = MMMarkdown;
 			productReference = BED761571B374D6700687B36 /* MMMarkdown.framework */;
 			productType = "com.apple.product-type.framework";
@@ -658,7 +658,7 @@
 			projectRoot = "";
 			targets = (
 				BE813E0614F8961D00EC9469 /* MMMarkdown-iOS */,
-				BED761561B374D6700687B36 /* MMMarkdown */,
+				BED761561B374D6700687B36 /* MMMarkdown (OS X) */,
 				BED761601B374D6700687B36 /* MMMarkdownTests */,
 			);
 		};
@@ -736,7 +736,7 @@
 /* Begin PBXTargetDependency section */
 		BED761641B374D6700687B36 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = BED761561B374D6700687B36 /* MMMarkdown */;
+			target = BED761561B374D6700687B36 /* MMMarkdown (OS X) */;
 			targetProxy = BED761631B374D6700687B36 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -863,7 +863,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = MMMarkdown;
 				SKIP_INSTALL = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -894,7 +894,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = MMMarkdown;
 				SKIP_INSTALL = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -975,7 +975,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		BED7616E1B374D6700687B36 /* Build configuration list for PBXNativeTarget "MMMarkdown" */ = {
+		BED7616E1B374D6700687B36 /* Build configuration list for PBXNativeTarget "MMMarkdown (OS X)" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BED7616A1B374D6700687B36 /* Debug */,
