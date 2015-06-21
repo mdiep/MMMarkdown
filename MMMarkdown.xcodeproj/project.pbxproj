@@ -460,7 +460,6 @@
 				BE813DDF14F893EB00EC9469 /* Source */,
 				BE813E1614F92B6100EC9469 /* CLI */,
 				BE813DF114F893EB00EC9469 /* Tests */,
-				BED761581B374D6700687B36 /* MMMarkdown */,
 				BED761651B374D6700687B36 /* MMMarkdownTests */,
 				BE813DD814F893EB00EC9469 /* Frameworks */,
 				BE813DD714F893EB00EC9469 /* Products */,
@@ -511,6 +510,7 @@
 				BE813E9114FACF0C00EC9469 /* MMScanner.m */,
 				BEF3421A150CEA6D00BFA0E2 /* MMSpanParser.h */,
 				BEF3421B150CEA6D00BFA0E2 /* MMSpanParser.m */,
+				BED7615A1B374D6700687B36 /* Info.plist */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -642,22 +642,6 @@
 				BEAAEBBF1554E77600EF1EA0 /* Tight blocks.text */,
 			);
 			path = "php-markdown";
-			sourceTree = "<group>";
-		};
-		BED761581B374D6700687B36 /* MMMarkdown */ = {
-			isa = PBXGroup;
-			children = (
-				BED761591B374D6700687B36 /* Supporting Files */,
-			);
-			path = MMMarkdown;
-			sourceTree = "<group>";
-		};
-		BED761591B374D6700687B36 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				BED7615A1B374D6700687B36 /* Info.plist */,
-			);
-			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		BED761651B374D6700687B36 /* MMMarkdownTests */ = {
@@ -1185,7 +1169,7 @@
 				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = MMMarkdown/Info.plist;
+				INFOPLIST_FILE = Source/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
@@ -1216,7 +1200,7 @@
 				FRAMEWORK_VERSION = A;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = MMMarkdown/Info.plist;
+				INFOPLIST_FILE = Source/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
