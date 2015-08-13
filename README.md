@@ -1,5 +1,5 @@
 # MMMarkdown
-MMMarkdown is an Objective-C static library for converting [Markdown][] to HTML. It is compatible with OS X 10.6+ and iOS 5.0+, and is written using ARC.
+MMMarkdown is an Objective-C framework for converting [Markdown][] to HTML. It is compatible with OS X 10.6+ and iOS 8.0+.
 
 Unlike other Markdown libraries, MMMarkdown implements an actual parser. It is not a port of the original Perl implementation and does not use regular expressions to transform the input into HTML. MMMarkdown tries to be efficient and minimize memory usage.
 
@@ -28,13 +28,21 @@ MMMarkdown also supports a number of Markdown extensions:
 ## Setup
 Adding MMMarkdown to your Mac or iOS project is easy.
 
+If you’d like to use [Carthage](https://github.com/Carthage/Carthage), add the following line to your `Cartfile`:
+
+```
+github "mdiep/MMMarkdown"
+```
+
+Otherwise, you can:
+
 0. Add MMMarkdown as a git submodule. (`git submodule add https://github.com/mdiep/MMMarkdown <path>`)
 
 0. Add `MMMarkdown.xcodeproj` to your project or workspace
 
-0. Add `libMMMarkdown-Mac.a` or `libMMMarkdown-iOS.a` to the "Link Binary with Libraries" section of your project's "Build Phases".
+0. Add `MMMarkdown.framework` to the ”Link Binary with Libraries" section of your project's “Build Phases”.
 
-0. Add `$(CONFIGURATION_BUILD_DIR)/MMMarkdown-Mac/public/` or `$(CONFIGURATION_BUILD_DIR)/MMMarkdown-iOS/public/` to the "Header Search Paths" in your project's "Build Settings".
+0. Add `MMMarkdown.framework` to a ”Copy Files” build phase that copies it to the `Frameworks` destination.
 
 ## License
 MMMarkdown is available under the [MIT License][].

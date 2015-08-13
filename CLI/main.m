@@ -25,7 +25,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import "MMMarkdown.h"
+#import <MMMarkdown/MMMarkdown.h>
 
 int main(int argc, const char * argv[])
 {
