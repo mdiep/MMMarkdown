@@ -158,7 +158,13 @@ static NSString * __MMStringFromElementType(MMElementType type)
 
 - (void)setChildren:(NSArray *)children
 {
+    for (MMElement *child in _children) {
+        child.parent = nil;
+    }
     _children = [children mutableCopy];
+    for (MMElement *child in _children) {
+        child.parent = self;
+    }
 }
 
 
