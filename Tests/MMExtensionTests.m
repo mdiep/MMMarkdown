@@ -328,6 +328,15 @@
     );
 }
 
+- (void)testURLAutolinkingWithEqualsSign
+{
+    MMAssertExtendedMarkdownEqualsHTML(
+        MMMarkdownExtensionsAutolinkedURLs,
+        @"http://www.test.com/?a=b",
+        @"<p><a href=\"http://www.test.com/?a=b\">http://www.test.com/?a=b</a></p>"
+    );
+}
+
 
 #pragma mark - MMMarkdownExtensionsHardNewlines
 
@@ -476,8 +485,8 @@
 {
     MMAssertExtendedMarkdownEqualsHTML(
         MMMarkdownExtensionsFencedCodeBlocks,
-        @"```objc\nhello\nworld\n```",
-        @"<pre><code class=\"objc\">hello\nworld\n"
+        @"```objective-c\nhello\nworld\n```",
+        @"<pre><code class=\"objective-c\">hello\nworld\n"
         "</code></pre>\n"
     );
 }

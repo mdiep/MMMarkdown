@@ -1,4 +1,11 @@
 # MMMarkdown Release Notes
+## 0.5
+ - #63: Fix warnings from Xcode 6.3
+ - #67: Improved link handling
+ - #71: Allow = in autolinked URLs
+ - #73: Allow dashes in language names
+ - #74: Switch to from static libraries to dynamic frameworks
+ 
 ## 0.4.3
  - #60: UnderscoresInWords should only affect underscores
 

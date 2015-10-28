@@ -343,7 +343,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 {
     NSCharacterSet        *alphanumerics = NSCharacterSet.alphanumericCharacterSet;
     NSMutableCharacterSet *boringChars = [alphanumerics mutableCopy];
-    [boringChars addCharactersInString:@",_-/:?&;%~!#+"];
+    [boringChars addCharactersInString:@",_-/:?&;%~!#+="];
     
     NSUInteger parenLevel = 0;
     while (1)
@@ -987,6 +987,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     if (scanner.nextCharacter != '(')
         return nil;
     [scanner advance];
+    [scanner skipWhitespace];
     
     NSUInteger      urlLocation = scanner.location;
     NSUInteger      urlEnd      = urlLocation;
@@ -1017,6 +1018,13 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
         {
             if (level != 1)
                 return nil;
+            
+            [scanner skipWhitespace];
+            if (scanner.nextCharacter == ')')
+            {
+                [scanner advance];
+                level -= 1;
+            }
             break;
         }
         urlEnd = scanner.location;
@@ -1029,9 +1037,6 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     // If the level is still 1, then we hit a space.
     if (level == 1)
     {
-        // skip the whitespace
-        [scanner skipCharactersFromSet:NSCharacterSet.whitespaceCharacterSet];
-        
         // make sure there's a "
         if (scanner.nextCharacter != '"')
             return nil;
@@ -1096,6 +1101,8 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     
     // Look for the second []
     NSArray *idRanges = [self _parseLinkTextBodyWithScanner:scanner];
+    if (!idRanges)
+        return nil;
     if (!idRanges.count)
     {
         idRanges = element.innerRanges;
