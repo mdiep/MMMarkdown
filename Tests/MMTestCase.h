@@ -45,6 +45,7 @@
         \
         NSXMLDocument *actual   = [[NSXMLDocument alloc] initWithXMLString:output options:0 error:nil]; \
         NSXMLDocument *expected = [[NSXMLDocument alloc] initWithXMLString:html2  options:0 error:nil]; \
+        XCTAssertNotNil(actual);\
         XCTAssertEqualObjects(actual, expected); \
     } while(0)
 
@@ -56,6 +57,7 @@
         NSError *error; \
         NSString *actual   = [MMMarkdown HTMLStringWithMarkdown:a1value error:&error]; \
         NSString *expected = a2value; \
+        XCTAssertNotNil(actual);\
         XCTAssertEqualObjects(actual, expected); \
     } while(0)
 
