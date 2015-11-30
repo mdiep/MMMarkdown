@@ -526,7 +526,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
 - (MMElement *)_parseCodeBlockWithScanner:(MMScanner *)scanner
 {
     NSUInteger indentation = [scanner skipIndentationUpTo:4];
-    if (indentation != 4)
+    if (indentation != 4 || scanner.atEndOfLine)
         return nil;
     
     MMElement *element = [MMElement new];
