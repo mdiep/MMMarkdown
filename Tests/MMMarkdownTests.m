@@ -86,10 +86,15 @@
     [self runTestWithName:@"Inline HTML (Simple)"];
 }
 
+#if 0
+/*
+ * XML comments can't contain `--`, so there's not a good way to do this comparison.
+ */
 - (void)testInlineHTMLComments
 {
     [self runTestWithName:@"Inline HTML comments"];
 }
+#endif
 
 - (void)testLinksInlineStyle
 {
