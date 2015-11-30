@@ -7,4 +7,6 @@ xcode_workspace: MMMarkdown.xcworkspace
 xcode_scheme:
   - MMMarkdown (iOS)
   - MMMarkdown (OS X)
+  - MMMarkdown (tvOS)
+  - MMMarkdown (watchOS)
 
