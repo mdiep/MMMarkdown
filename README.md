@@ -1,5 +1,5 @@
 # MMMarkdown
-MMMarkdown is an Objective-C framework for converting [Markdown][] to HTML. It is compatible with OS X 10.6+ and iOS 8.0+.
+MMMarkdown is an Objective-C framework for converting [Markdown][] to HTML. It is compatible with OS X 10.6+, iOS 8.0+, tvOS, and watchOS.
 
 Unlike other Markdown libraries, MMMarkdown implements an actual parser. It is not a port of the original Perl implementation and does not use regular expressions to transform the input into HTML. MMMarkdown tries to be efficient and minimize memory usage.
 
@@ -26,7 +26,7 @@ MMMarkdown also supports a number of Markdown extensions:
     // Returns @"<p><del>Mistaken</del></p>"
 
 ## Setup
-Adding MMMarkdown to your Mac or iOS project is easy.
+Adding MMMarkdown to your project is easy.
 
 If you’d like to use [Carthage](https://github.com/Carthage/Carthage), add the following line to your `Cartfile`:
 
