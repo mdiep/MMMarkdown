@@ -2,8 +2,4 @@ language: objective-c
 osx_image: xcode7.1
 xcode_workspace: MMMarkdown.xcworkspace
 xcode_scheme:
-  - MMMarkdown (iOS)
   - MMMarkdown (OS X)
-xcode_sdks:
-  - macosx10.11
-  - iphonesimulator9.1
