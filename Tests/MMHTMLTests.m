@@ -226,9 +226,7 @@
 
 - (void)testBlockHTMLCommentWithSpans
 {
-    // An SGML comment starts and ends with "--", so you can't have an odd number of dashes before
-    // the closing angle bracket.
-    MMAssertMarkdownEqualsHTML(@"<!------> *hello*-->", @"<!------> *hello*-->");
+    MMAssertMarkdownEqualsString(@"<!------> *hello*-->", @"<!------><p><em>hello</em>--></p>\n");
 }
 
 
