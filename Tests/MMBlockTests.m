@@ -100,6 +100,11 @@
 
 #pragma mark - Code Block Tests
 
+- (void)testCodeBlockWithNoCode
+{
+    MMAssertMarkdownEqualsHTML(@"    \nfoo\n", @"<p>foo</p>");
+}
+
 - (void)testCodeBlocks_blankLinesInBetween
 {
     NSString *markdown = @"    Some Code\n"
