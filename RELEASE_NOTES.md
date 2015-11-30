@@ -1,4 +1,9 @@
 # MMMarkdown Release Notes
+## 0.5.1
+ - #88: Update Xcode project settings
+ - #89: Fix some broken unit tests
+ - #90: Add tvOS and watchOS targets
+ 
 ## 0.5
  - #63: Fix warnings from Xcode 6.3
  - #67: Improved link handling
