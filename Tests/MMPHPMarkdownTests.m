@@ -97,10 +97,15 @@
     [self runTestWithName:@"Images (Untitled)"];
 }
 
+#if 0
+/*
+ * This isn't valid XML, so we can't compare it.
+ */
 - (void)testInlineHTMLSimple
 {
     [self runTestWithName:@"Inline HTML (Simple)"];
 }
+#endif
 
 - (void)testInlineHTMLSpan
 {
