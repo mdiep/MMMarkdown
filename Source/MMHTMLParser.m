@@ -248,6 +248,7 @@
 {
     NSMutableCharacterSet *nameSet = [NSMutableCharacterSet alphanumericCharacterSet];
     [nameSet addCharactersInString:@":"];
+    [nameSet addCharactersInString:@"-"];
     
     NSRange result = NSMakeRange(scanner.location, 0);
     result.length = [scanner skipCharactersFromSet:nameSet];
