@@ -87,6 +87,13 @@
     MMAssertMarkdownEqualsHTML(@"<1", @"<p>&lt;1</p>");
 }
 
+- (void)testInlineHTMLWithDataAttributes
+{
+    NSString* html = @"<a href=\"https://example.com/foo.js\" data-card-width=\"100%\">foo</a>";
+    NSString* htmlWithParagraph = [NSString stringWithFormat:@"<p>%@</p>", html];
+    MMAssertMarkdownEqualsHTML(html, htmlWithParagraph);
+}
+
 
 #pragma mark - HTML Comment Tests
 
