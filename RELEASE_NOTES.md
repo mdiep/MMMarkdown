@@ -1,4 +1,7 @@
 # MMMarkdown Release Notes
+## 0.5.2
+ - #92: Allow `-`s in inline HTML
+
 ## 0.5.1
  - #88: Update Xcode project settings
  - #89: Fix some broken unit tests
