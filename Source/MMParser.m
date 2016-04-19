@@ -515,7 +515,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
             // Add a newline
             MMElement *newline = [MMElement new];
             newline.type  = MMElementTypeNone;
-            newline.range = NSMakeRange(0, 0);
+            newline.range = NSMakeRange(scanner.location, 0);
             [children addObject:newline];
         }
     }
@@ -541,7 +541,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         NSUInteger numOfEmptyLines = [scanner skipEmptyLines];
         for (NSUInteger idx=0; idx<numOfEmptyLines; idx++)
         {
-            [element addInnerRange:NSMakeRange(0, 0)];
+            [element addInnerRange:NSMakeRange(scanner.location, 0)];
         }
         
         // Need 4 spaces to continue the code block
@@ -791,7 +791,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         [scanner commitTransaction:NO];
         if (newList && nestedListIndex == NSNotFound)
         {
-            [element addInnerRange:NSMakeRange(0, 0)];
+            [element addInnerRange:NSMakeRange(scanner.location, 0)];
             nestedListIndex = element.innerRanges.count;
             [element addInnerRange:scanner.currentRange];
             
@@ -816,7 +816,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
             [scanner commitTransaction:YES];
             [scanner commitTransaction:YES];
             
-            [element addInnerRange:NSMakeRange(0, 0)];
+            [element addInnerRange:NSMakeRange(scanner.location, 0)];
             canContainBlocks = YES;
         }
         else
