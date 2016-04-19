@@ -280,7 +280,7 @@ static NSString *__delimitersForCharacter(unichar character)
     {
         [self beginTransaction];
         [self skipWhitespace];
-        if (![self atEndOfLine])
+        if (!self.atEndOfLine)
         {
             [self commitTransaction:NO];
             break;
