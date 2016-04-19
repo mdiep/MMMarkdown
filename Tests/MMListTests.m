@@ -299,6 +299,34 @@
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
 
+- (void)testNestedListWithMultipleEmptyLinesAndBacktracking
+{
+    // https://github.com/mdiep/MMMarkdown/issues/100
+    NSString *markdown =
+        @"* A\n"
+         "    * B\n"
+         "\n"
+         "    * C\n"
+         "\n"
+         "    D\n";
+    NSString *html =
+        @"<ul>\n"
+         "<li>\n"
+         "<p>A</p>\n"
+         "<ul>\n"
+         "<li>\n"
+         "<p>B</p>\n"
+         "</li>\n"
+         "<li>\n"
+         "<p>C</p>\n"
+         "</li>\n"
+         "</ul>\n"
+         "<p>D</p>\n"
+         "</li>\n"
+         "</ul>";
+    MMAssertMarkdownEqualsHTML(markdown, html);
+}
+
 - (void)testList_followedByHorizontalRule
 {
     NSString *markdown = @"* One\n"
