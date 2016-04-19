@@ -268,7 +268,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         return element;
     
     [scanner beginTransaction];
-    element = [self _parseListWithScanner:scanner atIndentationLevel:0];
+    element = [self _parseListWithScanner:scanner];
     [scanner commitTransaction:element != nil];
     if (element)
         return element;
@@ -729,7 +729,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     return NO;
 }
 
-- (MMElement *)_parseListItemWithScanner:(MMScanner *)scanner atIndentationLevel:(NSUInteger)level
+- (MMElement *)_parseListItemWithScanner:(MMScanner *)scanner
 {
     BOOL canContainBlocks = NO;
     
@@ -738,18 +738,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         canContainBlocks = YES;
     }
     
-    // Make sure there's enough leading space
-    [scanner beginTransaction];
-    NSUInteger toSkip  = 4 * level;
-    NSUInteger skipped = [scanner skipIndentationUpTo:toSkip];
-    if (skipped != toSkip)
-    {
-        [scanner commitTransaction:NO];
-        return nil;
-    }
-    [scanner commitTransaction:YES];
-    
-    [scanner skipIndentationUpTo:3]; // Additional optional space
+    [scanner skipIndentationUpTo:3]; // Optional space
     
     BOOL foundAnItem = [self _parseListMarkerWithScanner:scanner];
     if (!foundAnItem)
@@ -781,7 +770,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         
         // Check for the start of a new list item
         [scanner beginTransaction];
-        [scanner skipIndentationUpTo:4*level + 3];
+        [scanner skipIndentationUpTo:3];
         BOOL newMarker = [self _parseListMarkerWithScanner:scanner];
         [scanner commitTransaction:NO];
         if (newMarker)
@@ -796,7 +785,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         
         // Check for a nested list
         [scanner beginTransaction];
-        [scanner skipIndentationUpTo:4*(level + 1) + 3];
+        [scanner skipIndentationUpTo:4 + 3];
         [scanner beginTransaction];
         BOOL newList = [self _parseListMarkerWithScanner:scanner];
         [scanner commitTransaction:NO];
@@ -817,9 +806,8 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         {
             // Must be 4 spaces past the indentation level to start a new paragraph
             [scanner beginTransaction];
-            NSUInteger newLevel    = 4*(1+level);
-            NSUInteger indentation = [scanner skipIndentationUpTo:newLevel];
-            if (indentation < newLevel)
+            NSUInteger indentation = [scanner skipIndentationUpTo:4];
+            if (indentation < 4)
             {
                 [scanner commitTransaction:NO];
                 [scanner commitTransaction:NO];
@@ -837,7 +825,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
             
             // Don't skip past where a nested list would start because that list
             // could have its own nested list, so the whitespace will be needed.
-            [scanner skipIndentationUpTo:4*(level + 1)];
+            [scanner skipIndentationUpTo:4];
         }
         
         if (nestedListIndex != NSNotFound)
@@ -890,20 +878,17 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     return element;
 }
 
-- (MMElement *)_parseListWithScanner:(MMScanner *)scanner atIndentationLevel:(NSUInteger)level
+- (MMElement *)_parseListWithScanner:(MMScanner *)scanner
 {
     [scanner beginTransaction];
-    // Check the amount of leading whitespace
-    NSUInteger toSkip  = 4 * level;
-    NSUInteger skipped = [scanner skipIndentationUpTo:toSkip];
     
-    [scanner skipIndentationUpTo:3]; // Additional optional space
+    [scanner skipIndentationUpTo:3]; // Optional space
     unichar nextChar   = scanner.nextCharacter;
     BOOL    isBulleted = (nextChar == '*' || nextChar == '-' || nextChar == '+');
     BOOL    hasMarker  = [self _parseListMarkerWithScanner:scanner];
     [scanner commitTransaction:NO];
     
-    if (toSkip != skipped || !hasMarker)
+    if (!hasMarker)
         return nil;
     
     MMElement *element = [MMElement new];
@@ -922,7 +907,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
             break;
         
         [scanner beginTransaction];
-        MMElement *item = [self _parseListItemWithScanner:scanner atIndentationLevel:level];
+        MMElement *item = [self _parseListItemWithScanner:scanner];
         if (!item)
         {
             [scanner commitTransaction:NO];
