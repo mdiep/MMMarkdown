@@ -762,6 +762,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     
     BOOL afterBlankLine = NO;
     NSUInteger nestedListIndex = NSNotFound;
+    NSUInteger nestedListIndentation = 0;
     while (!scanner.atEndOfString)
     {
         // Skip over any empty lines
@@ -781,7 +782,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         
         // Check for the start of a new list item
         [scanner beginTransaction];
-        [scanner skipIndentationUpTo:3];
+        [scanner skipIndentationUpTo:1];
         BOOL newMarker = [self _parseListMarkerWithScanner:scanner listType:listType];
         [scanner commitTransaction:NO];
         if (newMarker)
@@ -796,12 +797,12 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         
         // Check for a nested list
         [scanner beginTransaction];
-        NSUInteger indentation = [scanner skipIndentationUpTo:4 + 3];
+        NSUInteger indentation = [scanner skipIndentationUpTo:4];
         [scanner beginTransaction];
         BOOL newList = [self _parseListMarkerWithScanner:scanner listType:MMListTypeBulleted]
                     || [self _parseListMarkerWithScanner:scanner listType:MMListTypeNumbered];
         [scanner commitTransaction:NO];
-        if (indentation >= 4 && newList && nestedListIndex == NSNotFound)
+        if (indentation >= 2 && newList && nestedListIndex == NSNotFound)
         {
             [element addInnerRange:NSMakeRange(scanner.location, 0)];
             nestedListIndex = element.innerRanges.count;
@@ -810,6 +811,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
             [scanner commitTransaction:YES];
             [scanner commitTransaction:YES];
             [scanner advanceToNextLine];
+            nestedListIndentation = indentation;
             continue;
         }
         [scanner commitTransaction:NO];
@@ -837,7 +839,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
             
             // Don't skip past where a nested list would start because that list
             // could have its own nested list, so the whitespace will be needed.
-            [scanner skipIndentationUpTo:4];
+            [scanner skipIndentationUpTo:nestedListIndentation];
         }
         
         if (nestedListIndex != NSNotFound)
@@ -1031,16 +1033,12 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     NSCharacterSet *whitespaceSet = NSCharacterSet.whitespaceCharacterSet;
     while (!scanner.atEndOfString)
     {
-        // Skip whitespace if it's the only thing on the line
-        [scanner beginTransaction];
-        [scanner skipCharactersFromSet:whitespaceSet];
+        [scanner skipWhitespace];
         if (scanner.atEndOfLine)
         {
-            [scanner commitTransaction:YES];
             [scanner advanceToNextLine];
             break;
         }
-        [scanner commitTransaction:NO];
         
         // Check for a blockquote
         [scanner beginTransaction];
@@ -1087,7 +1085,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         
         // Check for a list item
         [scanner beginTransaction];
-        [scanner skipIndentationUpTo:4];
+        [scanner skipIndentationUpTo:2];
         hasElement = [self _parseListMarkerWithScanner:scanner listType:MMListTypeBulleted]
                   || [self _parseListMarkerWithScanner:scanner listType:MMListTypeNumbered];
         [scanner commitTransaction:NO];
