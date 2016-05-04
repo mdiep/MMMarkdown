@@ -399,5 +399,23 @@
     MMAssertMarkdownEqualsHTML(markdown, HTML);
 }
 
+- (void)testListWith2SpaceIndentation
+{
+    NSString *markdown =
+        @"* 1\n"
+         "  * 2\n"
+         "* 3\n";
+    NSString *HTML =
+        @"<ul>\n"
+         "<li>1\n"
+         "<ul>\n"
+         "<li>2</li>\n"
+         "</ul>\n"
+         "</li>\n"
+         "<li>3</li>\n"
+         "</ul>\n";
+    MMAssertMarkdownEqualsHTML(markdown, HTML);
+}
+
 
 @end

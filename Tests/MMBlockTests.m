@@ -254,7 +254,7 @@
     // Tabs should be converted to spaces
     NSString *markdown = @"A Paragraph\n    Here\n";
     NSString *html = @"<p>A Paragraph\n"
-                      "    Here</p>";
+                      "Here</p>";
     
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
@@ -264,7 +264,7 @@
     // Tabs should be converted to spaces
     NSString *markdown = @"A\tParagraph\n\tHere\n";
     NSString *html = @"<p>A   Paragraph\n"
-                      "    Here</p>";
+                      "Here</p>";
     
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
