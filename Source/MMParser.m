@@ -33,6 +33,11 @@
 #import "MMScanner.h"
 #import "MMSpanParser.h"
 
+typedef NS_ENUM(NSInteger, MMListType) {
+    MMListTypeBulleted,
+    MMListTypeNumbered,
+};
+
 static NSString * __HTMLEntityForCharacter(unichar character)
 {
     switch (character)
@@ -690,46 +695,51 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     return element;
 }
 
-- (BOOL)_parseListMarkerWithScanner:(MMScanner *)scanner
+- (BOOL)_parseListMarkerWithScanner:(MMScanner *)scanner listType:(MMListType)listType
 {
-    // Look for a bullet
-    [scanner beginTransaction];
-    unichar nextChar = scanner.nextCharacter;
-    if (nextChar == '*' || nextChar == '-' || nextChar == '+')
+    switch (listType)
     {
-        [scanner advance];
-        if (scanner.nextCharacter == ' ')
-        {
-            [scanner advance];
-            [scanner commitTransaction:YES];
-            return YES;
-        }
-    }
-    [scanner commitTransaction:NO];
-    
-    // Look for a numbered item
-    [scanner beginTransaction];
-    NSUInteger numOfNums = [scanner skipCharactersFromSet:[NSCharacterSet decimalDigitCharacterSet]];
-    if (numOfNums != 0)
-    {
-        unichar nextChar = scanner.nextCharacter;
-        if (nextChar == '.')
-        {
-            [scanner advance];
-            if (scanner.nextCharacter == ' ')
+        case MMListTypeBulleted:
+            [scanner beginTransaction];
+            unichar nextChar = scanner.nextCharacter;
+            if (nextChar == '*' || nextChar == '-' || nextChar == '+')
             {
                 [scanner advance];
-                [scanner commitTransaction:YES];
-                return YES;
+                if (scanner.nextCharacter == ' ')
+                {
+                    [scanner advance];
+                    [scanner commitTransaction:YES];
+                    return YES;
+                }
             }
-        }
+            [scanner commitTransaction:NO];
+            break;
+            
+        case MMListTypeNumbered:
+            [scanner beginTransaction];
+            NSUInteger numOfNums = [scanner skipCharactersFromSet:[NSCharacterSet decimalDigitCharacterSet]];
+            if (numOfNums != 0)
+            {
+                unichar nextChar = scanner.nextCharacter;
+                if (nextChar == '.')
+                {
+                    [scanner advance];
+                    if (scanner.nextCharacter == ' ')
+                    {
+                        [scanner advance];
+                        [scanner commitTransaction:YES];
+                        return YES;
+                    }
+                }
+            }
+            [scanner commitTransaction:NO];
+            break;
     }
-    [scanner commitTransaction:NO];
     
     return NO;
 }
 
-- (MMElement *)_parseListItemWithScanner:(MMScanner *)scanner
+- (MMElement *)_parseListItemWithScanner:(MMScanner *)scanner listType:(MMListType)listType
 {
     BOOL canContainBlocks = NO;
     
@@ -740,7 +750,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     
     [scanner skipIndentationUpTo:3]; // Optional space
     
-    BOOL foundAnItem = [self _parseListMarkerWithScanner:scanner];
+    BOOL foundAnItem = [self _parseListMarkerWithScanner:scanner listType:listType];
     if (!foundAnItem)
         return nil;
     
@@ -771,7 +781,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         // Check for the start of a new list item
         [scanner beginTransaction];
         [scanner skipIndentationUpTo:3];
-        BOOL newMarker = [self _parseListMarkerWithScanner:scanner];
+        BOOL newMarker = [self _parseListMarkerWithScanner:scanner listType:listType];
         [scanner commitTransaction:NO];
         if (newMarker)
         {
@@ -785,11 +795,12 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         
         // Check for a nested list
         [scanner beginTransaction];
-        [scanner skipIndentationUpTo:4 + 3];
+        NSUInteger indentation = [scanner skipIndentationUpTo:4 + 3];
         [scanner beginTransaction];
-        BOOL newList = [self _parseListMarkerWithScanner:scanner];
+        BOOL newList = [self _parseListMarkerWithScanner:scanner listType:MMListTypeBulleted]
+                    || [self _parseListMarkerWithScanner:scanner listType:MMListTypeNumbered];
         [scanner commitTransaction:NO];
-        if (newList && nestedListIndex == NSNotFound)
+        if (indentation >= 4 && newList && nestedListIndex == NSNotFound)
         {
             [element addInnerRange:NSMakeRange(scanner.location, 0)];
             nestedListIndex = element.innerRanges.count;
@@ -884,8 +895,9 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     
     [scanner skipIndentationUpTo:3]; // Optional space
     unichar nextChar   = scanner.nextCharacter;
-    BOOL    isBulleted = (nextChar == '*' || nextChar == '-' || nextChar == '+');
-    BOOL    hasMarker  = [self _parseListMarkerWithScanner:scanner];
+    BOOL       isBulleted = (nextChar == '*' || nextChar == '-' || nextChar == '+');
+    MMListType listType   = isBulleted ? MMListTypeBulleted : MMListTypeNumbered;
+    BOOL       hasMarker  = [self _parseListMarkerWithScanner:scanner listType:listType];
     [scanner commitTransaction:NO];
     
     if (!hasMarker)
@@ -907,7 +919,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
             break;
         
         [scanner beginTransaction];
-        MMElement *item = [self _parseListItemWithScanner:scanner];
+        MMElement *item = [self _parseListItemWithScanner:scanner listType:listType];
         if (!item)
         {
             [scanner commitTransaction:NO];
@@ -1075,7 +1087,8 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         // Check for a list item
         [scanner beginTransaction];
         [scanner skipIndentationUpTo:4];
-        hasElement = [self _parseListMarkerWithScanner:scanner];
+        hasElement = [self _parseListMarkerWithScanner:scanner listType:MMListTypeBulleted]
+                  || [self _parseListMarkerWithScanner:scanner listType:MMListTypeNumbered];
         [scanner commitTransaction:NO];
         if (hasElement)
             break;

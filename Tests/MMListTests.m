@@ -379,5 +379,25 @@
     MMAssertMarkdownEqualsHTML(@" - One\n - Two", @"<ul><li>One</li><li>Two</li></ul>");
 }
 
+- (void)testListFollowingAnotherList
+{
+    NSString *markdown =
+        @"- A\n"
+         "- B\n"
+         "\n"
+         "1. 1\n"
+         "1. 2\n";
+    NSString *HTML =
+        @"<ul>\n"
+        "<li>A</li>\n"
+        "<li>B</li>\n"
+        "</ul>\n"
+        "<ol>\n"
+        "<li>1</li>\n"
+        "<li>2</li>\n"
+        "</ol>\n";
+    MMAssertMarkdownEqualsHTML(markdown, HTML);
+}
+
 
 @end
