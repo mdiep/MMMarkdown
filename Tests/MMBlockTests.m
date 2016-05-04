@@ -221,6 +221,11 @@
     MMAssertMarkdownEqualsHTML(@" #H", @"<p>#H</p>");
 }
 
+- (void)testPrefixedHeaderRequiresASpace
+{
+    MMAssertMarkdownEqualsHTML(@"#H", @"<p>#H</p>");
+}
+
 
 #pragma mark - Underlined Header Tests
 

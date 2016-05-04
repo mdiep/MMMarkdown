@@ -314,7 +314,8 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     if (level == 0)
         return nil;
     
-    [scanner skipCharactersFromSet:NSCharacterSet.whitespaceCharacterSet];
+    if ([scanner skipWhitespace] == 0)
+        return nil;
     
     NSRange headerRange = scanner.currentRange;
     
