@@ -820,9 +820,12 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     NSString *linkText  = [scanner.string substringWithRange:linkRange];
     
     // Make sure it looks like a link
-    NSRegularExpression *regex;
+    static NSRegularExpression *regex;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        regex = [NSRegularExpression regularExpressionWithPattern:@"^(\\w+)://" options:0 error:nil];
+    });
     NSRange matchRange;
-    regex      = [NSRegularExpression regularExpressionWithPattern:@"^(\\w+)://" options:0 error:nil];
     matchRange = [regex rangeOfFirstMatchInString:linkText options:0 range:NSMakeRange(0, linkText.length)];
     if (matchRange.location == NSNotFound)
         return nil;
@@ -897,11 +900,14 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     NSString *linkText  = [scanner.string substringWithRange:linkRange];
     
     // Make sure it looks like a link
-    NSRegularExpression *regex;
+    static NSRegularExpression *regex;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        regex = [NSRegularExpression regularExpressionWithPattern:@"^[-._0-9\\p{L}]+@[-\\p{L}0-9][-.\\p{L}0-9]*\\.\\p{L}+$"
+                                                          options:NSRegularExpressionCaseInsensitive
+                                                            error:nil];
+    });
     NSRange matchRange;
-    regex      = [NSRegularExpression regularExpressionWithPattern:@"^[-._0-9\\p{L}]+@[-\\p{L}0-9][-.\\p{L}0-9]*\\.\\p{L}+$"
-                                                           options:NSRegularExpressionCaseInsensitive
-                                                             error:nil];
     matchRange = [regex rangeOfFirstMatchInString:linkText options:0 range:NSMakeRange(0, linkText.length)];
     if (matchRange.location == NSNotFound)
         return nil;
