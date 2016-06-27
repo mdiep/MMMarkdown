@@ -1,4 +1,7 @@
 # MMMarkdown Release Notes
+## 0.5.5
+ - #107: Create `NSRegularExpression`s using `dispatch_once`
+
 ## 0.5.4
  - #103: Don't let lists contain both bulleted and numbered items
  - #104: Require a space after the # in headers
