@@ -29,10 +29,12 @@
 @class MMElement;
 @class MMScanner;
 
+NS_ASSUME_NONNULL_BEGIN
 @interface MMHTMLParser : NSObject
 
-- (nullable MMElement *)parseBlockTagWithScanner:(nonnull MMScanner *)scanner;
-- (nullable MMElement *)parseCommentWithScanner:(nonnull MMScanner *)scanner;
-- (nullable MMElement *)parseInlineTagWithScanner:(nonnull MMScanner *)scanner;
+- (nullable MMElement *)parseBlockTagWithScanner:(MMScanner *)scanner;
+- (nullable MMElement *)parseCommentWithScanner:(MMScanner *)scanner;
+- (nullable MMElement *)parseInlineTagWithScanner:(MMScanner *)scanner;
 
 @end
+NS_ASSUME_NONNULL_END

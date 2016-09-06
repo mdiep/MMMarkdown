@@ -62,7 +62,7 @@ NS_ASSUME_NONNULL_BEGIN
  @result
     Returns an HTML string.
  */
-+ (NSString *)HTMLStringWithMarkdown:(NSString *)string error:(__autoreleasing NSError **)error;
++ (NSString *)HTMLStringWithMarkdown:(NSString *)string error:(NSError * __autoreleasing * _Nullable)error;
 
 /*!
  Convert a Markdown string to HTML.
@@ -76,7 +76,7 @@ NS_ASSUME_NONNULL_BEGIN
  @result
     Returns an HTML string.
  */
-+ (NSString *)HTMLStringWithMarkdown:(NSString *)string extensions:(MMMarkdownExtensions)extensions error:(__autoreleasing NSError **)error;
++ (NSString *)HTMLStringWithMarkdown:(NSString *)string extensions:(MMMarkdownExtensions)extensions error:(NSError * __autoreleasing * _Nullable)error;
 
 @end
 NS_ASSUME_NONNULL_END

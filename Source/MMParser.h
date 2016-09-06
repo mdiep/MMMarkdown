@@ -35,7 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (id)initWithExtensions:(MMMarkdownExtensions)extensions;
 
-- (MMDocument *)parseMarkdown:(NSString *)markdown error:(__autoreleasing NSError **)error;
+- (MMDocument *)parseMarkdown:(NSString *)markdown error:(NSError * __autoreleasing * _Nullable)error;
 
 @end
 NS_ASSUME_NONNULL_END
