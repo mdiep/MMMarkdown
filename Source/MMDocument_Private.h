@@ -28,10 +28,12 @@
 
 @class MMElement;
 
+NS_ASSUME_NONNULL_BEGIN
 @interface MMDocument (MMDocumentPrivate)
 
-@property (copy, nonatomic) NSArray *elements;
+@property (copy, nonatomic) NSArray<MMElement *> *elements;
 
 - (void)addElement:(MMElement *)anElement;
 
 @end
+NS_ASSUME_NONNULL_END

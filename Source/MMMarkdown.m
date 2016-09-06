@@ -65,8 +65,6 @@
     MMGenerator *generator = [MMGenerator new];
     
     MMDocument *document = [parser parseMarkdown:string error:error];
-    if (!document)
-        return nil;
     
     return [generator generateHTML:document];
 }

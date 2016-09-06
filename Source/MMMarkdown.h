@@ -49,6 +49,7 @@ typedef NS_OPTIONS(NSUInteger, MMMarkdownExtensions)
     MMMarkdownExtensionsGitHubFlavored = MMMarkdownExtensionsAutolinkedURLs|MMMarkdownExtensionsFencedCodeBlocks|MMMarkdownExtensionsHardNewlines|MMMarkdownExtensionsStrikethroughs|MMMarkdownExtensionsTables|MMMarkdownExtensionsUnderscoresInWords,
 };
 
+NS_ASSUME_NONNULL_BEGIN
 @interface MMMarkdown : NSObject
 
 /*!
@@ -61,7 +62,7 @@ typedef NS_OPTIONS(NSUInteger, MMMarkdownExtensions)
  @result
     Returns an HTML string.
  */
-+ (NSString *)HTMLStringWithMarkdown:(NSString *)string error:(__autoreleasing NSError **)error __attribute__((nonnull(1)));
++ (NSString *)HTMLStringWithMarkdown:(NSString *)string error:(NSError * __autoreleasing * _Nullable)error;
 
 /*!
  Convert a Markdown string to HTML.
@@ -75,6 +76,7 @@ typedef NS_OPTIONS(NSUInteger, MMMarkdownExtensions)
  @result
     Returns an HTML string.
  */
-+ (NSString *)HTMLStringWithMarkdown:(NSString *)string extensions:(MMMarkdownExtensions)extensions error:(__autoreleasing NSError **)error __attribute__((nonnull(1)));
++ (NSString *)HTMLStringWithMarkdown:(NSString *)string extensions:(MMMarkdownExtensions)extensions error:(NSError * __autoreleasing * _Nullable)error;
 
 @end
+NS_ASSUME_NONNULL_END
