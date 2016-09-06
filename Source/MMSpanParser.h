@@ -32,12 +32,14 @@
 @class MMElement;
 @class MMScanner;
 
+NS_ASSUME_NONNULL_BEGIN
 @interface MMSpanParser : NSObject
 
 - (id)initWithExtensions:(MMMarkdownExtensions)extensions;
 
-- (NSArray *)parseSpansInBlockElement:(MMElement *)block withScanner:(MMScanner *)scanner;
+- (nullable NSArray *)parseSpansInBlockElement:(MMElement *)block withScanner:(MMScanner *)scanner;
 
-- (NSArray *)parseSpansInTableColumns:(NSArray *)columns withScanner:(MMScanner *)scanner;
+- (nullable NSArray *)parseSpansInTableColumns:(NSArray *)columns withScanner:(MMScanner *)scanner;
 
 @end
+NS_ASSUME_NONNULL_END

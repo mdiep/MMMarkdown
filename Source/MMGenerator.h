@@ -28,8 +28,10 @@
 
 @class MMDocument;
 
+NS_ASSUME_NONNULL_BEGIN
 @interface MMGenerator : NSObject
 
 - (NSString *)generateHTML:(MMDocument *)aDocument;
 
 @end
+NS_ASSUME_NONNULL_END

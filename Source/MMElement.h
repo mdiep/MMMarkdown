@@ -25,6 +25,7 @@
 
 #import <Foundation/Foundation.h>
 
+@class MMElement;
 
 typedef enum
 {
@@ -77,7 +78,7 @@ typedef NS_ENUM(NSInteger, MMTableCellAlignment)
 @property (copy,   nonatomic) NSString      *stringValue;
 
 @property (assign, nonatomic) MMElement *parent;
-@property (copy,   nonatomic) NSArray   *children;
+@property (copy,   nonatomic) NSArray<MMElement *>   *children;
 
 @property (copy,   nonatomic) NSString  *language;
 

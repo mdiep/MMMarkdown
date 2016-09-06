@@ -31,8 +31,8 @@
 
 @interface MMHTMLParser : NSObject
 
-- (MMElement *)parseBlockTagWithScanner:(MMScanner *)scanner;
-- (MMElement *)parseCommentWithScanner:(MMScanner *)scanner;
-- (MMElement *)parseInlineTagWithScanner:(MMScanner *)scanner;
+- (nullable MMElement *)parseBlockTagWithScanner:(nonnull MMScanner *)scanner;
+- (nullable MMElement *)parseCommentWithScanner:(nonnull MMScanner *)scanner;
+- (nullable MMElement *)parseInlineTagWithScanner:(nonnull MMScanner *)scanner;
 
 @end

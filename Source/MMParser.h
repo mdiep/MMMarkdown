@@ -30,6 +30,7 @@
 
 @class MMDocument;
 
+NS_ASSUME_NONNULL_BEGIN
 @interface MMParser : NSObject
 
 - (id)initWithExtensions:(MMMarkdownExtensions)extensions;
@@ -37,3 +38,4 @@
 - (MMDocument *)parseMarkdown:(NSString *)markdown error:(__autoreleasing NSError **)error;
 
 @end
+NS_ASSUME_NONNULL_END
