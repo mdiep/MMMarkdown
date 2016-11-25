@@ -379,6 +379,16 @@
     MMAssertMarkdownEqualsHTML(@" - One\n - Two", @"<ul><li>One</li><li>Two</li></ul>");
 }
 
+- (void)testList_withBold
+{
+    MMAssertMarkdownEqualsHTML(@" - One **Bold**\n - Two", @"<ul><li>One <strong>Bold</strong></li><li>Two</li></ul>");
+}
+
+- (void)testList_withCode
+{
+    MMAssertMarkdownEqualsHTML(@" - One `Code`\n - Two", @"<ul><li>One <code>Code</code></li><li>Two</li></ul>");
+}
+
 - (void)testListFollowingAnotherList
 {
     NSString *markdown =
@@ -416,6 +426,159 @@
          "</ul>\n";
     MMAssertMarkdownEqualsHTML(markdown, HTML);
 }
+
+- (void)testAlternateListAndQuoteWithDoubleNewlines
+{
+    NSString *markdown =
+    @"+ abc\n\n"
+    @"> 123\n\n"
+    @"+ def\n\n"
+    @"> 456\n\n";
+ 
+    NSString *HTML =
+    @"<ul>\n"
+    @"<li>abc</li>\n"
+    @"</ul>\n"
+    @"<blockquote>\n"
+    @"<p>123</p>\n"
+    @"</blockquote>\n"
+    @"<ul>\n"
+    @"<li>def</li>\n"
+    @"</ul>\n"
+    @"<blockquote>\n"
+    @"<p>456</p>\n"
+    @"</blockquote>\n";
+    
+    MMAssertMarkdownEqualsHTML(markdown, HTML);
+}
+
+- (void)testAlternateListAndQuote
+{
+    NSString *markdown =
+    @"+ abc\n"
+    @"> 123\n"
+    @"+ def\n"
+    @"> 456\n";
+    
+    NSString *HTML =
+    @"<ul>\n"
+    @"<li>abc</li>\n"
+    @"</ul>\n"
+    @"<blockquote>\n"
+    @"<p>123</p>\n"
+    @"</blockquote>\n"
+    @"<ul>\n"
+    @"<li>def</li>\n"
+    @"</ul>\n"
+    @"<blockquote>\n"
+    @"<p>456</p>\n"
+    @"</blockquote>\n";
+    
+    MMAssertMarkdownEqualsHTML(markdown, HTML);
+}
+
+
+- (void)testAlternateListAndQuoteWith3SpaceBeforeQuote
+{
+    NSString *markdown =
+    @"+ abc\n"
+    @"   > 123\n"
+    @"+ def\n"
+    @"> 456\n";
+    
+    NSString *HTML =
+    @"<ul>\n"
+    @"<li>abc</li>\n"
+    @"</ul>\n"
+    @"<blockquote>\n"
+    @"<p>123</p>\n"
+    @"</blockquote>\n"
+    @"<ul>\n"
+    @"<li>def</li>\n"
+    @"</ul>\n"
+    @"<blockquote>\n"
+    @"<p>456</p>\n"
+    @"</blockquote>\n";
+    
+    MMAssertMarkdownEqualsHTML(markdown, HTML);
+}
+
+
+- (void)testAlternateListAndQuoteWith4SpaceBeforeQuote
+{
+    NSString *markdown =
+    @"+ abc\n"
+    @"    > 123\n"
+    @"+ def\n"
+    @"> 456\n";
+    
+    NSString *HTML =
+    @"<ul>\n"
+    @"<li>abc</li>\n"
+    @"</ul>\n"
+    @"<pre><code>&gt; 123\n</code></pre>\n"
+    @"<ul>\n"
+    @"<li>def</li>\n"
+    @"</ul>\n"
+    @"<blockquote>\n"
+    @"<p>456</p>\n"
+    @"</blockquote>\n";
+    
+    MMAssertMarkdownEqualsHTML(markdown, HTML);
+}
+
+
+- (void)testAlternateListAndQuoteWith3SpaceBeforeListItem
+{
+    NSString *markdown =
+    @"+ abc\n"
+    @"> 123\n"
+    @"   + def\n"
+    @"> 456\n";
+    
+    NSString *HTML =
+    @"<ul>\n"
+    @"<li>abc</li>\n"
+    @"</ul>\n"
+    @"<blockquote>\n"
+    @"<p>123</p>\n"
+    @"</blockquote>\n"
+    @"<ul>\n"
+    @"<li>def</li>\n"
+    @"</ul>\n"
+    @"<blockquote>\n"
+    @"<p>456</p>\n"
+    @"</blockquote>\n";
+
+    MMAssertMarkdownEqualsHTML(markdown, HTML);
+}
+
+
+- (void)testAlternateListAndQuoteWith4SpaceBeforeListItem
+{
+    NSString *markdown =
+    @"+ abc\n"
+    @"> 123\n"
+    @"    + def\n"
+    @"> 456\n";
+    
+    NSString *HTML =
+    @"<ul>\n"
+    @"<li>abc</li>\n"
+    @"</ul>\n"
+    @"<blockquote>\n"
+    @"<p>123</p>\n"
+    @"</blockquote>\n"
+    @"<ul>\n"
+    @"<li>def</li>\n"
+    @"</ul>\n"
+    @"<blockquote>\n"
+    @"<p>456</p>\n"
+    @"</blockquote>\n";
+    
+    MMAssertMarkdownEqualsHTML(markdown, HTML);
+}
+
 
 
 @end
