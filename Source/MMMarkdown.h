@@ -45,8 +45,9 @@ typedef NS_OPTIONS(NSUInteger, MMMarkdownExtensions)
 //    MMMarkdownExtensionsTableCaptions       = 1 << 7,
     MMMarkdownExtensionsTables              = 1 << 8,
     MMMarkdownExtensionsUnderscoresInWords  = 1 << 9,
+    MMMarkdownExtensionsChecklist           = 1 << 10,  // https://github.com/blog/1375-task-lists-in-gfm-issues-pulls-comments
     
-    MMMarkdownExtensionsGitHubFlavored = MMMarkdownExtensionsAutolinkedURLs|MMMarkdownExtensionsFencedCodeBlocks|MMMarkdownExtensionsHardNewlines|MMMarkdownExtensionsStrikethroughs|MMMarkdownExtensionsTables|MMMarkdownExtensionsUnderscoresInWords,
+    MMMarkdownExtensionsGitHubFlavored = MMMarkdownExtensionsAutolinkedURLs|MMMarkdownExtensionsFencedCodeBlocks|MMMarkdownExtensionsHardNewlines|MMMarkdownExtensionsStrikethroughs|MMMarkdownExtensionsTables|MMMarkdownExtensionsUnderscoresInWords|MMMarkdownExtensionsChecklist,
 };
 
 NS_ASSUME_NONNULL_BEGIN
