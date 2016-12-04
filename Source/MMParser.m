@@ -729,18 +729,28 @@ static NSString * __HTMLEntityForCharacter(unichar character)
 
 #pragma mark - Checklist
 
-/**
+
+/*!
  Check the following tasklist markers:
- 
- - [ ]
- - [x]
- - [X]
- + [ ]
- * [ ]
- 1. [ ]
- 
- @param scanner MMScanner
- @return ture if the check list marker exist, false otherwise.
+
+ - [ ] text
+ - [x] text
+ - [X] text
+ + [ ] text
+ * [ ] text
+ 1. [ ] text
+
+
+ @param scanner 
+    A MMScanner, Must not be nil.
+ @param type
+    A list type enum pointer. If found a valid tasklist marker, the type value will be save into this point.
+ @param expectedListType
+    Expected type enum. MMElementTypeNone value means that we are expecting any valid tasklist marker
+ @param checked
+    A nullable boolean pointer. If found a valid tasklist marker, the tasklist checking status will be save into this point.
+ @result
+    Returns a boolean value. ture if found a valid tasklist marker, false otherwise.
  */
 - (BOOL)_parseTasklistMarkerWithScanner:(MMScanner *)scanner listType:(MMElementType*)type expectedListType:(MMElementType)expectedListType checked:(nullable BOOL*)checked
 {
@@ -833,7 +843,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
 
 
 
-- (MMElement *)_parseChecklistItemWithScanner:(MMScanner *)scanner listType:(MMElementType)thelistType
+- (MMElement *)_parseTasklistItemWithScanner:(MMScanner *)scanner listType:(MMElementType)thelistType
 {
     BOOL canContainBlocks = NO;
     
@@ -1046,7 +1056,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
             break;
         
         [scanner beginTransaction];
-        MMElement *item = [self _parseChecklistItemWithScanner:scanner listType: listType];
+        MMElement *item = [self _parseTasklistItemWithScanner:scanner listType: listType];
         if (!item)
         {
             [scanner commitTransaction:NO];
