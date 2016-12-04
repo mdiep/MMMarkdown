@@ -24,7 +24,7 @@
     "- [ ] Three\n";
     NSString *html = @"<ul class=\"contains-task-list\"><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" /> One</li><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" /> Two</li><li class=\"task-list-item\"> <input type=\"checkbox\" class=\"task-list-item-checkbox\" /> Three</li></ul>";
     
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist ,markdown, html);
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList ,markdown, html);
 }
 
 
@@ -35,7 +35,7 @@
     "* [ ] Three\n";
     NSString *html = @"<ul class=\"contains-task-list\"><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" /> One</li><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" /> Two</li><li class=\"task-list-item\"> <input type=\"checkbox\" class=\"task-list-item-checkbox\" /> Three</li></ul>";
     
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist ,markdown, html);
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList ,markdown, html);
 }
 
 
@@ -46,7 +46,7 @@
     "2. [ ] Three\n";
     NSString *html = @"<ol class=\"contains-task-list\"><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" /> One</li><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" /> Two</li><li class=\"task-list-item\"> <input type=\"checkbox\" class=\"task-list-item-checkbox\" /> Three</li></ol>";
     
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist ,markdown, html);
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList ,markdown, html);
 }
 
 
@@ -58,7 +58,7 @@
     NSString *html = @"<ul class=\"contains-task-list\"><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" checked=\"\" /> One</li><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" checked=\"\" /> Two</li><li class=\"task-list-item\"> <input type=\"checkbox\" class=\"task-list-item-checkbox\" /> Three</li></ul>";
     
     
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist ,markdown, html);
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList ,markdown, html);
 }
 
 
@@ -69,7 +69,7 @@
     "* [X] Three\n";
     NSString *html = @"<ul class=\"contains-task-list\"><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" /> One</li><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" checked=\"\" /> Two</li><li class=\"task-list-item\"> <input type=\"checkbox\" class=\"task-list-item-checkbox\" checked=\"\" /> Three</li></ul>";
     
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist ,markdown, html);
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList ,markdown, html);
 }
 
 
@@ -80,7 +80,7 @@
     "2. [X] Three\n";
     NSString *html = @"<ol class=\"contains-task-list\"><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" checked=\"\"/> One</li><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" /> Two</li><li class=\"task-list-item\"> <input type=\"checkbox\" class=\"task-list-item-checkbox\" checked=\"\"/> Three</li></ol>";
     
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist ,markdown, html);
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList ,markdown, html);
 }
 
 
@@ -95,24 +95,24 @@
     "<li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" /> <p>Two</p></li>"
     "<li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" /> <p>Three</p></li></ul>";
     
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist ,markdown, html);
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList ,markdown, html);
 }
 
 
 - (void)testChecklist_carriageReturn
 {
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"- [ ] One\r- [ ] Two\r", @"<ul class=\"contains-task-list\"><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" /> One</li>\n<li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" /> Two</li></ul>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"- [ ] One\r- [ ] Two\r", @"<ul class=\"contains-task-list\"><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" /> One</li>\n<li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" /> Two</li></ul>");
 }
 
 
 - (void)testInvalidChecklist_emptylist
 {
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"- [ ]\n- [ ]\n- [ ]\n", @"<ul>\n<li>[ ]</li>\n<li>[ ]</li>\n<li>[ ]</li>\n</ul>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"- [ ]\n- [ ]\n- [ ]\n", @"<ul>\n<li>[ ]</li>\n<li>[ ]</li>\n<li>[ ]</li>\n</ul>");
 }
 
 - (void)testValidChecklist_emptylist
 {
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"- [ ] \n- [ ] \n- [ ] \n", @"<ul class=\"contains-task-list\"><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" /></li><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" /></li><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" /></li>\n</ul>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"- [ ] \n- [ ] \n- [ ] \n", @"<ul class=\"contains-task-list\"><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" /></li><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" /></li><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" /></li>\n</ul>");
 }
 
 - (void)testNestedChecklists
@@ -127,7 +127,7 @@
     "<li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" /> 2</li>"
     "<li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" /> 3</li></ul>";
     
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, markdown, html);
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, markdown, html);
 }
 
 
@@ -143,7 +143,7 @@
     "<li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" /> 2</li>"
     "<li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" /> 3</li></ul>";
     
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, markdown, html);
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, markdown, html);
 }
 
 
@@ -173,7 +173,7 @@
     "<li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" /> 2</li>"
     "<li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" /> 3</li></ul>";
     
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, markdown, html);
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, markdown, html);
 }
 
 
@@ -189,61 +189,61 @@
     "<li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" /> Three</li></ul>"
     "<hr />";
     
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, markdown, html);
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, markdown, html);
 }
 
 - (void)testChecklist_invalidMarker
 {
     // First element
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"*[]One\n",  @"<p>*[]One</p>");
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"-[]One\n",  @"<p>-[]One</p>");
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"+[]One\n",  @"<p>+[]One</p>");
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"1.[]One\n", @"<p>1.[]One</p>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"*[]One\n",  @"<p>*[]One</p>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"-[]One\n",  @"<p>-[]One</p>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"+[]One\n",  @"<p>+[]One</p>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"1.[]One\n", @"<p>1.[]One</p>");
     
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"* []One\n",  @"<ul><li>[]One</li></ul>");
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"- []One\n",  @"<ul><li>[]One</li></ul>");
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"+ []One\n",  @"<ul><li>[]One</li></ul>");
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"1. []One\n", @"<ol><li>[]One</li></ol>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"* []One\n",  @"<ul><li>[]One</li></ul>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"- []One\n",  @"<ul><li>[]One</li></ul>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"+ []One\n",  @"<ul><li>[]One</li></ul>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"1. []One\n", @"<ol><li>[]One</li></ol>");
 
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"*[ ]One\n",  @"<p>*[ ]One</p>");
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"-[ ]One\n",  @"<p>-[ ]One</p>");
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"+[ ]One\n",  @"<p>+[ ]One</p>");
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"1.[ ]One\n", @"<p>1.[ ]One</p>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"*[ ]One\n",  @"<p>*[ ]One</p>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"-[ ]One\n",  @"<p>-[ ]One</p>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"+[ ]One\n",  @"<p>+[ ]One</p>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"1.[ ]One\n", @"<p>1.[ ]One</p>");
 
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"*[] One\n",  @"<p>*[] One</p>");
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"-[] One\n",  @"<p>-[] One</p>");
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"+[] One\n",  @"<p>+[] One</p>");
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"1.[] One\n", @"<p>1.[] One</p>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"*[] One\n",  @"<p>*[] One</p>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"-[] One\n",  @"<p>-[] One</p>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"+[] One\n",  @"<p>+[] One</p>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"1.[] One\n", @"<p>1.[] One</p>");
 
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"* [ ]One\n",  @"<ul><li>[ ]One</li></ul>");
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"- [ ]One\n",  @"<ul><li>[ ]One</li></ul>");
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"+ [ ]One\n",  @"<ul><li>[ ]One</li></ul>");
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"1. [ ]One\n", @"<ol><li>[ ]One</li></ol>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"* [ ]One\n",  @"<ul><li>[ ]One</li></ul>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"- [ ]One\n",  @"<ul><li>[ ]One</li></ul>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"+ [ ]One\n",  @"<ul><li>[ ]One</li></ul>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"1. [ ]One\n", @"<ol><li>[ ]One</li></ol>");
 
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"* [] One\n",  @"<ul><li>[] One</li></ul>");
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"- [] One\n",  @"<ul><li>[] One</li></ul>");
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"+ [] One\n",  @"<ul><li>[] One</li></ul>");
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"1. [] One\n", @"<ol><li>[] One</li></ol>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"* [] One\n",  @"<ul><li>[] One</li></ul>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"- [] One\n",  @"<ul><li>[] One</li></ul>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"+ [] One\n",  @"<ul><li>[] One</li></ul>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"1. [] One\n", @"<ol><li>[] One</li></ol>");
 
     // Second element
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"*[ ] One\n*Two",   @"<p>*[ ] One\n*Two</p>");
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"-[ ] One\n-Two",   @"<p>-[ ] One\n-Two</p>");
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"+[ ] One\n+Two",   @"<p>+[ ] One\n+Two</p>");
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"1.[ ] One\n1.Two", @"<p>1.[ ] One\n1.Two</p>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"*[ ] One\n*Two",   @"<p>*[ ] One\n*Two</p>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"-[ ] One\n-Two",   @"<p>-[ ] One\n-Two</p>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"+[ ] One\n+Two",   @"<p>+[ ] One\n+Two</p>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"1.[ ] One\n1.Two", @"<p>1.[ ] One\n1.Two</p>");
     
     // Check with tabs
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"*\t[]One\n",  @"<ul><li>[]One</li></ul>");
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"-\t[]One\n",  @"<ul><li>[]One</li></ul>");
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"+\t[]One\n",  @"<ul><li>[]One</li></ul>");
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"1.\t[]One\n", @"<ol><li>[]One</li></ol>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"*\t[]One\n",  @"<ul><li>[]One</li></ul>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"-\t[]One\n",  @"<ul><li>[]One</li></ul>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"+\t[]One\n",  @"<ul><li>[]One</li></ul>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"1.\t[]One\n", @"<ol><li>[]One</li></ol>");
 
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"*\t[ ] One\n",  @"<ul><li>[ ] One</li></ul>");
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"-\t[ ] One\n",  @"<ul><li>[ ] One</li></ul>");
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"+\t[ ] One\n",  @"<ul><li>[ ] One</li></ul>");
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"1.\t[ ] One\n", @"<ol><li>[ ] One</li></ol>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"*\t[ ] One\n",  @"<ul><li>[ ] One</li></ul>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"-\t[ ] One\n",  @"<ul><li>[ ] One</li></ul>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"+\t[ ] One\n",  @"<ul><li>[ ] One</li></ul>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"1.\t[ ] One\n", @"<ol><li>[ ] One</li></ol>");
 
   
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"1. [\t] One\n", @"<ol><li>[    ] One</li></ol>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"1. [\t] One\n", @"<ol><li>[    ] One</li></ol>");
 
 }
 
@@ -251,10 +251,10 @@
 - (void)testChecklist_validMarker
 {
     
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"* [ ]\tOne\n",  @"<ul class=\"contains-task-list\"><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\"></input> One</li></ul>");
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"- [ ]\tOne\n",  @"<ul class=\"contains-task-list\"><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\"></input> One</li></ul>");
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"+ [ ]\tOne\n",  @"<ul class=\"contains-task-list\"><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\"></input> One</li></ul>");
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"1. [ ]\tOne\n", @"<ol class=\"contains-task-list\"><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\"></input> One</li></ol>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"* [ ]\tOne\n",  @"<ul class=\"contains-task-list\"><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\"></input> One</li></ul>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"- [ ]\tOne\n",  @"<ul class=\"contains-task-list\"><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\"></input> One</li></ul>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"+ [ ]\tOne\n",  @"<ul class=\"contains-task-list\"><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\"></input> One</li></ul>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"1. [ ]\tOne\n", @"<ol class=\"contains-task-list\"><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\"></input> One</li></ol>");
     
 #warning these suppose to be invalid checklist items according to Github
     
@@ -262,25 +262,25 @@
     // these suppose to be invalid checklist items
     // but seems that _removeTabsFromString function made it works.
     //
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"* [\t] One\n",  @"<ul class=\"contains-task-list\"><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\"></input> One</li></ul>");
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"- [\t] One\n",  @"<ul class=\"contains-task-list\"><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\"></input> One</li></ul>");
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"+ [\t] One\n",  @"<ul class=\"contains-task-list\"><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\"></input> One</li></ul>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"* [\t] One\n",  @"<ul class=\"contains-task-list\"><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\"></input> One</li></ul>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"- [\t] One\n",  @"<ul class=\"contains-task-list\"><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\"></input> One</li></ul>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"+ [\t] One\n",  @"<ul class=\"contains-task-list\"><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\"></input> One</li></ul>");
 }
 
 
 - (void)testChecklist_withLeadingSpace
 {
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @" - [ ] One\n - [ ] Two", @"<ul class=\"contains-task-list\"><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\"></input> One</li><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\"></input> Two</li></ul>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @" - [ ] One\n - [ ] Two", @"<ul class=\"contains-task-list\"><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\"></input> One</li><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\"></input> Two</li></ul>");
 }
 
 - (void)testChecklist_withBold
 {
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"- [ ] One **Bold**\n- [ ] Two", @"<ul class=\"contains-task-list\"><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\"></input> One <strong>Bold</strong></li><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\"></input> Two</li></ul>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"- [ ] One **Bold**\n- [ ] Two", @"<ul class=\"contains-task-list\"><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\"></input> One <strong>Bold</strong></li><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\"></input> Two</li></ul>");
 }
 
 - (void)testChecklist_withCode
 {
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, @"- [ ] One `Code`\n- [ ] Two", @"<ul class=\"contains-task-list\"><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\"></input> One <code>Code</code></li><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\"></input> Two</li></ul>");
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, @"- [ ] One `Code`\n- [ ] Two", @"<ul class=\"contains-task-list\"><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\"></input> One <code>Code</code></li><li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\"></input> Two</li></ul>");
 }
 
 
@@ -301,7 +301,7 @@
     "   <li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\"></input> 1</li>"
     "   <li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\"></input> 2</li>"
     "</ol>";
-    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsChecklist, markdown, HTML);
+    MMAssertExtendedMarkdownEqualsHTML(MMMarkdownExtensionsTaskList, markdown, HTML);
 }
 
 @end

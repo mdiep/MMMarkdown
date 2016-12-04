@@ -242,7 +242,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     
     // checklist has more sophisticated leading structure
     // it trumps code block.
-    if (self.extensions & MMMarkdownExtensionsChecklist)
+    if (self.extensions & MMMarkdownExtensionsTaskList)
     {
         // check list - github flavored markdown:
         //
@@ -730,7 +730,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
 #pragma mark - Checklist
 
 /**
- Check the following markers:
+ Check the following tasklist markers:
  
  - [ ]
  - [x]
@@ -742,10 +742,10 @@ static NSString * __HTMLEntityForCharacter(unichar character)
  @param scanner MMScanner
  @return ture if the check list marker exist, false otherwise.
  */
-- (BOOL)_parseChecklistMarkerWithScanner:(MMScanner *)scanner listType:(MMElementType*)type expectedListType:(MMElementType)expectedListType checked:(nullable BOOL*)checked
+- (BOOL)_parseTasklistMarkerWithScanner:(MMScanner *)scanner listType:(MMElementType*)type expectedListType:(MMElementType)expectedListType checked:(nullable BOOL*)checked
 {
-    // checking
-    if(expectedListType == MMElementTypeNone || expectedListType == MMElementTypeBulletedChecklist)
+    // checking unordered list marker
+    if (expectedListType == MMElementTypeNone || expectedListType == MMElementTypeBulletedChecklist)
     {
         [scanner beginTransaction];
         unichar nextChar = scanner.nextCharacter;
@@ -784,8 +784,8 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     }
  
     
-    // checking numbered checklist
-    if(expectedListType == MMElementTypeNone || expectedListType == MMElementTypeNumberedChecklist)
+    // checking numbered tasklist marker
+    if (expectedListType == MMElementTypeNone || expectedListType == MMElementTypeNumberedChecklist)
     {
         [scanner beginTransaction];
         NSUInteger numOfNums = [scanner skipCharactersFromSet:[NSCharacterSet decimalDigitCharacterSet]];
@@ -845,7 +845,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     [scanner skipIndentationUpTo:7]; // Optional space
     MMElementType listType = MMElementTypeNone;
     BOOL checked = NO;
-    BOOL foundAnItem = [self _parseChecklistMarkerWithScanner:scanner listType:&listType expectedListType:thelistType checked:&checked];
+    BOOL foundAnItem = [self _parseTasklistMarkerWithScanner:scanner listType:&listType expectedListType:thelistType checked:&checked];
     if (!foundAnItem)
         return nil;
     
@@ -877,7 +877,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         // Check for the start of a new list item
         [scanner beginTransaction];
         [scanner skipIndentationUpTo:1];
-        BOOL newMarker = [self _parseChecklistMarkerWithScanner:scanner listType:&listType expectedListType:thelistType checked:NULL];
+        BOOL newMarker = [self _parseTasklistMarkerWithScanner:scanner listType:&listType expectedListType:thelistType checked:NULL];
         [scanner commitTransaction:NO];
         if (newMarker)
         {
@@ -893,7 +893,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         [scanner beginTransaction];
         NSUInteger indentation = [scanner skipIndentationUpTo:4];
         [scanner beginTransaction];
-        BOOL newList = [self _parseChecklistMarkerWithScanner:scanner listType:&listType expectedListType:thelistType checked:NULL];
+        BOOL newList = [self _parseTasklistMarkerWithScanner:scanner listType:&listType expectedListType:thelistType checked:NULL];
         [scanner commitTransaction:NO];
         if (indentation >= 2 && newList && nestedListIndex == NSNotFound)
         {
@@ -1024,7 +1024,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     [scanner beginTransaction];
     [scanner skipIndentationUpTo:7]; // checklist allow optional 7 leading space or 1 tab. above that it's code block.
     MMElementType  listType = MMElementTypeNone;
-    BOOL hasMarker  = [self _parseChecklistMarkerWithScanner:scanner listType:&listType expectedListType:MMElementTypeNone checked:NULL];
+    BOOL hasMarker  = [self _parseTasklistMarkerWithScanner:scanner listType:&listType expectedListType:MMElementTypeNone checked:NULL];
     [scanner commitTransaction:NO];
     
     if (!hasMarker)
