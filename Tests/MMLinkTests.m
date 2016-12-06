@@ -324,5 +324,14 @@
     MMAssertMarkdownEqualsHTML(@"[Foo][bar]", @"<p>[Foo][bar]</p>");
 }
 
+- (void)testLinkRecognitionWithAtSymbol
+{
+    // Use a string comparison for this test because the output is not valid XML
+    NSString *markdown  = @"Have you seen this medium link? https://medium.com/@philipla/the-two-types-of-product-virality-8ae744b1c4d7 It's Great";
+    NSString *generated = [MMMarkdown HTMLStringWithMarkdown:markdown extensions:MMMarkdownExtensionsAutolinkedURLs error:nil];
+    NSString *expected  =  @"<p>Have you seen this medium link? <a href=\"https://medium.com/@philipla/the-two-types-of-product-virality-8ae744b1c4d7\">https://medium.com/@philipla/the-two-types-of-product-virality-8ae744b1c4d7</a> It's Great</p>\n";
+    XCTAssertEqualObjects(generated, expected, @"HTML didn't match expected value");
+}
+
 
 @end
