@@ -240,6 +240,22 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     if (element)
         return element;
     
+    // checklist has more sophisticated leading structure
+    // it trumps code block.
+    if (self.extensions & MMMarkdownExtensionsTaskList)
+    {
+        // check list - github flavored markdown:
+        //
+        // - [ ] check item 1
+        // - [X] check item 2
+        //
+        [scanner beginTransaction];
+        element = [self _parseChecklistWithScanner:scanner];
+        [scanner commitTransaction:element != nil];
+        if (element)
+            return element;
+    }
+    
     // Check code first because its four-space behavior trumps most else
     [scanner beginTransaction];
     element = [self _parseCodeBlockWithScanner:scanner];
@@ -710,6 +726,355 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     return element;
 }
 
+
+#pragma mark - Checklist
+
+
+/*!
+ Check the following tasklist markers:
+
+ - [ ] text
+ - [x] text
+ - [X] text
+ + [ ] text
+ * [ ] text
+ 1. [ ] text
+
+
+ @param scanner 
+    A MMScanner, Must not be nil.
+ @param type
+    A list type enum pointer. If found a valid tasklist marker, the type value will be save into this point.
+ @param expectedListType
+    Expected type enum. MMElementTypeNone value means that we are expecting any valid tasklist marker
+ @param checked
+    A nullable boolean pointer. If found a valid tasklist marker, the tasklist checking status will be save into this point.
+ @result
+    Returns a boolean value. ture if found a valid tasklist marker, false otherwise.
+ */
+- (BOOL)_parseTasklistMarkerWithScanner:(MMScanner *)scanner listType:(MMElementType*)type expectedListType:(MMElementType)expectedListType checked:(nullable BOOL*)checked
+{
+    // checking unordered list marker
+    if (expectedListType == MMElementTypeNone || expectedListType == MMElementTypeBulletedChecklist)
+    {
+        [scanner beginTransaction];
+        unichar nextChar = scanner.nextCharacter;
+        if (nextChar == '*' || nextChar == '-' || nextChar == '+')
+        {
+            [scanner advance];
+            if (scanner.nextCharacter == ' ')
+            {
+                [scanner advance];
+                if (scanner.nextCharacter == '[')
+                {
+                    [scanner advance];
+                    nextChar = scanner.nextCharacter;
+                    if (nextChar == ' ' || nextChar == 'X' || nextChar == 'x')
+                    {
+                        BOOL foundx = nextChar == 'X' || nextChar == 'x';
+                        [scanner advance];
+                        if (scanner.nextCharacter == ']')
+                        {
+                            [scanner advance];
+                            if (scanner.nextCharacter == ' ')
+                            {
+                                [scanner commitTransaction:YES];
+                                *type = MMElementTypeBulletedChecklist;
+                                if(checked != NULL){
+                                    *checked = foundx;
+                                }
+                                return YES;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        [scanner commitTransaction:NO];
+    }
+ 
+    
+    // checking numbered tasklist marker
+    if (expectedListType == MMElementTypeNone || expectedListType == MMElementTypeNumberedChecklist)
+    {
+        [scanner beginTransaction];
+        NSUInteger numOfNums = [scanner skipCharactersFromSet:[NSCharacterSet decimalDigitCharacterSet]];
+        if (numOfNums != 0)
+        {
+            unichar nextChar = scanner.nextCharacter;
+            if (nextChar == '.')
+            {
+                [scanner advance];
+                if (scanner.nextCharacter == ' ')
+                {
+                    [scanner advance];
+                    if (scanner.nextCharacter == '[')
+                    {
+                        [scanner advance];
+                        nextChar = scanner.nextCharacter;
+                        if (nextChar == ' ' || nextChar == 'X' || nextChar == 'x')
+                        {
+                            BOOL foundx = nextChar == 'X' || nextChar == 'x';
+                            [scanner advance];
+                            if (scanner.nextCharacter == ']')
+                            {
+                                [scanner advance];
+                                if (scanner.nextCharacter == ' ')
+                                {
+                                    [scanner commitTransaction:YES];
+                                    *type = MMElementTypeNumberedChecklist;
+                                    if(checked != NULL){
+                                        *checked = foundx;
+                                    }
+                                    return YES;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        [scanner commitTransaction:NO];
+    }
+    
+    
+    return NO;
+}
+
+
+
+- (MMElement *)_parseTasklistItemWithScanner:(MMScanner *)scanner listType:(MMElementType)thelistType
+{
+    BOOL canContainBlocks = NO;
+    
+    if ([scanner skipEmptyLines])
+    {
+        canContainBlocks = YES;
+    }
+    
+    [scanner skipIndentationUpTo:7]; // Optional space
+    MMElementType listType = MMElementTypeNone;
+    BOOL checked = NO;
+    BOOL foundAnItem = [self _parseTasklistMarkerWithScanner:scanner listType:&listType expectedListType:thelistType checked:&checked];
+    if (!foundAnItem)
+        return nil;
+    
+    [scanner skipWhitespace];
+    
+    MMElement *element = [MMElement new];
+    element.type = checked ? MMElementTypeChecklistCheckedItem : MMElementTypeChecklistUncheckedItem;
+    
+    BOOL afterBlankLine = NO;
+    NSUInteger nestedListIndex = NSNotFound;
+    NSUInteger nestedListIndentation = 0;
+    while (!scanner.atEndOfString)
+    {
+        // Skip over any empty lines
+        [scanner beginTransaction];
+        NSUInteger numOfEmptyLines = [scanner skipEmptyLines];
+        afterBlankLine = numOfEmptyLines != 0;
+        
+        // Check for a horizontal rule
+        [scanner beginTransaction];
+        BOOL newRule = [self _parseHorizontalRuleWithScanner:scanner] != nil;
+        [scanner commitTransaction:NO];
+        if (newRule)
+        {
+            [scanner commitTransaction:NO];
+            break;
+        }
+        
+        // Check for the start of a new list item
+        [scanner beginTransaction];
+        [scanner skipIndentationUpTo:1];
+        BOOL newMarker = [self _parseTasklistMarkerWithScanner:scanner listType:&listType expectedListType:thelistType checked:NULL];
+        [scanner commitTransaction:NO];
+        if (newMarker)
+        {
+            [scanner commitTransaction:NO];
+            if (afterBlankLine)
+            {
+                canContainBlocks = YES;
+            }
+            break;
+        }
+        
+        // Check for a nested list
+        [scanner beginTransaction];
+        NSUInteger indentation = [scanner skipIndentationUpTo:4];
+        [scanner beginTransaction];
+        BOOL newList = [self _parseTasklistMarkerWithScanner:scanner listType:&listType expectedListType:thelistType checked:NULL];
+        [scanner commitTransaction:NO];
+        if (indentation >= 2 && newList && nestedListIndex == NSNotFound)
+        {
+            [element addInnerRange:NSMakeRange(scanner.location, 0)];
+            nestedListIndex = element.innerRanges.count;
+            [element addInnerRange:scanner.currentRange];
+            
+            [scanner commitTransaction:YES];
+            [scanner commitTransaction:YES];
+            [scanner advanceToNextLine];
+            nestedListIndentation = indentation;
+            continue;
+        }
+        [scanner commitTransaction:NO];
+        
+        if (afterBlankLine)
+        {
+            // Must be 4 spaces past the indentation level to start a new paragraph
+            [scanner beginTransaction];
+            NSUInteger indentation = [scanner skipIndentationUpTo:4];
+            if (indentation < 4)
+            {
+                [scanner commitTransaction:NO];
+                [scanner commitTransaction:NO];
+                break;
+            }
+            [scanner commitTransaction:YES];
+            [scanner commitTransaction:YES];
+            
+            [element addInnerRange:NSMakeRange(scanner.location, 0)];
+            canContainBlocks = YES;
+        }
+        else
+        {
+            [scanner commitTransaction:YES];
+            
+            // Don't skip past where a nested list would start because that list
+            // could have its own nested list, so the whitespace will be needed.
+            [scanner skipIndentationUpTo:nestedListIndentation];
+        }
+        
+        if (nestedListIndex != NSNotFound)
+        {
+            [element addInnerRange:scanner.currentRange];
+            [scanner advanceToNextLine];
+        }
+        else
+        {
+            [self _addTextLineToElement:element withScanner:scanner];
+        }
+        
+        [scanner beginTransaction];
+        [scanner skipIndentationUpTo:4];
+        
+        //
+        //      checklist will ignore blockquote rules
+        //
+        //        if (scanner.nextCharacter == '>')
+        //        {
+        //            //
+        //            // If next line is start with blockquote mark
+        //            // then break current list parsering.
+        //            //
+        //            // for example:
+        //            //
+        //            // > 123
+        //            // + abc
+        //            //
+        //            // "+ abs" should not consider as part of blockquote
+        //            //
+        //            // > 234
+        //            // 567
+        //            //
+        //            // "567" is part of the blockquote
+        //            //
+        //            [scanner commitTransaction:NO];
+        //            break;
+        //        }
+        //
+        
+        [scanner commitTransaction:NO];
+        
+    }
+    
+    element.range = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
+    
+    if (element.innerRanges.count > 0)
+    {
+        if (nestedListIndex != NSNotFound)
+        {
+            NSArray *preListRanges  = [element.innerRanges subarrayWithRange:NSMakeRange(0, nestedListIndex)];
+            NSArray *postListRanges = [element.innerRanges subarrayWithRange:NSMakeRange(nestedListIndex, element.innerRanges.count - nestedListIndex)];
+            MMScanner *preListScanner  = [MMScanner scannerWithString:scanner.string lineRanges:preListRanges];
+            MMScanner *postListScanner = [MMScanner scannerWithString:scanner.string lineRanges:postListRanges];
+            
+            if (canContainBlocks)
+            {
+                element.children = [self _parseElementsWithScanner:preListScanner];
+            }
+            else
+            {
+                element.children = [self.spanParser parseSpansInBlockElement:element withScanner:preListScanner];
+            }
+            
+            element.children = [element.children arrayByAddingObjectsFromArray:[self _parseElementsWithScanner:postListScanner]];
+        }
+        else
+        {
+            MMScanner *innerScanner = [MMScanner scannerWithString:scanner.string lineRanges:element.innerRanges];
+            if (canContainBlocks)
+            {
+                element.children = [self _parseElementsWithScanner:innerScanner];
+            }
+            else
+            {
+                element.children = [self.spanParser parseSpansInBlockElement:element withScanner:innerScanner];
+            }
+        }
+    }
+    
+    return element;
+}
+
+
+
+- (MMElement *)_parseChecklistWithScanner:(MMScanner *)scanner
+{
+    [scanner beginTransaction];
+    [scanner skipIndentationUpTo:7]; // checklist allow optional 7 leading space or 1 tab. above that it's code block.
+    MMElementType  listType = MMElementTypeNone;
+    BOOL hasMarker  = [self _parseTasklistMarkerWithScanner:scanner listType:&listType expectedListType:MMElementTypeNone checked:NULL];
+    [scanner commitTransaction:NO];
+    
+    if (!hasMarker)
+        return nil;
+    
+    MMElement *element = [MMElement new];
+    element.type = listType;
+    
+    while (!scanner.atEndOfString)
+    {
+        [scanner beginTransaction];
+        
+        // Check for a horizontal rule first -- they look like a list marker
+        [scanner skipEmptyLines];
+        MMElement *rule = [self _parseHorizontalRuleWithScanner:scanner];
+        
+        [scanner commitTransaction:NO];
+        if (rule)
+            break;
+        
+        [scanner beginTransaction];
+        MMElement *item = [self _parseTasklistItemWithScanner:scanner listType: listType];
+        if (!item)
+        {
+            [scanner commitTransaction:NO];
+            break;
+        }
+        [scanner commitTransaction:YES];
+        
+        [element addChild:item];
+    }
+    
+    element.range = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
+    
+    return element;
+}
+
+
+#pragma mark - List
+
 - (BOOL)_parseListMarkerWithScanner:(MMScanner *)scanner listType:(MMListType)listType
 {
     switch (listType)
@@ -931,6 +1296,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     
     return element;
 }
+
 
 - (MMElement *)_parseListWithScanner:(MMScanner *)scanner
 {
