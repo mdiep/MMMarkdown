@@ -578,8 +578,8 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
     __block NSUInteger remainingChars = numberOfChars;
     BOOL (^atEnd)(void) = ^{
         // Can't be at the beginning of the line
-        if (scanner.atBeginningOfLine)
-            return NO;
+//        if (scanner.atBeginningOfLine)
+//            return NO;
         
         // Must follow the end of a word
         if ([whitespaceSet characterIsMember:scanner.previousCharacter])
