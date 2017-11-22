@@ -43,8 +43,12 @@
         output = [NSString stringWithFormat:@"<test>%@</test>", output]; \
         html2  = [NSString stringWithFormat:@"<test>%@</test>", html2]; \
         \
-        NSXMLDocument *actual   = [[NSXMLDocument alloc] initWithXMLString:output options:0 error:nil]; \
-        NSXMLDocument *expected = [[NSXMLDocument alloc] initWithXMLString:html2  options:0 error:nil]; \
+        NSError *actualError; \
+        NSError *expectedError; \
+        NSXMLDocument *actual   = [[NSXMLDocument alloc] initWithXMLString:output options:0 error:&actualError]; \
+        NSXMLDocument *expected = [[NSXMLDocument alloc] initWithXMLString:html2  options:0 error:&expectedError]; \
+        XCTAssertNotNil(actual, "%@", actualError); \
+        XCTAssertNotNil(expected, "%@", expectedError); \
         XCTAssertEqualObjects(actual, expected); \
     } while(0)
 
@@ -56,6 +60,8 @@
         NSError *error; \
         NSString *actual   = [MMMarkdown HTMLStringWithMarkdown:a1value error:&error]; \
         NSString *expected = a2value; \
+        XCTAssertNotNil(actual); \
+        XCTAssertNotNil(expected); \
         XCTAssertEqualObjects(actual, expected); \
     } while(0)
 

@@ -1,4 +1,37 @@
 # MMMarkdown Release Notes
+## 0.5.5
+ - #107: Create `NSRegularExpression`s using `dispatch_once`
+
+## 0.5.4
+ - #103: Don't let lists contain both bulleted and numbered items
+ - #104: Require a space after the # in headers
+ - #105: Let list items indent with 2 spaces
+
+## 0.5.3
+ - #101: Fix infinite loop in list parsing
+
+## 0.5.2
+ - #92: Allow `-`s in inline HTML
+
+## 0.5.1
+ - #88: Update Xcode project settings
+ - #89: Fix some broken unit tests
+ - #90: Add tvOS and watchOS targets
+ 
+## 0.5
+ - #63: Fix warnings from Xcode 6.3
+ - #67: Improved link handling
+ - #71: Allow = in autolinked URLs
+ - #73: Allow dashes in language names
+ - #74: Switch to from static libraries to dynamic frameworks
+ 
+## 0.4.3
+ - #60: UnderscoresInWords should only affect underscores
+
+## 0.4.2
+ - #51: Fenced code blocks shouldn't allow non-whitespace characters after trailing delimiter
+ - #54: Improve handling of of language names in fenced code blocks
+ - #57: Fix handling of images inside links
 
 ## 0.4.1
 Fix an exception when whitespace preceded what would otherwise be a header ([#47](https://github.com/mdiep/MMMarkdown/issues/47)).

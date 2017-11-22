@@ -87,6 +87,13 @@
     MMAssertMarkdownEqualsHTML(@"<1", @"<p>&lt;1</p>");
 }
 
+- (void)testInlineHTMLWithDataAttributes
+{
+    NSString* html = @"<a href=\"https://example.com/foo.js\" data-card-width=\"100%\">foo</a>";
+    NSString* htmlWithParagraph = [NSString stringWithFormat:@"<p>%@</p>", html];
+    MMAssertMarkdownEqualsHTML(html, htmlWithParagraph);
+}
+
 
 #pragma mark - HTML Comment Tests
 
@@ -226,9 +233,7 @@
 
 - (void)testBlockHTMLCommentWithSpans
 {
-    // An SGML comment starts and ends with "--", so you can't have an odd number of dashes before
-    // the closing angle bracket.
-    MMAssertMarkdownEqualsHTML(@"<!------> *hello*-->", @"<!------> *hello*-->");
+    MMAssertMarkdownEqualsString(@"<!------> *hello*-->", @"<!------><p><em>hello</em>--></p>\n");
 }
 
 

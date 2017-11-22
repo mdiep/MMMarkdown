@@ -201,6 +201,15 @@
     );
 }
 
+- (void)testAsterisksInsideWord
+{
+    MMAssertExtendedMarkdownEqualsHTML(
+        MMMarkdownExtensionsUnderscoresInWords,
+        @"t*es*t",
+        @"<p>t<em>es</em>t</p>"
+    );
+}
+
 
 #pragma mark - MMMarkdownExtensionsAutolinkedURLs
 
@@ -316,6 +325,15 @@
         MMMarkdownExtensionsAutolinkedURLs,
         @"https://plus.google.com/+AlanCoxLinux/posts/a2jAP7Pz1gj",
         @"<p><a href=\"https://plus.google.com/+AlanCoxLinux/posts/a2jAP7Pz1gj\">https://plus.google.com/+AlanCoxLinux/posts/a2jAP7Pz1gj</a></p>"
+    );
+}
+
+- (void)testURLAutolinkingWithEqualsSign
+{
+    MMAssertExtendedMarkdownEqualsHTML(
+        MMMarkdownExtensionsAutolinkedURLs,
+        @"http://www.test.com/?a=b",
+        @"<p><a href=\"http://www.test.com/?a=b\">http://www.test.com/?a=b</a></p>"
     );
 }
 
@@ -467,10 +485,40 @@
 {
     MMAssertExtendedMarkdownEqualsHTML(
         MMMarkdownExtensionsFencedCodeBlocks,
-        @"```objc\nhello\nworld\n```",
+        @"```objective-c\nhello\nworld\n```",
+        @"<pre><code class=\"objective-c\">hello\nworld\n"
+        "</code></pre>\n"
+    );
+}
+
+- (void)testFencedCodeBlockWithSpaceBeforeLanguage
+{
+    MMAssertExtendedMarkdownEqualsHTML(
+        MMMarkdownExtensionsFencedCodeBlocks,
+        @"``` objc\nhello\nworld\n```",
         @"<pre><code class=\"objc\">hello\nworld\n"
         "</code></pre>\n"
     );
+}
+
+- (void)testFencedCodeBlockWithSpaceAfterLanguage
+{
+    MMAssertExtendedMarkdownEqualsHTML(
+        MMMarkdownExtensionsFencedCodeBlocks,
+        @"```objc \nhello\nworld\n```",
+        @"<pre><code class=\"objc\">hello\nworld\n"
+        "</code></pre>\n"
+    );
+}
+
+- (void)testFencedCodeBlockWithSpaceInLanguageName
+{
+    MMAssertExtendedMarkdownEqualsHTML(
+        MMMarkdownExtensionsFencedCodeBlocks,
+        @"```a b\nhello\nworld\n```",
+        @"<p>```a b\nhello\nworld</p>\n<pre><code></code></pre>\n"
+    );
+    
 }
 
 - (void)testFencedCodeBlockInsideBlockquote

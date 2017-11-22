@@ -25,13 +25,16 @@
 
 #import <Foundation/Foundation.h>
 
+@class MMElement;
 
+NS_ASSUME_NONNULL_BEGIN
 @interface MMDocument : NSObject
 
-@property (strong, nonatomic, readonly) NSString *markdown;
-@property (copy,   nonatomic, readonly) NSArray  *elements;
+@property (copy, nonatomic, readonly) NSString *markdown;
+@property (copy, nonatomic, readonly) NSArray<MMElement *> *elements;
 
 + (id)documentWithMarkdown:(NSString *)markdown;
 - (id)initWithMarkdown:(NSString *)markdown;
 
 @end
+NS_ASSUME_NONNULL_END

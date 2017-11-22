@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0600"
+   LastUpgradeVersion = "0710"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,47 +14,40 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "BE813DD514F893EB00EC9469"
-               BuildableName = "libMMMarkdown-Mac.a"
-               BlueprintName = "MMMarkdown-Mac"
+               BlueprintIdentifier = "BE23E8F31C0CF3EF0087F587"
+               BuildableName = "MMMarkdown.framework"
+               BlueprintName = "MMMarkdown (tvOS)"
                ReferencedContainer = "container:MMMarkdown.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
+      buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      shouldUseLaunchSchemeArgsEnv = "YES"
-      buildConfiguration = "Debug">
+      shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "BE813DE914F893EB00EC9469"
-               BuildableName = "MMMarkdownTests.xctest"
-               BlueprintName = "MMMarkdownTests"
-               ReferencedContainer = "container:MMMarkdown.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
+      <AdditionalOptions>
+      </AdditionalOptions>
    </TestAction>
    <LaunchAction
+      buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
-      buildConfiguration = "Debug"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
+      debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "BE813DD514F893EB00EC9469"
-            BuildableName = "libMMMarkdown-Mac.a"
-            BlueprintName = "MMMarkdown-Mac"
+            BlueprintIdentifier = "BE23E8F31C0CF3EF0087F587"
+            BuildableName = "MMMarkdown.framework"
+            BlueprintName = "MMMarkdown (tvOS)"
             ReferencedContainer = "container:MMMarkdown.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -62,11 +55,20 @@
       </AdditionalOptions>
    </LaunchAction>
    <ProfileAction
+      buildConfiguration = "Release"
       shouldUseLaunchSchemeArgsEnv = "YES"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
-      buildConfiguration = "Release"
       debugDocumentVersioning = "YES">
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "BE23E8F31C0CF3EF0087F587"
+            BuildableName = "MMMarkdown.framework"
+            BlueprintName = "MMMarkdown (tvOS)"
+            ReferencedContainer = "container:MMMarkdown.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

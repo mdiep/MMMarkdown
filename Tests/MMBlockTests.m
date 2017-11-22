@@ -100,6 +100,11 @@
 
 #pragma mark - Code Block Tests
 
+- (void)testCodeBlockWithNoCode
+{
+    MMAssertMarkdownEqualsHTML(@"    \nfoo\n", @"<p>foo</p>");
+}
+
 - (void)testCodeBlocks_blankLinesInBetween
 {
     NSString *markdown = @"    Some Code\n"
@@ -216,6 +221,11 @@
     MMAssertMarkdownEqualsHTML(@" #H", @"<p>#H</p>");
 }
 
+- (void)testPrefixedHeaderRequiresASpace
+{
+    MMAssertMarkdownEqualsHTML(@"#H", @"<p>#H</p>");
+}
+
 
 #pragma mark - Underlined Header Tests
 
@@ -244,7 +254,7 @@
     // Tabs should be converted to spaces
     NSString *markdown = @"A Paragraph\n    Here\n";
     NSString *html = @"<p>A Paragraph\n"
-                      "    Here</p>";
+                      "Here</p>";
     
     MMAssertMarkdownEqualsHTML(markdown, html);
 }
@@ -254,7 +264,7 @@
     // Tabs should be converted to spaces
     NSString *markdown = @"A\tParagraph\n\tHere\n";
     NSString *html = @"<p>A   Paragraph\n"
-                      "    Here</p>";
+                      "Here</p>";
     
     MMAssertMarkdownEqualsHTML(markdown, html);
 }

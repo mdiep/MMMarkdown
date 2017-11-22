@@ -33,6 +33,11 @@
 #import "MMScanner.h"
 #import "MMSpanParser.h"
 
+typedef NS_ENUM(NSInteger, MMListType) {
+    MMListTypeBulleted,
+    MMListTypeNumbered,
+};
+
 static NSString * __HTMLEntityForCharacter(unichar character)
 {
     switch (character)
@@ -268,7 +273,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         return element;
     
     [scanner beginTransaction];
-    element = [self _parseListWithScanner:scanner atIndentationLevel:0];
+    element = [self _parseListWithScanner:scanner];
     [scanner commitTransaction:element != nil];
     if (element)
         return element;
@@ -309,7 +314,8 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     if (level == 0)
         return nil;
     
-    [scanner skipCharactersFromSet:NSCharacterSet.whitespaceCharacterSet];
+    if ([scanner skipWhitespace] == 0)
+        return nil;
     
     NSRange headerRange = scanner.currentRange;
     
@@ -456,6 +462,20 @@ static NSString * __HTMLEntityForCharacter(unichar character)
             [scanner advance];
             [scanner skipCharactersFromSet:whitespaceSet max:1];
         }
+        else
+        {
+            //
+            // If the following line is a list item
+            // then break the blockquote parsering.
+            //
+            [scanner beginTransaction];
+            [scanner skipIndentationUpTo:2];
+            BOOL hasListMarker = [self _parseListMarkerWithScanner:scanner listType:MMListTypeBulleted]
+            || [self _parseListMarkerWithScanner:scanner listType:MMListTypeNumbered];
+            [scanner commitTransaction:NO];
+            if (hasListMarker)
+                break;
+        }
         
         [element addInnerRange:scanner.currentRange];
         
@@ -515,7 +535,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
             // Add a newline
             MMElement *newline = [MMElement new];
             newline.type  = MMElementTypeNone;
-            newline.range = NSMakeRange(0, 0);
+            newline.range = NSMakeRange(scanner.location, 0);
             [children addObject:newline];
         }
     }
@@ -526,7 +546,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
 - (MMElement *)_parseCodeBlockWithScanner:(MMScanner *)scanner
 {
     NSUInteger indentation = [scanner skipIndentationUpTo:4];
-    if (indentation != 4)
+    if (indentation != 4 || scanner.atEndOfLine)
         return nil;
     
     MMElement *element = [MMElement new];
@@ -541,7 +561,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         NSUInteger numOfEmptyLines = [scanner skipEmptyLines];
         for (NSUInteger idx=0; idx<numOfEmptyLines; idx++)
         {
-            [element addInnerRange:NSMakeRange(0, 0)];
+            [element addInnerRange:NSMakeRange(scanner.location, 0)];
         }
         
         // Need 4 spaces to continue the code block
@@ -600,13 +620,21 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         return nil;
     
     // skip additional backticks and language
-    NSString *language = [scanner nextWord];
-    language = [language isEqual:@""] ? nil : language;
+    [scanner skipWhitespace];
+    
+    NSMutableCharacterSet *languageNameSet = NSMutableCharacterSet.alphanumericCharacterSet;
+    [languageNameSet addCharactersInString:@"-_"];
+    NSString *language = [scanner nextWordWithCharactersFromSet:languageNameSet];
+    scanner.location += language.length;
+    
+    [scanner skipWhitespace];
+    if (!scanner.atEndOfLine)
+        return nil;
     [scanner advanceToNextLine];
     
     MMElement *element = [MMElement new];
     element.type  = MMElementTypeCodeBlock;
-    element.language = language;
+    element.language = (language.length == 0 ? nil : language);
 
     // block ends when it hints a line starting with ``` or the end of the string
     while (!scanner.atEndOfString)
@@ -682,46 +710,51 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     return element;
 }
 
-- (BOOL)_parseListMarkerWithScanner:(MMScanner *)scanner
+- (BOOL)_parseListMarkerWithScanner:(MMScanner *)scanner listType:(MMListType)listType
 {
-    // Look for a bullet
-    [scanner beginTransaction];
-    unichar nextChar = scanner.nextCharacter;
-    if (nextChar == '*' || nextChar == '-' || nextChar == '+')
+    switch (listType)
     {
-        [scanner advance];
-        if (scanner.nextCharacter == ' ')
-        {
-            [scanner advance];
-            [scanner commitTransaction:YES];
-            return YES;
-        }
-    }
-    [scanner commitTransaction:NO];
-    
-    // Look for a numbered item
-    [scanner beginTransaction];
-    NSUInteger numOfNums = [scanner skipCharactersFromSet:[NSCharacterSet decimalDigitCharacterSet]];
-    if (numOfNums != 0)
-    {
-        unichar nextChar = scanner.nextCharacter;
-        if (nextChar == '.')
-        {
-            [scanner advance];
-            if (scanner.nextCharacter == ' ')
+        case MMListTypeBulleted:
+            [scanner beginTransaction];
+            unichar nextChar = scanner.nextCharacter;
+            if (nextChar == '*' || nextChar == '-' || nextChar == '+')
             {
                 [scanner advance];
-                [scanner commitTransaction:YES];
-                return YES;
+                if (scanner.nextCharacter == ' ')
+                {
+                    [scanner advance];
+                    [scanner commitTransaction:YES];
+                    return YES;
+                }
             }
-        }
+            [scanner commitTransaction:NO];
+            break;
+            
+        case MMListTypeNumbered:
+            [scanner beginTransaction];
+            NSUInteger numOfNums = [scanner skipCharactersFromSet:[NSCharacterSet decimalDigitCharacterSet]];
+            if (numOfNums != 0)
+            {
+                unichar nextChar = scanner.nextCharacter;
+                if (nextChar == '.')
+                {
+                    [scanner advance];
+                    if (scanner.nextCharacter == ' ')
+                    {
+                        [scanner advance];
+                        [scanner commitTransaction:YES];
+                        return YES;
+                    }
+                }
+            }
+            [scanner commitTransaction:NO];
+            break;
     }
-    [scanner commitTransaction:NO];
     
     return NO;
 }
 
-- (MMElement *)_parseListItemWithScanner:(MMScanner *)scanner atIndentationLevel:(NSUInteger)level
+- (MMElement *)_parseListItemWithScanner:(MMScanner *)scanner listType:(MMListType)listType
 {
     BOOL canContainBlocks = NO;
     
@@ -730,20 +763,9 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         canContainBlocks = YES;
     }
     
-    // Make sure there's enough leading space
-    [scanner beginTransaction];
-    NSUInteger toSkip  = 4 * level;
-    NSUInteger skipped = [scanner skipIndentationUpTo:toSkip];
-    if (skipped != toSkip)
-    {
-        [scanner commitTransaction:NO];
-        return nil;
-    }
-    [scanner commitTransaction:YES];
+    [scanner skipIndentationUpTo:3]; // Optional space
     
-    [scanner skipIndentationUpTo:3]; // Additional optional space
-    
-    BOOL foundAnItem = [self _parseListMarkerWithScanner:scanner];
+    BOOL foundAnItem = [self _parseListMarkerWithScanner:scanner listType:listType];
     if (!foundAnItem)
         return nil;
     
@@ -754,6 +776,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     
     BOOL afterBlankLine = NO;
     NSUInteger nestedListIndex = NSNotFound;
+    NSUInteger nestedListIndentation = 0;
     while (!scanner.atEndOfString)
     {
         // Skip over any empty lines
@@ -773,8 +796,8 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         
         // Check for the start of a new list item
         [scanner beginTransaction];
-        [scanner skipIndentationUpTo:4*level + 3];
-        BOOL newMarker = [self _parseListMarkerWithScanner:scanner];
+        [scanner skipIndentationUpTo:1];
+        BOOL newMarker = [self _parseListMarkerWithScanner:scanner listType:listType];
         [scanner commitTransaction:NO];
         if (newMarker)
         {
@@ -788,19 +811,21 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         
         // Check for a nested list
         [scanner beginTransaction];
-        [scanner skipIndentationUpTo:4*(level + 1) + 3];
+        NSUInteger indentation = [scanner skipIndentationUpTo:4];
         [scanner beginTransaction];
-        BOOL newList = [self _parseListMarkerWithScanner:scanner];
+        BOOL newList = [self _parseListMarkerWithScanner:scanner listType:MMListTypeBulleted]
+                    || [self _parseListMarkerWithScanner:scanner listType:MMListTypeNumbered];
         [scanner commitTransaction:NO];
-        if (newList && nestedListIndex == NSNotFound)
+        if (indentation >= 2 && newList && nestedListIndex == NSNotFound)
         {
-            [element addInnerRange:NSMakeRange(0, 0)];
+            [element addInnerRange:NSMakeRange(scanner.location, 0)];
             nestedListIndex = element.innerRanges.count;
             [element addInnerRange:scanner.currentRange];
             
             [scanner commitTransaction:YES];
             [scanner commitTransaction:YES];
             [scanner advanceToNextLine];
+            nestedListIndentation = indentation;
             continue;
         }
         [scanner commitTransaction:NO];
@@ -809,9 +834,8 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         {
             // Must be 4 spaces past the indentation level to start a new paragraph
             [scanner beginTransaction];
-            NSUInteger newLevel    = 4*(1+level);
-            NSUInteger indentation = [scanner skipIndentationUpTo:newLevel];
-            if (indentation < newLevel)
+            NSUInteger indentation = [scanner skipIndentationUpTo:4];
+            if (indentation < 4)
             {
                 [scanner commitTransaction:NO];
                 [scanner commitTransaction:NO];
@@ -820,7 +844,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
             [scanner commitTransaction:YES];
             [scanner commitTransaction:YES];
             
-            [element addInnerRange:NSMakeRange(0, 0)];
+            [element addInnerRange:NSMakeRange(scanner.location, 0)];
             canContainBlocks = YES;
         }
         else
@@ -829,7 +853,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
             
             // Don't skip past where a nested list would start because that list
             // could have its own nested list, so the whitespace will be needed.
-            [scanner skipIndentationUpTo:4*(level + 1)];
+            [scanner skipIndentationUpTo:nestedListIndentation];
         }
         
         if (nestedListIndex != NSNotFound)
@@ -841,6 +865,32 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         {
             [self _addTextLineToElement:element withScanner:scanner];
         }
+        
+        [scanner beginTransaction];
+        [scanner skipIndentationUpTo:4];
+        if (scanner.nextCharacter == '>')
+        {
+            //
+            // If next line is start with blockquote mark
+            // then break current list parsering.
+            //
+            // for example:
+            //
+            // > 123
+            // + abc
+            //
+            // "+ abs" should not consider as part of blockquote
+            //
+            // > 234
+            // 567
+            //
+            // "567" is part of the blockquote
+            //
+            [scanner commitTransaction:NO];
+            break;
+        }
+        [scanner commitTransaction:NO];
+        
     }
     
     element.range = NSMakeRange(scanner.startLocation, scanner.location-scanner.startLocation);
@@ -882,20 +932,18 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     return element;
 }
 
-- (MMElement *)_parseListWithScanner:(MMScanner *)scanner atIndentationLevel:(NSUInteger)level
+- (MMElement *)_parseListWithScanner:(MMScanner *)scanner
 {
     [scanner beginTransaction];
-    // Check the amount of leading whitespace
-    NSUInteger toSkip  = 4 * level;
-    NSUInteger skipped = [scanner skipIndentationUpTo:toSkip];
     
-    [scanner skipIndentationUpTo:3]; // Additional optional space
+    [scanner skipIndentationUpTo:3]; // Optional space
     unichar nextChar   = scanner.nextCharacter;
-    BOOL    isBulleted = (nextChar == '*' || nextChar == '-' || nextChar == '+');
-    BOOL    hasMarker  = [self _parseListMarkerWithScanner:scanner];
+    BOOL       isBulleted = (nextChar == '*' || nextChar == '-' || nextChar == '+');
+    MMListType listType   = isBulleted ? MMListTypeBulleted : MMListTypeNumbered;
+    BOOL       hasMarker  = [self _parseListMarkerWithScanner:scanner listType:listType];
     [scanner commitTransaction:NO];
     
-    if (toSkip != skipped || !hasMarker)
+    if (!hasMarker)
         return nil;
     
     MMElement *element = [MMElement new];
@@ -914,7 +962,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
             break;
         
         [scanner beginTransaction];
-        MMElement *item = [self _parseListItemWithScanner:scanner atIndentationLevel:level];
+        MMElement *item = [self _parseListItemWithScanner:scanner listType:listType];
         if (!item)
         {
             [scanner commitTransaction:NO];
@@ -1025,16 +1073,12 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     NSCharacterSet *whitespaceSet = NSCharacterSet.whitespaceCharacterSet;
     while (!scanner.atEndOfString)
     {
-        // Skip whitespace if it's the only thing on the line
-        [scanner beginTransaction];
-        [scanner skipCharactersFromSet:whitespaceSet];
+        [scanner skipWhitespace];
         if (scanner.atEndOfLine)
         {
-            [scanner commitTransaction:YES];
             [scanner advanceToNextLine];
             break;
         }
-        [scanner commitTransaction:NO];
         
         // Check for a blockquote
         [scanner beginTransaction];
@@ -1081,8 +1125,9 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         
         // Check for a list item
         [scanner beginTransaction];
-        [scanner skipIndentationUpTo:4];
-        hasElement = [self _parseListMarkerWithScanner:scanner];
+        [scanner skipIndentationUpTo:2];
+        hasElement = [self _parseListMarkerWithScanner:scanner listType:MMListTypeBulleted]
+                  || [self _parseListMarkerWithScanner:scanner listType:MMListTypeNumbered];
         [scanner commitTransaction:NO];
         if (hasElement)
             break;
