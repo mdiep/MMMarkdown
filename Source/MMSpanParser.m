@@ -108,7 +108,7 @@ static NSString * const ESCAPABLE_CHARS = @"\\`*_{}[]()#+-.!>";
 
 #pragma mark - Private Methods
 
-- (NSArray *)_parseWithScanner:(MMScanner *)scanner untilTestPasses:(BOOL (^)())test
+- (NSArray *)_parseWithScanner:(MMScanner *)scanner untilTestPasses:(BOOL (^)(void))test
 {
     NSMutableArray *result = [NSMutableArray array];
     
