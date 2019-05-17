@@ -92,6 +92,18 @@ static NSString * __HTMLStartTagForElement(MMElement *anElement)
             return @"<ol>\n";
         case MMElementTypeListItem:
             return @"<li>";
+        case MMElementTypeMinusChecklist:
+            return @"<ul class=\"contains-task-list contains-task-list-minus\">\n";
+        case MMElementTypePlusChecklist:
+            return @"<ul class=\"contains-task-list contains-task-list-plus\">\n";
+        case MMElementTypeAsteriskChecklist:
+            return @"<ul class=\"contains-task-list contains-task-list-asterisk\">\n";
+        case MMElementTypeNumberedChecklist:
+            return @"<ol class=\"contains-task-list\">\n";
+        case MMElementTypeChecklistCheckedItem:
+            return @"<li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" checked=\"\" /> ";
+        case MMElementTypeChecklistUncheckedItem:
+            return @"<li class=\"task-list-item\"><input type=\"checkbox\" class=\"task-list-item-checkbox\" /> ";
         case MMElementTypeBlockquote:
             return @"<blockquote>\n";
         case MMElementTypeCodeBlock:
@@ -166,6 +178,15 @@ static NSString * __HTMLEndTagForElement(MMElement *anElement)
         case MMElementTypeNumberedList:
             return @"</ol>\n";
         case MMElementTypeListItem:
+            return @"</li>\n";
+        case MMElementTypeMinusChecklist:
+        case MMElementTypePlusChecklist:
+        case MMElementTypeAsteriskChecklist:
+            return @"</ul>\n";
+        case MMElementTypeNumberedChecklist:
+            return @"</ol>\n";
+        case MMElementTypeChecklistCheckedItem:
+        case MMElementTypeChecklistUncheckedItem:
             return @"</li>\n";
         case MMElementTypeBlockquote:
             return @"</blockquote>\n";

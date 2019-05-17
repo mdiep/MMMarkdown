@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B9FD4F131DE8D48E00DD679D /* MMChecklistTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B9FD4F121DE8D48E00DD679D /* MMChecklistTests.m */; };
 		BE23E8FC1C0CF4190087F587 /* MMMarkdown.h in Headers */ = {isa = PBXBuildFile; fileRef = BE813DE214F893EB00EC9469 /* MMMarkdown.h */; };
 		BE23E8FD1C0CF4190087F587 /* MMMarkdown.m in Sources */ = {isa = PBXBuildFile; fileRef = BE813DE314F893EB00EC9469 /* MMMarkdown.m */; };
 		BE23E8FE1C0CF4190087F587 /* MMMarkdown-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = BE813DE114F893EB00EC9469 /* MMMarkdown-Prefix.pch */; };
@@ -272,6 +273,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		B9FD4F121DE8D48E00DD679D /* MMChecklistTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMChecklistTests.m; sourceTree = "<group>"; };
 		BE1DB5D41514184000B26092 /* MMSpanTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMSpanTests.m; sourceTree = "<group>"; };
 		BE1DB5D915143F4200B26092 /* MMBlockTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMBlockTests.m; sourceTree = "<group>"; };
 		BE1DB5DC1515032F00B26092 /* MMLinkTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMLinkTests.m; sourceTree = "<group>"; };
@@ -497,6 +499,7 @@
 				BEAAEB421549DD1700EF1EA0 /* MMImageTests.m */,
 				BE1DB5DC1515032F00B26092 /* MMLinkTests.m */,
 				BE813E9A15031B4000EC9469 /* MMListTests.m */,
+				B9FD4F121DE8D48E00DD679D /* MMChecklistTests.m */,
 				BE1DB5D41514184000B26092 /* MMSpanTests.m */,
 				BE813DF714F893EB00EC9469 /* MMMarkdownTests.h */,
 				BE813DF814F893EB00EC9469 /* MMMarkdownTests.m */,
@@ -913,6 +916,7 @@
 				BED761871B37783100687B36 /* MMImageTests.m in Sources */,
 				BED761821B37783100687B36 /* MMBlockTests.m in Sources */,
 				BED7618C1B37783100687B36 /* MMPHPMarkdownTests.m in Sources */,
+				B9FD4F131DE8D48E00DD679D /* MMChecklistTests.m in Sources */,
 				BED7618B1B37783100687B36 /* MMMarkdownTests.m in Sources */,
 				BED761851B37783100687B36 /* MMExtensionTests.m in Sources */,
 			);
