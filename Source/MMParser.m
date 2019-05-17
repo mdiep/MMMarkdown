@@ -755,20 +755,23 @@ static NSString * __HTMLEntityForCharacter(unichar character)
 - (BOOL)_parseTasklistMarkerWithScanner:(MMScanner *)scanner listType:(MMElementType*)type expectedListType:(MMElementType)expectedListType checked:(nullable BOOL*)checked
 {
     // checking unordered list marker
-    if (expectedListType != MMElementTypeNone && expectedListType != MMElementTypeBulletedChecklist && expectedListType != MMElementTypeNumberedChecklist)
+    if (expectedListType != MMElementTypeNone &&
+        expectedListType != MMElementTypeMinusChecklist &&
+        expectedListType != MMElementTypePlusChecklist &&
+        expectedListType != MMElementTypeAsteriskChecklist &&
+        expectedListType != MMElementTypeNumberedChecklist)
         return NO;
 
     [scanner beginTransaction];
     unichar nextChar = scanner.nextCharacter;
+    unichar fistChar = nextChar;
     if (nextChar != '*' && nextChar != '-' && nextChar != '+' && !isdigit(nextChar))
     {
         [scanner commitTransaction:NO];
         return NO;
     }
 
-    BOOL numbered = isdigit(nextChar);
-
-    if (numbered) {
+    if (isdigit(nextChar)) {
         do{
             [scanner advance];
             nextChar = scanner.nextCharacter;
@@ -824,11 +827,20 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         return NO;
     }
 
-    if(numbered){
-        *type = MMElementTypeNumberedList;
+    if(fistChar == '-')
+    {
+        *type = MMElementTypeMinusChecklist;
+    }
+    else if(fistChar == '+')
+    {
+        *type = MMElementTypePlusChecklist;
+    }
+    else if(fistChar == '*')
+    {
+        *type = MMElementTypeAsteriskChecklist;
     }
     else{
-        *type = MMElementTypeBulletedChecklist;
+        *type = MMElementTypeNumberedChecklist;
     }
 
     if(checked != NULL){
@@ -842,7 +854,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
 
 
 
-- (MMElement *)_parseTasklistItemWithScanner:(MMScanner *)scanner listType:(MMElementType)thelistType
+- (MMElement *)_parseTasklistItemWithScanner:(MMScanner *)scanner listType:(MMElementType*)listType expectedListType:(MMElementType)thelistType
 {
     BOOL canContainBlocks = NO;
     
@@ -852,12 +864,14 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     }
     
     [scanner skipIndentationUpTo:7]; // Optional space
-    MMElementType listType = MMElementTypeNone;
+    MMElementType thislistType = MMElementTypeNone;
     BOOL checked = NO;
-    BOOL foundAnItem = [self _parseTasklistMarkerWithScanner:scanner listType:&listType expectedListType:thelistType checked:&checked];
+    BOOL foundAnItem = [self _parseTasklistMarkerWithScanner:scanner listType:&thislistType expectedListType:thelistType checked:&checked];
     if (!foundAnItem)
         return nil;
-    
+
+    *listType = thislistType;
+
     [scanner skipWhitespace];
     
     MMElement *element = [MMElement new];
@@ -886,7 +900,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         // Check for the start of a new list item
         [scanner beginTransaction];
         [scanner skipIndentationUpTo:1];
-        BOOL newMarker = [self _parseTasklistMarkerWithScanner:scanner listType:&listType expectedListType:thelistType checked:NULL];
+        BOOL newMarker = [self _parseTasklistMarkerWithScanner:scanner listType:&thislistType expectedListType:thelistType checked:NULL];
         [scanner commitTransaction:NO];
         if (newMarker)
         {
@@ -902,7 +916,7 @@ static NSString * __HTMLEntityForCharacter(unichar character)
         [scanner beginTransaction];
         NSUInteger indentation = [scanner skipIndentationUpTo:4];
         [scanner beginTransaction];
-        BOOL newList = [self _parseTasklistMarkerWithScanner:scanner listType:&listType expectedListType:thelistType checked:NULL];
+        BOOL newList = [self _parseTasklistMarkerWithScanner:scanner listType:&thislistType expectedListType:thelistType checked:NULL];
         [scanner commitTransaction:NO];
         if (indentation >= 2 && newList && nestedListIndex == NSNotFound)
         {
@@ -1033,9 +1047,12 @@ static NSString * __HTMLEntityForCharacter(unichar character)
     [scanner beginTransaction];
     [scanner skipIndentationUpTo:7]; // checklist allow optional 7 leading space or 1 tab. above that it's code block.
     MMElementType  listType = MMElementTypeNone;
+    MMElementType  nextListType = MMElementTypeNone;
+
     BOOL hasMarker  = [self _parseTasklistMarkerWithScanner:scanner listType:&listType expectedListType:MMElementTypeNone checked:NULL];
     [scanner commitTransaction:NO];
-    
+
+
     if (!hasMarker)
         return nil;
     
@@ -1055,12 +1072,19 @@ static NSString * __HTMLEntityForCharacter(unichar character)
             break;
         
         [scanner beginTransaction];
-        MMElement *item = [self _parseTasklistItemWithScanner:scanner listType: listType];
+        MMElement *item = [self _parseTasklistItemWithScanner:scanner listType: &nextListType expectedListType:listType];
         if (!item)
         {
             [scanner commitTransaction:NO];
             break;
         }
+
+        if(nextListType != listType)
+        {
+            [scanner commitTransaction:NO];
+            break;
+        }
+
         [scanner commitTransaction:YES];
         
         [element addChild:item];
