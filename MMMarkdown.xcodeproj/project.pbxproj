@@ -1350,7 +1350,6 @@
 				BE23E8FA1C0CF3EF0087F587 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
 		};
 		BE23E9181C0CF77D0087F587 /* Build configuration list for PBXNativeTarget "MMMarkdown (watchOS)" */ = {
 			isa = XCConfigurationList;
@@ -1359,7 +1358,6 @@
 				BE23E91A1C0CF77D0087F587 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
 		};
 		BE813DD014F893EB00EC9469 /* Build configuration list for PBXProject "MMMarkdown" */ = {
 			isa = XCConfigurationList;
