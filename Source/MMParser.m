@@ -755,90 +755,89 @@ static NSString * __HTMLEntityForCharacter(unichar character)
 - (BOOL)_parseTasklistMarkerWithScanner:(MMScanner *)scanner listType:(MMElementType*)type expectedListType:(MMElementType)expectedListType checked:(nullable BOOL*)checked
 {
     // checking unordered list marker
-    if (expectedListType == MMElementTypeNone || expectedListType == MMElementTypeBulletedChecklist)
+    if (expectedListType != MMElementTypeNone && expectedListType != MMElementTypeBulletedChecklist && expectedListType != MMElementTypeNumberedChecklist)
+        return NO;
+
+    [scanner beginTransaction];
+    unichar nextChar = scanner.nextCharacter;
+    if (nextChar != '*' && nextChar != '-' && nextChar != '+' && !isdigit(nextChar))
     {
-        [scanner beginTransaction];
-        unichar nextChar = scanner.nextCharacter;
-        if (nextChar == '*' || nextChar == '-' || nextChar == '+')
-        {
+        [scanner commitTransaction:NO];
+        return NO;
+    }
+
+    BOOL numbered = isdigit(nextChar);
+
+    if (numbered) {
+        do{
             [scanner advance];
-            if (scanner.nextCharacter == ' ')
-            {
-                [scanner advance];
-                if (scanner.nextCharacter == '[')
-                {
-                    [scanner advance];
-                    nextChar = scanner.nextCharacter;
-                    if (nextChar == ' ' || nextChar == 'X' || nextChar == 'x')
-                    {
-                        BOOL foundx = nextChar == 'X' || nextChar == 'x';
-                        [scanner advance];
-                        if (scanner.nextCharacter == ']')
-                        {
-                            [scanner advance];
-                            if (scanner.nextCharacter == ' ')
-                            {
-                                [scanner commitTransaction:YES];
-                                *type = MMElementTypeBulletedChecklist;
-                                if(checked != NULL){
-                                    *checked = foundx;
-                                }
-                                return YES;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        [scanner commitTransaction:NO];
-    }
- 
-    
-    // checking numbered tasklist marker
-    if (expectedListType == MMElementTypeNone || expectedListType == MMElementTypeNumberedChecklist)
-    {
-        [scanner beginTransaction];
-        NSUInteger numOfNums = [scanner skipCharactersFromSet:[NSCharacterSet decimalDigitCharacterSet]];
-        if (numOfNums != 0)
+            nextChar = scanner.nextCharacter;
+        } while(isdigit(nextChar));
+
+        if(nextChar != '.')
         {
-            unichar nextChar = scanner.nextCharacter;
-            if (nextChar == '.')
-            {
-                [scanner advance];
-                if (scanner.nextCharacter == ' ')
-                {
-                    [scanner advance];
-                    if (scanner.nextCharacter == '[')
-                    {
-                        [scanner advance];
-                        nextChar = scanner.nextCharacter;
-                        if (nextChar == ' ' || nextChar == 'X' || nextChar == 'x')
-                        {
-                            BOOL foundx = nextChar == 'X' || nextChar == 'x';
-                            [scanner advance];
-                            if (scanner.nextCharacter == ']')
-                            {
-                                [scanner advance];
-                                if (scanner.nextCharacter == ' ')
-                                {
-                                    [scanner commitTransaction:YES];
-                                    *type = MMElementTypeNumberedChecklist;
-                                    if(checked != NULL){
-                                        *checked = foundx;
-                                    }
-                                    return YES;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            [scanner commitTransaction:NO];
+            return NO;
         }
-        [scanner commitTransaction:NO];
     }
-    
-    
-    return NO;
+
+    [scanner advance];
+    nextChar = scanner.nextCharacter;
+    if (nextChar != ' ')
+    {
+        [scanner commitTransaction:NO];
+        return NO;
+    }
+
+
+    [scanner advance];
+    nextChar = scanner.nextCharacter;
+    if (nextChar != '[')
+    {
+        [scanner commitTransaction:NO];
+        return NO;
+    }
+
+
+    [scanner advance];
+    nextChar = scanner.nextCharacter;
+    if (nextChar != ' ' && nextChar != 'X' && nextChar != 'x')
+    {
+        [scanner commitTransaction:NO];
+        return NO;
+    }
+
+    BOOL foundx = nextChar == 'X' || nextChar == 'x';
+    [scanner advance];
+    nextChar = scanner.nextCharacter;
+    if (nextChar != ']')
+    {
+        [scanner commitTransaction:NO];
+        return NO;
+    }
+
+    [scanner advance];
+    nextChar = scanner.nextCharacter;
+    if (nextChar != ' ')
+    {
+        [scanner commitTransaction:NO];
+        return NO;
+    }
+
+    if(numbered){
+        *type = MMElementTypeNumberedList;
+    }
+    else{
+        *type = MMElementTypeBulletedChecklist;
+    }
+
+    if(checked != NULL){
+        *checked = foundx;
+    }
+
+    [scanner commitTransaction:YES];
+
+    return YES;
 }
 
 
